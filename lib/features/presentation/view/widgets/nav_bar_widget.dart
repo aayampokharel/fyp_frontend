@@ -2,7 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dashboard/core/constants/color_constants.dart';
 
 class NavBarWidget extends StatelessWidget {
-  const NavBarWidget({super.key});
+  final String title;
+  final String subTitle;
+  final String icon1Name;
+  final String icon2Name;
+  const NavBarWidget({
+    super.key,
+    required this.title,
+    required this.subTitle,
+    required this.icon1Name,
+    required this.icon2Name,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -10,7 +20,7 @@ class NavBarWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
-          'Recent Workflow Runs',
+          title,
           style: TextStyle(
             color: ColorConstants.primaryPurple,
             fontSize: 28,
@@ -18,26 +28,28 @@ class NavBarWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 12),
-        const Text(
-          'Monitor your workflow executions and performance',
+        Text(
+          // 'Monitor your workflow executions and performance',
+          subTitle,
           style: TextStyle(color: Colors.black54),
         ),
         const Spacer(),
-        // Filter button and View All button (static)
-        _glassButtonRow(),
+
+        _glassButtonRow(icon1Name, icon2Name),
       ],
     );
   }
 }
 
-Widget _glassButtonRow() {
+Widget _glassButtonRow(String icon1Name, String icon2Name) {
   return Row(
     children: [
       // Filter button
       ElevatedButton.icon(
         onPressed: null,
         icon: const Icon(Icons.filter_list),
-        label: const Text('Filter'),
+        // label: const Text('Filter'),
+        label: Text(icon1Name),
         style: ElevatedButton.styleFrom(
           backgroundColor: ColorConstants.primaryPurple.withOpacity(0.1),
           foregroundColor: ColorConstants.primaryPurple,
@@ -52,7 +64,8 @@ Widget _glassButtonRow() {
       ElevatedButton.icon(
         onPressed: null,
         icon: const Icon(Icons.remove_red_eye_outlined),
-        label: const Text('View All'),
+        // label: const Text('View All'),
+        label: Text(icon2Name),
         style: ElevatedButton.styleFrom(
           backgroundColor: ColorConstants.primaryPurple,
           foregroundColor: Colors.white,

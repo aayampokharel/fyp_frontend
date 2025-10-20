@@ -30,6 +30,5 @@ class GlassCardWidget extends StatelessWidget {
         ),
       ),
     );
-    ;
   }
 }
