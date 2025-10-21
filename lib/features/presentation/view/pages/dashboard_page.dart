@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:ui';
-import 'package:flutter_dashboard/core/constants/color_constants.dart';
 import 'package:flutter_dashboard/features/presentation/view/widgets/analytics_row_widget.dart';
 import 'package:flutter_dashboard/features/presentation/view/widgets/background_jobs_column_widget.dart';
 import 'package:flutter_dashboard/features/presentation/view/widgets/data_table_widget.dart';
@@ -241,7 +239,6 @@ class DashboardPage extends StatelessWidget {
     );
   }
 
-  
   Widget _runRow(Map<String, dynamic> run) {
     Color statusColor;
     switch (run['status']) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class BackgroundJobsColumnWidget extends StatelessWidget {
-  const BackgroundJobsColumnWidget({Key? key}) : super(key: key);
+  const BackgroundJobsColumnWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

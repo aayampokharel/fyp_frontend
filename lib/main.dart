@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dashboard/core/constants/color_constants.dart';
 import 'package:flutter_dashboard/features/presentation/view/pages/dashboard_page.dart';
+import 'package:flutter_dashboard/features/presentation/view/pages/sign_in_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,12 +20,12 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.light,
         primaryColor: ColorConstants.primaryPurple,
         scaffoldBackgroundColor: ColorConstants.lightGray,
-        fontFamily: 'Exo', 
+        fontFamily: 'Exo',
         textTheme: const TextTheme(
           bodyMedium: TextStyle(color: Colors.black87),
         ),
       ),
-      home: const DashboardPage(),
+      home: SignInPage(),
     );
   }
 }

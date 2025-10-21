@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class TeamStatusColumnWidget extends StatelessWidget {
-  const TeamStatusColumnWidget({Key? key}) : super(key: key);
+  const TeamStatusColumnWidget({super.key});
 
   final List<Map<String, String>> _team = const [
     {'name': 'John Doe', 'title': 'CEO', 'status': 'online'},
