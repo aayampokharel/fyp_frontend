@@ -42,6 +42,9 @@ dependencies:
   intl: ^0.20.2
   flutter_admin_scaffold: ^1.2.0
   fpdart: ^1.1.1
+  dio: ^5.9.0
+  get_it: ^8.2.0
+  bloc: ^9.1.0
 
 dev_dependencies:
   flutter_test:

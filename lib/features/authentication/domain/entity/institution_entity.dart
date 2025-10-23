@@ -1,10 +1,17 @@
 class InstitutionEntity {
-  String institutionID;
+  final String institutionID;
+  final String institutionName;
+  final String wardNumber;
+  final String toleAddress;
+  final String districtAddress;
+  final bool isActive;
 
-  InstitutionEntity({required this.institutionID});
-
-  factory InstitutionEntity.fromJSON(Map<String, String> json) =>
-      InstitutionEntity(institutionID: json['institutionID'] ?? "");
-
-  InstitutionEntity toJSON() => InstitutionEntity(institutionID: institutionID);
+  const InstitutionEntity(
+    this.institutionName,
+    this.wardNumber,
+    this.toleAddress,
+    this.districtAddress,
+    this.isActive, {
+    required this.institutionID,
+  });
 }
