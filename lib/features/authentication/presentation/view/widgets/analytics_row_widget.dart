@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dashboard/core/constants/color_constants.dart';
-import 'package:flutter_dashboard/features/presentation/view/widgets/glass_card_widget.dart';
+import 'package:flutter_dashboard/features/authentication/presentation/view/widgets/glass_card_widget.dart';
 
 class AnalyticsRowWidget extends StatelessWidget {
   const AnalyticsRowWidget({super.key});

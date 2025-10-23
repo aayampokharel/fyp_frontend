@@ -2,10 +2,10 @@ import "package:flutter/material.dart";
 import "package:flutter_dashboard/core/constants/color_constants.dart";
 import "package:flutter_dashboard/core/constants/image_constants.dart";
 import "package:flutter_dashboard/core/constants/string_constants.dart";
-import "package:flutter_dashboard/features/presentation/view/widgets/colored_button_widget.dart";
-import "package:flutter_dashboard/features/presentation/view/widgets/container_with_two_parts_widget.dart";
-import "package:flutter_dashboard/features/presentation/view/widgets/nav_bar_widget.dart";
-import "package:flutter_dashboard/features/presentation/view/widgets/text_field_widget.dart";
+import "package:flutter_dashboard/features/authentication/presentation/view/widgets/colored_button_widget.dart";
+import "package:flutter_dashboard/features/authentication/presentation/view/widgets/container_with_two_parts_widget.dart";
+import "package:flutter_dashboard/features/authentication/presentation/view/widgets/nav_bar_widget.dart";
+import "package:flutter_dashboard/features/authentication/presentation/view/widgets/text_field_widget.dart";
 
 class SignInPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
@@ -51,6 +51,7 @@ class SignInPage extends StatelessWidget {
               ColoredButtonWidget(
                 onPressed: () {},
                 width: 300,
+                textColor: Colors.white,
                 height: 300,
                 color: ColorConstants.accentPurple,
                 text: "Sign In",

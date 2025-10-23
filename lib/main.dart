@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dashboard/core/constants/color_constants.dart';
-import 'package:flutter_dashboard/features/presentation/view/pages/dashboard_page.dart';
-import 'package:flutter_dashboard/features/presentation/view/pages/sign_in_page.dart';
+import 'package:flutter_dashboard/features/authentication/presentation/view/pages/dashboard_page.dart';
+import 'package:flutter_dashboard/features/authentication/presentation/view/pages/sign_in_page.dart';
 
 void main() {
   runApp(const MyApp());

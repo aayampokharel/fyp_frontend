@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dashboard/features/presentation/view/widgets/analytics_row_widget.dart';
-import 'package:flutter_dashboard/features/presentation/view/widgets/background_jobs_column_widget.dart';
-import 'package:flutter_dashboard/features/presentation/view/widgets/data_table_widget.dart';
-import 'package:flutter_dashboard/features/presentation/view/widgets/glass_card_widget.dart';
-import 'package:flutter_dashboard/features/presentation/view/widgets/left_side_bar_widget.dart';
-import 'package:flutter_dashboard/features/presentation/view/widgets/quick_stat_column_widget.dart';
-import 'package:flutter_dashboard/features/presentation/view/widgets/stat_card_widget.dart';
-import 'package:flutter_dashboard/features/presentation/view/widgets/team_status_column_widget.dart';
-import 'package:flutter_dashboard/features/presentation/view/widgets/top_university_table.dart';
-import 'package:flutter_dashboard/features/presentation/view/widgets/workflow_table_widget.dart';
+import 'package:flutter_dashboard/features/authentication/presentation/view/widgets/analytics_row_widget.dart';
+import 'package:flutter_dashboard/features/authentication/presentation/view/widgets/background_jobs_column_widget.dart';
+import 'package:flutter_dashboard/features/authentication/presentation/view/widgets/data_table_widget.dart';
+import 'package:flutter_dashboard/features/authentication/presentation/view/widgets/glass_card_widget.dart';
+import 'package:flutter_dashboard/features/authentication/presentation/view/widgets/left_side_bar_widget.dart';
+import 'package:flutter_dashboard/features/authentication/presentation/view/widgets/quick_stat_column_widget.dart';
+import 'package:flutter_dashboard/features/authentication/presentation/view/widgets/stat_card_widget.dart';
+import 'package:flutter_dashboard/features/authentication/presentation/view/widgets/team_status_column_widget.dart';
+import 'package:flutter_dashboard/features/authentication/presentation/view/widgets/top_university_table.dart';
+import 'package:flutter_dashboard/features/authentication/presentation/view/widgets/workflow_table_widget.dart';
 
 // ==================== DASHBOARD PAGE ====================
 class DashboardPage extends StatelessWidget {
