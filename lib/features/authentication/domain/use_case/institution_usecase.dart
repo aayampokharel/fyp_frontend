@@ -6,7 +6,7 @@ import 'package:flutter_dashboard/features/authentication/domain/repository/inst
 
 class InstitutionUseCaseParams {
   String institutionName;
-  String wardNumber;
+  int wardNumber;
   String toleAddress;
   String districtAddress;
   InstitutionUseCaseParams({

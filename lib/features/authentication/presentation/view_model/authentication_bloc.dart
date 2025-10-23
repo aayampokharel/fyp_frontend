@@ -10,9 +10,9 @@ class AuthenticationBloc
   InstitutionUsecase institutionUsecase;
 
   AuthenticationBloc({required this.institutionUsecase})
-    : super(AuthenticationInitial()) {
+    : super(AuthenticationInitialState()) {
     on<CreateInstitutionUserEvent>((event, emit) async {
-      emit(AuthenticationLoading());
+      emit(AuthenticationLoadingState());
       InstitutionUseCaseParams params = InstitutionUseCaseParams(
         institutionName: event.institutionName,
         wardNumber: event.wardNumber,
@@ -23,12 +23,12 @@ class AuthenticationBloc
           .call(params);
       response.fold<void>(
         (left) => emit(
-          AuthenticationError(
+          AuthenticationErrorState(
             displayErrorString: left.message,
             code: left.code,
           ),
         ),
-        (right) => emit(AuthenticationSuccess(institutionEntity: right)),
+        (right) => emit(AuthenticationSuccessState(institutionEntity: right)),
       );
     });
   }

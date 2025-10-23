@@ -13,7 +13,7 @@ class InstitutionRepositoryImpl implements InstitutionRepository {
   @override
   DefaultFutureEitherType<InstitutionEntity> sendInstitutionInfo(
     String institutionName,
-    String wardNumber,
+    int wardNumber,
     String toleAddress,
     String districtAddress,
   ) async {

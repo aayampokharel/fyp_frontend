@@ -4,17 +4,20 @@ abstract class AuthenticationState {
   const AuthenticationState();
 }
 
-class AuthenticationInitial extends AuthenticationState {}
+class AuthenticationInitialState extends AuthenticationState {}
 
-class AuthenticationLoading extends AuthenticationState {}
+class AuthenticationLoadingState extends AuthenticationState {}
 
-class AuthenticationSuccess extends AuthenticationState {
+class AuthenticationSuccessState extends AuthenticationState {
   InstitutionEntity institutionEntity;
-  AuthenticationSuccess({required this.institutionEntity});
+  AuthenticationSuccessState({required this.institutionEntity});
 }
 
-class AuthenticationError extends AuthenticationState {
+class AuthenticationErrorState extends AuthenticationState {
   String displayErrorString;
   int code;
-  AuthenticationError({required this.displayErrorString, required this.code});
+  AuthenticationErrorState({
+    required this.displayErrorString,
+    required this.code,
+  });
 }

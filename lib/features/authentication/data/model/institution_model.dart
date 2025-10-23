@@ -2,7 +2,7 @@ import 'package:flutter_dashboard/features/authentication/domain/entity/institut
 
 class InstitutionRequestModel {
   final String institutionName;
-  final String wardNumber;
+  final int wardNumber;
   final String toleAddress;
   final String districtAddress;
 
@@ -38,7 +38,7 @@ class InstitutionResponseModel {
 
   InstitutionEntity toEntity(
     String institutionName,
-    String wardNumber,
+    int wardNumber,
     String toleAddress,
     String districtAddress,
   ) => InstitutionEntity(

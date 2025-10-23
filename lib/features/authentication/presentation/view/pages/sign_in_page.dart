@@ -1,15 +1,30 @@
 import "package:flutter/material.dart";
+import "package:flutter_bloc/flutter_bloc.dart";
 import "package:flutter_dashboard/core/constants/color_constants.dart";
+import "package:flutter_dashboard/core/constants/dependency_injection/di.dart";
 import "package:flutter_dashboard/core/constants/image_constants.dart";
 import "package:flutter_dashboard/core/constants/string_constants.dart";
+import "package:flutter_dashboard/features/authentication/domain/use_case/institution_usecase.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view/widgets/colored_button_widget.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view/widgets/container_with_two_parts_widget.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view/widgets/nav_bar_widget.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view/widgets/text_field_widget.dart";
+import "package:flutter_dashboard/features/authentication/presentation/view_model/authentication_bloc.dart";
+import "package:flutter_dashboard/features/authentication/presentation/view_model/authentication_event.dart";
+import "package:flutter_dashboard/features/authentication/presentation/view_model/authentication_state.dart";
 
 class SignInPage extends StatelessWidget {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController institutionController = TextEditingController();
+  final TextEditingController institutionNameController =
+      TextEditingController();
+  final TextEditingController institutionWardNoController =
+      TextEditingController();
+  final TextEditingController institutionToleNoController =
+      TextEditingController();
+  final TextEditingController institutionDistrictController =
+      TextEditingController();
+
+  final InstitutionUsecase institutionUseCase = getIt<InstitutionUsecase>();
+
   SignInPage({super.key});
 
   @override
@@ -38,23 +53,65 @@ class SignInPage extends StatelessWidget {
             children: [
               TextFieldWidget(
                 containerSize: 350,
-                textController: emailController,
-                labelText: "email",
+                textController: institutionNameController,
+                labelText: "institutionname",
                 hintText: "Enter your email",
               ),
               TextFieldWidget(
                 containerSize: 350,
-                textController: institutionController,
-                labelText: "Institution Name",
+                textController: institutionWardNoController,
+                labelText: "institution wardno",
+                hintText: "Enter your Institution",
+              ),
+              TextFieldWidget(
+                containerSize: 350,
+                textController: institutionDistrictController,
+                labelText: "institution district",
+                hintText: "Enter your Institution",
+              ),
+
+              TextFieldWidget(
+                containerSize: 350,
+                textController: institutionToleNoController,
+                labelText: "institution tole",
                 hintText: "Enter your Institution",
               ),
               ColoredButtonWidget(
-                onPressed: () {},
+                onPressed: () {
+                  String institutionName = institutionNameController.text;
+                  int wardNumber = int.parse(institutionWardNoController.text);
+                  String toleAddress = institutionToleNoController.text;
+                  String districtAddress = institutionDistrictController.text;
+
+                  context.read<AuthenticationBloc>().add(
+                    CreateInstitutionUserEvent(
+                      institutionName: institutionName,
+                      wardNumber: wardNumber,
+                      toleAddress: toleAddress,
+                      districtAddress: districtAddress,
+                    ),
+                  );
+                },
                 width: 300,
                 textColor: Colors.white,
                 height: 300,
                 color: ColorConstants.accentPurple,
                 text: "Sign In",
+              ),
+              BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                builder: (context, state) {
+                  if (state is AuthenticationInitialState) {
+                    return Text("");
+                  } else if (state is AuthenticationSuccessState) {
+                    return Text(state.institutionEntity.toString());
+                  } else if (state is AuthenticationErrorState) {
+                    return Text(
+                      state.displayErrorString + state.code.toString(),
+                    );
+                  } else {
+                    return Text("");
+                  }
+                },
               ),
             ],
           ),

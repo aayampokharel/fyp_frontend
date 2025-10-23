@@ -1,7 +1,7 @@
 class InstitutionEntity {
   final String institutionID;
   final String institutionName;
-  final String wardNumber;
+  final int wardNumber;
   final String toleAddress;
   final String districtAddress;
   final bool isActive;

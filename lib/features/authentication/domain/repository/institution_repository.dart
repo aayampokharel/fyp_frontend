@@ -7,7 +7,7 @@ import 'package:fpdart/fpdart.dart';
 abstract class InstitutionRepository {
   DefaultFutureEitherType<InstitutionEntity> sendInstitutionInfo(
     final String institutionName,
-    final String wardNumber,
+    final int wardNumber,
     final String toleAddress,
     final String districtAddress,
   );

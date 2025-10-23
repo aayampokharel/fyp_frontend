@@ -5,8 +5,8 @@ class DioClient {
   final Dio dio;
 
   DioClient({required this.dio}) {
-    dio.options.baseUrl = ApiEndpoints.baseUrl;
     dio.options = BaseOptions(
+      baseUrl: ApiEndpoints.baseUrl,
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
