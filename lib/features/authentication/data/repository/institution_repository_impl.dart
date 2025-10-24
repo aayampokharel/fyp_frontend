@@ -7,7 +7,7 @@ import 'package:flutter_dashboard/features/authentication/domain/repository/inst
 import 'package:fpdart/src/either.dart';
 
 class InstitutionRepositoryImpl implements InstitutionRepository {
-  InstitutionRemoteDataSource _institutionRemoteDataSource;
+  final InstitutionRemoteDataSource _institutionRemoteDataSource;
 
   InstitutionRepositoryImpl(this._institutionRemoteDataSource);
   @override
@@ -28,6 +28,9 @@ class InstitutionRepositoryImpl implements InstitutionRepository {
           await _institutionRemoteDataSource.createInstitutionInfo(
             institutionRequestModel,
           );
+      print(institutionResponseModel.institutionID);
+      print(institutionResponseModel.isActive);
+
       InstitutionEntity institutionEntity = institutionResponseModel.toEntity(
         institutionName,
         wardNumber,

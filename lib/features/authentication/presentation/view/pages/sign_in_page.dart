@@ -103,7 +103,19 @@ class SignInPage extends StatelessWidget {
                   if (state is AuthenticationInitialState) {
                     return Text("");
                   } else if (state is AuthenticationSuccessState) {
-                    return Text(state.institutionEntity.toString());
+                    return Text(
+                      state.institutionEntity.institutionID +
+                          " " +
+                          state.institutionEntity.institutionName +
+                          " " +
+                          state.institutionEntity.wardNumber.toString() +
+                          " " +
+                          state.institutionEntity.districtAddress +
+                          " " +
+                          state.institutionEntity.toleAddress +
+                          " " +
+                          state.institutionEntity.isActive.toString(),
+                    );
                   } else if (state is AuthenticationErrorState) {
                     return Text(
                       state.displayErrorString + state.code.toString(),

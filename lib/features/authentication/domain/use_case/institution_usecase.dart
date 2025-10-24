@@ -19,7 +19,7 @@ class InstitutionUseCaseParams {
 
 class InstitutionUsecase
     implements UseCase<InstitutionEntity, InstitutionUseCaseParams> {
-  InstitutionRepository _institutionRepository;
+  final InstitutionRepository _institutionRepository;
   InstitutionUsecase(this._institutionRepository);
   @override
   DefaultFutureEitherType<InstitutionEntity> call(params) {

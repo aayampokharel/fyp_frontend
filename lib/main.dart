@@ -3,8 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dashboard/core/constants/color_constants.dart';
 import 'package:flutter_dashboard/core/constants/dependency_injection/di.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/institution_usecase.dart';
-import 'package:flutter_dashboard/features/authentication/presentation/view/pages/dashboard_page.dart';
-import 'package:bloc/bloc.dart';
 import 'package:flutter_dashboard/features/authentication/presentation/view/pages/sign_in_page.dart';
 import 'package:flutter_dashboard/features/authentication/presentation/view_model/authentication_bloc.dart';
 

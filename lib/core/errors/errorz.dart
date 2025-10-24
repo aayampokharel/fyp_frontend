@@ -12,11 +12,11 @@ class Errorz implements Exception {
 class ServerError extends Errorz {
   String? extraMsg;
   ServerError({this.extraMsg = 'Server Error'})
-    : super(message: "error:" + extraMsg!, code: 500);
+    : super(message: "error:${extraMsg!}", code: 500);
 }
 
 class WarnError extends Errorz {
   String? extraMsg;
   WarnError({this.extraMsg = 'Warn Error'})
-    : super(message: "warn:" + extraMsg!, code: 400);
+    : super(message: "warn:${extraMsg!}", code: 400);
 }

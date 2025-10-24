@@ -32,8 +32,8 @@ class InstitutionResponseModel {
 
   factory InstitutionResponseModel.fromJson(Map<String, dynamic> json) =>
       InstitutionResponseModel(
-        institutionID: json['institution_id'],
-        isActive: json['is_active'],
+        institutionID: json['institution_id'] ?? '',
+        isActive: json['is_active'] ?? false,
       );
 
   InstitutionEntity toEntity(

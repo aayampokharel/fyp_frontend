@@ -20,7 +20,7 @@ class InstitutionRemoteDataSource {
 
       if (response.statusCode == 200) {
         print(response.data);
-        return InstitutionResponseModel.fromJson(response.data);
+        return InstitutionResponseModel.fromJson(response.data['data']);
       } else {
         throw Errorz(
           message: response.data['message'],
