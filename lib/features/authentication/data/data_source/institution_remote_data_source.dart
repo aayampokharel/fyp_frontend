@@ -14,7 +14,7 @@ class InstitutionRemoteDataSource {
     Map<String, dynamic> institutionJSON = institutionRequestModel.toJSON();
     try {
       var response = await _dioClient.dio.post(
-        ApiEndpoints.institution,
+        ApiEndpoints.authInstitution,
         data: institutionJSON,
       );
 
@@ -24,13 +24,13 @@ class InstitutionRemoteDataSource {
       } else {
         throw Errorz(
           message: response.data['message'],
-          code: response.data['code'] ?? response.statusCode,
+          statusCode: response.data['code'] ?? response.statusCode,
         );
       }
     } on DioException catch (e) {
       throw ServerError(extraMsg: e.message);
     } catch (e) {
-      throw Errorz(message: e.toString(), code: e.hashCode);
+      throw Errorz(message: e.toString(), statusCode: e.hashCode);
     }
   }
 }

@@ -3,7 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dashboard/core/constants/color_constants.dart';
 import 'package:flutter_dashboard/core/constants/dependency_injection/di.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/institution_usecase.dart';
-import 'package:flutter_dashboard/features/authentication/presentation/view/pages/sign_in_page.dart';
+import 'package:flutter_dashboard/features/authentication/domain/use_case/user_account_usecase.dart';
+import 'package:flutter_dashboard/features/authentication/presentation/view/pages/sign_in_institution_page.dart';
 import 'package:flutter_dashboard/features/authentication/presentation/view_model/authentication_bloc.dart';
 
 void main() async {
@@ -22,7 +23,8 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(
           create: (context) => AuthenticationBloc(
-            institutionUsecase: getIt<InstitutionUsecase>(),
+            institutionUsecase: getIt<InstitutionUseCase>(),
+            userAccountUsecase: getIt<UserAccountUseCase>(),
           ),
         ),
       ],

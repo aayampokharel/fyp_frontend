@@ -1,9 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dashboard/core/wrappers/dio_client.dart';
 import 'package:flutter_dashboard/features/authentication/data/data_source/institution_remote_data_source.dart';
+import 'package:flutter_dashboard/features/authentication/data/data_source/user_account_remote_data_source.dart';
 import 'package:flutter_dashboard/features/authentication/data/repository/institution_repository_impl.dart';
+import 'package:flutter_dashboard/features/authentication/data/repository/user_account_repository_impl.dart';
 import 'package:flutter_dashboard/features/authentication/domain/repository/institution_repository.dart';
+import 'package:flutter_dashboard/features/authentication/domain/repository/user_account_repository.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/institution_usecase.dart';
+import 'package:flutter_dashboard/features/authentication/domain/use_case/user_account_usecase.dart';
 import 'package:get_it/get_it.dart';
 
 final getIt = GetIt.instance;
@@ -29,7 +33,23 @@ Future _authDependencies() async {
   getIt.registerLazySingleton<InstitutionRepository>(
     () => getIt<InstitutionRepositoryImpl>(),
   );
-  getIt.registerLazySingleton<InstitutionUsecase>(
-    () => InstitutionUsecase(getIt<InstitutionRepository>()),
+  getIt.registerLazySingleton<InstitutionUseCase>(
+    () => InstitutionUseCase(getIt<InstitutionRepository>()),
+  );
+
+  //================================useraccount==x
+
+  getIt.registerLazySingleton<UserAccountRemoteDataSource>(
+    () => UserAccountRemoteDataSource(getIt<DioClient>()),
+  );
+  getIt.registerLazySingleton<UserAccountRepositoryImpl>(
+    () => UserAccountRepositoryImpl(getIt<UserAccountRemoteDataSource>()),
+  );
+  getIt.registerLazySingleton<UserAccountRepository>(
+    () => getIt<UserAccountRepositoryImpl>(),
+  );
+
+  getIt.registerLazySingleton<UserAccountUseCase>(
+    () => UserAccountUseCase(getIt<UserAccountRepository>()),
   );
 }

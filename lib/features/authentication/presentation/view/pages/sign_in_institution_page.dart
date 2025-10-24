@@ -5,6 +5,7 @@ import "package:flutter_dashboard/core/constants/dependency_injection/di.dart";
 import "package:flutter_dashboard/core/constants/image_constants.dart";
 import "package:flutter_dashboard/core/constants/string_constants.dart";
 import "package:flutter_dashboard/features/authentication/domain/use_case/institution_usecase.dart";
+import "package:flutter_dashboard/features/authentication/presentation/view/pages/sign_in_user_account_page.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view/widgets/colored_button_widget.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view/widgets/container_with_two_parts_widget.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view/widgets/nav_bar_widget.dart";
@@ -23,7 +24,7 @@ class SignInPage extends StatelessWidget {
   final TextEditingController institutionDistrictController =
       TextEditingController();
 
-  final InstitutionUsecase institutionUseCase = getIt<InstitutionUsecase>();
+  final InstitutionUseCase institutionUseCase = getIt<InstitutionUseCase>();
 
   SignInPage({super.key});
 
@@ -98,30 +99,31 @@ class SignInPage extends StatelessWidget {
                 color: ColorConstants.accentPurple,
                 text: "Sign In",
               ),
-              BlocBuilder<AuthenticationBloc, AuthenticationState>(
+              BlocConsumer<AuthenticationBloc, AuthenticationState>(
+                listener: (context, state) {
+                  if (state is AuthenticationSuccessState) {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => SignInUserAccountPage(
+                          institutionID: state.institutionEntity.institutionID,
+                        ),
+                      ),
+                    );
+                  }
+                },
                 builder: (context, state) {
                   if (state is AuthenticationInitialState) {
-                    return Text("");
-                  } else if (state is AuthenticationSuccessState) {
-                    return Text(
-                      state.institutionEntity.institutionID +
-                          " " +
-                          state.institutionEntity.institutionName +
-                          " " +
-                          state.institutionEntity.wardNumber.toString() +
-                          " " +
-                          state.institutionEntity.districtAddress +
-                          " " +
-                          state.institutionEntity.toleAddress +
-                          " " +
-                          state.institutionEntity.isActive.toString(),
-                    );
+                    return const Text("");
                   } else if (state is AuthenticationErrorState) {
                     return Text(
                       state.displayErrorString + state.code.toString(),
                     );
+                  } else if (state is AuthenticationLoadingState) {
+                    return const CircularProgressIndicator();
                   } else {
-                    return Text("");
+                    return const SizedBox.shrink();
                   }
                 },
               ),

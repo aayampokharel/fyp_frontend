@@ -12,3 +12,21 @@ class CreateInstitutionUserEvent extends AuthenticationEvent {
     required this.districtAddress,
   });
 }
+
+class CreateUserAccountEvent extends AuthenticationEvent {
+  final String password;
+  final String email;
+  final String systemRole;
+  final String institutionRole;
+  final String institutionID;
+  final String institutionLogoBase64;
+
+  CreateUserAccountEvent({
+    required this.password,
+    required this.email,
+    required this.systemRole,
+    required this.institutionRole,
+    required this.institutionID,
+    required this.institutionLogoBase64,
+  });
+}

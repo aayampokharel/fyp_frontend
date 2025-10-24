@@ -17,10 +17,10 @@ class InstitutionUseCaseParams {
   });
 }
 
-class InstitutionUsecase
+class InstitutionUseCase
     implements UseCase<InstitutionEntity, InstitutionUseCaseParams> {
   final InstitutionRepository _institutionRepository;
-  InstitutionUsecase(this._institutionRepository);
+  InstitutionUseCase(this._institutionRepository);
   @override
   DefaultFutureEitherType<InstitutionEntity> call(params) {
     return _institutionRepository.sendInstitutionInfo(

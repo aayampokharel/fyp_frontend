@@ -39,12 +39,12 @@ class InstitutionRepositoryImpl implements InstitutionRepository {
       );
       return Right(institutionEntity);
     } on ServerError catch (e) {
-      return Left(Errorz(message: e.message, code: e.code));
+      return Left(Errorz(message: e.message, statusCode: e.statusCode));
     } on WarnError catch (e) {
       // print(e.toString());
-      return Left(Errorz(message: e.message, code: e.code));
+      return Left(Errorz(message: e.message, statusCode: e.statusCode));
     } catch (e) {
-      return Left(Errorz(message: e.toString(), code: e.hashCode));
+      return Left(Errorz(message: e.toString(), statusCode: e.hashCode));
     }
   }
 }
