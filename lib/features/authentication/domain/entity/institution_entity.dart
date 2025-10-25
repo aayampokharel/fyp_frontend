@@ -14,4 +14,16 @@ class InstitutionEntity {
     this.isActive, {
     required this.institutionID,
   });
+
+  Map<String, dynamic> toJSON() => {
+    'institution_id': institutionID,
+    'institution_name': institutionName,
+    'ward_number': wardNumber,
+    'tole_address': toleAddress,
+    'district_address': districtAddress,
+    'is_active': isActive,
+  };
+
+  @override
+  String toString() => toJSON().toString();
 }

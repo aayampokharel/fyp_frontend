@@ -43,7 +43,7 @@ class AuthenticationBloc
       UserAccountEntityParams params = UserAccountEntityParams(
         institutionID: event.institutionID,
         password: event.password,
-        institutionRole: event.institutionID,
+        institutionRole: event.institutionRole,
         systemRole: stringtoSystemRole(event.systemRole),
         institutionLogoBase64: event.institutionLogoBase64,
         email: event.email,

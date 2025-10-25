@@ -53,4 +53,14 @@ class UserAccountResponseModel {
       email: email,
     );
   }
+
+  Map<String, dynamic> toJSON() => {
+    'id': userID,
+    'created_at': createdAt.toIso8601String(),
+  };
+
+  @override
+  String toString() {
+    return toJSON().toString();
+  }
 }

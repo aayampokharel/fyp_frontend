@@ -163,16 +163,14 @@ class SignInUserAccountPage extends StatelessWidget {
     if (state is AuthenticationInitialState) {
       return const SizedBox.shrink();
     } else if (state is AuthenticationErrorState) {
-      return Text('${state.displayErrorString} ${state.code.toString()}');
+      return Text(
+        'ERROR: ${state.displayErrorString} code: ${state.code.toString()}',
+      );
     } else if (state is AuthenticationLoadingState) {
       return const CircularProgressIndicator();
     } else if (state is UserAccountSuccessState) {
       return Text(
-        state.userAccountEntity.email +
-            " " +
-            state.userAccountEntity.institutionRole +
-            " " +
-            state.userAccountEntity.systemRole.toString(),
+        "Success: ${state.userAccountEntity.email} ${state.userAccountEntity.institutionRole} ${state.userAccountEntity.systemRole}",
       );
     } else {
       return const SizedBox.shrink();

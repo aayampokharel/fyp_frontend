@@ -36,6 +36,15 @@ class InstitutionResponseModel {
         isActive: json['is_active'] ?? false,
       );
 
+  Map<String, dynamic> toJSON() => {
+    'institution_id': institutionID,
+    'is_active': isActive,
+  };
+  @override
+  String toString() {
+    return toJSON().toString();
+  }
+
   InstitutionEntity toEntity(
     String institutionName,
     int wardNumber,

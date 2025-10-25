@@ -15,6 +15,17 @@ class UserAccountEntity {
     required this.createdAt,
     required this.email,
   });
+
+  Map<String, dynamic> toJSON() => {
+    'id': id,
+    'system_role': systemRoletoString(systemRole),
+    'institution_role': institutionRole,
+    'created_at': createdAt.toIso8601String(),
+    'email': email,
+  };
+
+  @override
+  String toString() => toJSON().toString();
 }
 
 class UserAccountEntityParams {

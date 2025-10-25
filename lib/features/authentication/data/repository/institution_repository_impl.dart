@@ -1,3 +1,4 @@
+import 'package:flutter_dashboard/core/errors/app_logger.dart';
 import 'package:flutter_dashboard/core/errors/errorz.dart';
 import 'package:flutter_dashboard/core/use_case.dart';
 import 'package:flutter_dashboard/features/authentication/data/data_source/institution_remote_data_source.dart';
@@ -24,26 +25,29 @@ class InstitutionRepositoryImpl implements InstitutionRepository {
         toleAddress: toleAddress,
         districtAddress: districtAddress,
       );
+
       InstitutionResponseModel institutionResponseModel =
           await _institutionRemoteDataSource.createInstitutionInfo(
             institutionRequestModel,
           );
-      print(institutionResponseModel.institutionID);
-      print(institutionResponseModel.isActive);
 
+      AppLogger.info(institutionResponseModel.toString());
       InstitutionEntity institutionEntity = institutionResponseModel.toEntity(
         institutionName,
         wardNumber,
         toleAddress,
         districtAddress,
       );
+      AppLogger.info(institutionEntity.toString());
       return Right(institutionEntity);
     } on ServerError catch (e) {
+      AppLogger.error(e.message);
       return Left(Errorz(message: e.message, statusCode: e.statusCode));
     } on WarnError catch (e) {
-      // print(e.toString());
+      AppLogger.error(e.message);
       return Left(Errorz(message: e.message, statusCode: e.statusCode));
     } catch (e) {
+      AppLogger.error(e.toString());
       return Left(Errorz(message: e.toString(), statusCode: e.hashCode));
     }
   }

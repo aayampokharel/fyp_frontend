@@ -4,7 +4,7 @@ import 'package:flutter_dashboard/features/authentication/domain/repository/user
 
 class UserAccountUseCase
     implements UseCase<UserAccountEntity, UserAccountEntityParams> {
-  UserAccountRepository _userAccountRepository;
+  final UserAccountRepository _userAccountRepository;
   UserAccountUseCase(this._userAccountRepository);
   @override
   DefaultFutureEitherType<UserAccountEntity> call(params) {
