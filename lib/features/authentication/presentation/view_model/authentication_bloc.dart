@@ -1,8 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter_dashboard/core/constants/enum.dart';
 import 'package:flutter_dashboard/core/use_case.dart';
+import 'package:flutter_dashboard/features/authentication/domain/entity/faculty_entity.dart';
 import 'package:flutter_dashboard/features/authentication/domain/entity/institution_entity.dart';
 import 'package:flutter_dashboard/features/authentication/domain/entity/user_account_entity.dart';
+import 'package:flutter_dashboard/features/authentication/domain/use_case/faculty_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/institution_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/user_account_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/presentation/view_model/authentication_event.dart';
@@ -12,11 +14,50 @@ class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   InstitutionUseCase institutionUsecase;
   UserAccountUseCase userAccountUsecase;
+  FacultyUseCase facultyUsecase;
 
   AuthenticationBloc({
     required this.institutionUsecase,
     required this.userAccountUsecase,
+    required this.facultyUsecase,
   }) : super(AuthenticationInitialState()) {
+    on<CreateFacultyEvent>((event, emit) async {
+      emit(AuthenticationLoadingState());
+      FacultyUseCaseParams facultyParams = FacultyUseCaseParams(
+        facultyEntity: FacultyEntity(
+          institutionFacultyID: "",
+          // faculty: event.faculty,
+          // principalName: event.principalName,
+          // principalSignatureBase64: event.principalSignatureBase64,
+          // facultyHodName: event.facultyHodName,
+          // universityAffiliation: event.universityAffiliation,
+          // universityCollegeCode: event.universityCollegeCode,
+          // facultyHodSignatureBase64: event.facultyHodSignatureBase64,
+          faculty: "event.faculty",
+          principalName: "event.principalName",
+          principalSignatureBase64: "event.principalSignatureBase64",
+          facultyHodName: "event.facultyHodName",
+          universityAffiliation: "event.universityAffiliation",
+          universityCollegeCode: "event.universityCollegeCode",
+          facultyHodSignatureBase64: "event.facultyHodSignatureBase64",
+        ),
+        institutionID: event.institutionID,
+      );
+
+      DefaultEitherType<FacultyEntity> facultyEntityResponse =
+          await facultyUsecase.call(facultyParams);
+
+      facultyEntityResponse.fold(
+        (left) => emit(
+          AuthenticationErrorState(
+            displayErrorString: left.message,
+            code: left.statusCode,
+          ),
+        ),
+        (right) => emit(FacultySuccessState(right)),
+      );
+    });
+
     on<CreateInstitutionUserEvent>((event, emit) async {
       emit(AuthenticationLoadingState());
       InstitutionUseCaseParams params = InstitutionUseCaseParams(

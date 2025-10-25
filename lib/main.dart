@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dashboard/core/constants/color_constants.dart';
 import 'package:flutter_dashboard/core/constants/dependency_injection/di.dart';
+import 'package:flutter_dashboard/features/authentication/domain/use_case/faculty_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/institution_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/user_account_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/presentation/view/pages/sign_in_institution_page.dart';
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
           create: (context) => AuthenticationBloc(
             institutionUsecase: getIt<InstitutionUseCase>(),
             userAccountUsecase: getIt<UserAccountUseCase>(),
+            facultyUsecase: getIt<FacultyUseCase>(),
           ),
         ),
       ],

@@ -1,11 +1,15 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dashboard/core/wrappers/dio_client.dart';
+import 'package:flutter_dashboard/features/authentication/data/data_source/faculty_remote_data_source.dart';
 import 'package:flutter_dashboard/features/authentication/data/data_source/institution_remote_data_source.dart';
 import 'package:flutter_dashboard/features/authentication/data/data_source/user_account_remote_data_source.dart';
+import 'package:flutter_dashboard/features/authentication/data/repository/faculty_repository_impl.dart';
 import 'package:flutter_dashboard/features/authentication/data/repository/institution_repository_impl.dart';
 import 'package:flutter_dashboard/features/authentication/data/repository/user_account_repository_impl.dart';
+import 'package:flutter_dashboard/features/authentication/domain/repository/faculty_repository.dart';
 import 'package:flutter_dashboard/features/authentication/domain/repository/institution_repository.dart';
 import 'package:flutter_dashboard/features/authentication/domain/repository/user_account_repository.dart';
+import 'package:flutter_dashboard/features/authentication/domain/use_case/faculty_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/institution_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/user_account_usecase.dart';
 import 'package:get_it/get_it.dart';
@@ -51,5 +55,19 @@ Future _authDependencies() async {
 
   getIt.registerLazySingleton<UserAccountUseCase>(
     () => UserAccountUseCase(getIt<UserAccountRepository>()),
+  );
+  //================================faculty==x
+  getIt.registerLazySingleton<FacultyRemoteDataSource>(
+    () => FacultyRemoteDataSource(getIt<DioClient>()),
+  );
+  getIt.registerLazySingleton<FacultyRepositoryImpl>(
+    () => FacultyRepositoryImpl(getIt<FacultyRemoteDataSource>()),
+  );
+  getIt.registerLazySingleton<FacultyRepository>(
+    () => getIt<FacultyRepositoryImpl>(),
+  );
+
+  getIt.registerLazySingleton<FacultyUseCase>(
+    () => FacultyUseCase(getIt<FacultyRepository>()),
   );
 }

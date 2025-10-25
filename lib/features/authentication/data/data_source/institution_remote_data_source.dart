@@ -17,11 +17,6 @@ class InstitutionRemoteDataSource {
       var response = await _dioClient.dio.post(
         ApiEndpoints.authInstitution,
         data: institutionJSON,
-        options: Options(
-          validateStatus: (status) {
-            return status! < 600;
-          },
-        ),
       );
 
       if (response.statusCode == 200) {

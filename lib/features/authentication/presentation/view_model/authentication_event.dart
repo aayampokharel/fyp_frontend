@@ -1,3 +1,6 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:flutter_dashboard/features/authentication/domain/entity/faculty_entity.dart';
+
 abstract class AuthenticationEvent {}
 
 class CreateInstitutionUserEvent extends AuthenticationEvent {
@@ -28,5 +31,27 @@ class CreateUserAccountEvent extends AuthenticationEvent {
     required this.institutionRole,
     required this.institutionID,
     required this.institutionLogoBase64,
+  });
+}
+
+class CreateFacultyEvent extends AuthenticationEvent {
+  String faculty;
+  String institutionID;
+  String principalName;
+  String principalSignatureBase64;
+  String facultyHodName;
+  String universityAffiliation;
+  String universityCollegeCode;
+  String facultyHodSignatureBase64;
+
+  CreateFacultyEvent({
+    required this.faculty,
+    required this.institutionID,
+    required this.principalName,
+    required this.principalSignatureBase64,
+    required this.facultyHodName,
+    required this.universityAffiliation,
+    required this.universityCollegeCode,
+    required this.facultyHodSignatureBase64,
   });
 }

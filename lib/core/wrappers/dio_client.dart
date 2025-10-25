@@ -11,6 +11,9 @@ class DioClient {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
+      validateStatus: (status) {
+        return status! < 600;
+      },
     );
   }
 }

@@ -5,8 +5,8 @@ import "package:flutter_dashboard/core/constants/dependency_injection/di.dart";
 import "package:flutter_dashboard/core/constants/enum.dart";
 import "package:flutter_dashboard/core/constants/image_constants.dart";
 import "package:flutter_dashboard/core/constants/string_constants.dart";
+import "package:flutter_dashboard/features/authentication/domain/entity/faculty_entity.dart";
 import "package:flutter_dashboard/features/authentication/domain/use_case/user_account_usecase.dart";
-import "package:flutter_dashboard/features/authentication/presentation/view/pages/sign_in_faculty.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view/widgets/colored_button_widget.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view/widgets/container_with_two_parts_widget.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view/widgets/nav_bar_widget.dart";
@@ -15,35 +15,47 @@ import "package:flutter_dashboard/features/authentication/presentation/view_mode
 import "package:flutter_dashboard/features/authentication/presentation/view_model/authentication_event.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view_model/authentication_state.dart";
 
-class SignInUserAccountPage extends StatelessWidget {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
+class SignInFacultyPage extends StatelessWidget {
+  final TextEditingController facultyController = TextEditingController();
+  final TextEditingController principalNameController = TextEditingController();
+  //principalSignaturebase64
+  //HODSignaturebase64
+  final TextEditingController facultyHODNameController =
       TextEditingController();
-  final TextEditingController roleController = TextEditingController();
+  final TextEditingController universityAffilicationController =
+      TextEditingController();
+  final TextEditingController universityCodeController =
+      TextEditingController();
 
   final UserAccountUseCase userAccountUseCase = getIt<UserAccountUseCase>();
   final String institutionID;
+  final String userAccountID;
 
-  SignInUserAccountPage({super.key, required this.institutionID});
+  SignInFacultyPage({
+    super.key,
+    required this.institutionID,
+    required this.userAccountID,
+  });
 
   void _handleSignIn(BuildContext context) {
-    final String email = emailController.text;
-    final String password = passwordController.text;
-    final String confirmPassword = confirmPasswordController.text;
-    final String institutionRole = roleController.text;
-    final String institutionLogoBase64 = "";
-
-    // TODO: Add validation for password match, email format, etc.
+    final String facultyHODName = facultyHODNameController.text;
+    final String universityAffiliation = universityAffilicationController.text;
+    final String universityCode = universityCodeController.text;
+    final String faculty = facultyController.text;
+    final String principalName = principalNameController.text;
+    final String principalSignatureBase64 = "";
+    final String hodSignatureBase64 = "";
 
     context.read<AuthenticationBloc>().add(
-      CreateUserAccountEvent(
-        email: email,
-        password: password,
+      CreateFacultyEvent(
         institutionID: institutionID,
-        institutionLogoBase64: institutionLogoBase64,
-        institutionRole: institutionRole,
-        systemRole: systemRoletoString(SystemRole.institute),
+        faculty: faculty,
+        principalName: principalName,
+        principalSignatureBase64: principalSignatureBase64,
+        facultyHodName: facultyHODName,
+        universityAffiliation: universityAffiliation,
+        universityCollegeCode: universityCode,
+        facultyHodSignatureBase64: hodSignatureBase64,
       ),
     );
   }
@@ -80,35 +92,33 @@ class SignInUserAccountPage extends StatelessWidget {
               // Email Field
               TextFieldWidget(
                 containerSize: 350,
-                textController: emailController,
-                labelText: "Email",
-                hintText: "Enter your email",
+                textController: facultyController,
+                labelText: "Faculty Name",
+                hintText: "Enter your Faculty name",
+              ),
+              TextFieldWidget(
+                containerSize: 350,
+                textController: principalNameController,
+                labelText: "faculty Principal Name",
+                hintText: "Enter faculty Principal name",
               ),
 
               // Password Field
               TextFieldWidget(
                 containerSize: 350,
-                textController: passwordController,
-                labelText: "Password",
-                hintText: "Enter your password",
+                textController: universityAffilicationController,
+                labelText: "University Affiliation",
+                hintText: "Enter your affiliated University",
                 // obscureText: true,
               ),
 
               // Confirm Password Field
               TextFieldWidget(
                 containerSize: 350,
-                textController: confirmPasswordController,
-                labelText: "Confirm Password",
-                hintText: "Confirm your password",
+                textController: universityCodeController,
+                labelText: "university code",
+                hintText: "university code",
                 // obscureText: true,
-              ),
-
-              // Role Field
-              TextFieldWidget(
-                containerSize: 350,
-                textController: roleController,
-                labelText: "Role",
-                hintText: "Enter your role",
               ),
 
               // Institution Logo File Selection
@@ -145,8 +155,8 @@ class SignInUserAccountPage extends StatelessWidget {
   Widget _buildBlocConsumer() {
     return BlocConsumer<AuthenticationBloc, AuthenticationState>(
       listener: (context, state) {
-        if (state is UserAccountSuccessState) {
-          _handleAuthenticationSuccess(context, state.userAccountEntity.id);
+        if (state is FacultySuccessState) {
+          _handleFacultySignInSuccess(context);
         }
       },
       builder: (context, state) {
@@ -155,20 +165,8 @@ class SignInUserAccountPage extends StatelessWidget {
     );
   }
 
-  void _handleAuthenticationSuccess(
-    BuildContext context,
-    String userAccountID,
-  ) {
+  void _handleFacultySignInSuccess(BuildContext context) {
     Navigator.pop(context);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SignInFacultyPage(
-          institutionID: institutionID,
-          userAccountID: userAccountID,
-        ),
-      ),
-    );
   }
 
   Widget _buildStateWidget(AuthenticationState state) {
@@ -180,9 +178,9 @@ class SignInUserAccountPage extends StatelessWidget {
       );
     } else if (state is AuthenticationLoadingState) {
       return const CircularProgressIndicator();
-    } else if (state is UserAccountSuccessState) {
+    } else if (state is FacultySuccessState) {
       return Text(
-        "Success: ${state.userAccountEntity.email} ${state.userAccountEntity.institutionRole} ${state.userAccountEntity.systemRole}",
+        "Success: ${state.facultyEntity.faculty} ${state.facultyEntity.principalName} ${state.facultyEntity.universityAffiliation} ${state.facultyEntity.universityCollegeCode}",
       );
     } else {
       return const SizedBox.shrink();

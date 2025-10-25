@@ -1,3 +1,5 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:flutter_dashboard/features/authentication/domain/entity/faculty_entity.dart';
 import 'package:flutter_dashboard/features/authentication/domain/entity/institution_entity.dart';
 import 'package:flutter_dashboard/features/authentication/domain/entity/user_account_entity.dart';
 
@@ -26,4 +28,10 @@ class AuthenticationErrorState extends AuthenticationState {
     required this.displayErrorString,
     required this.code,
   });
+}
+
+class FacultySuccessState extends AuthenticationState {
+  FacultyEntity facultyEntity;
+
+  FacultySuccessState(this.facultyEntity);
 }
