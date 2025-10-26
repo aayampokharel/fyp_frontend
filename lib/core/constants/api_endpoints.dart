@@ -8,4 +8,6 @@ class ApiEndpoints {
   //========================admin endpoints===============================
   static const String adminLogin = '/admin/login';
   static const String authNewAdmin = '/admin/signup';
+  //========================sse endpoints===============================
+  static const String sseInstitution = '/sse/institution';
 }

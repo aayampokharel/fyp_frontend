@@ -14,33 +14,22 @@ class AdminAccountRequestModel {
 class AdminAccountResponseModel {
   String userID;
   DateTime createdAt;
-  String sseToken;
 
-  AdminAccountResponseModel({
-    required this.userID,
-    required this.createdAt,
-    required this.sseToken,
-  });
+  AdminAccountResponseModel({required this.userID, required this.createdAt});
 
   factory AdminAccountResponseModel.fromJSON(Map<String, dynamic> map) =>
       AdminAccountResponseModel(
-        sseToken: map['sse_token'] ?? "",
         userID: map['user_id'] ?? "",
         createdAt: DateTime.parse(map['created_at']),
       );
 
   AdminAccountEntity toEntity(String email) {
-    return AdminAccountEntity(
-      createdAt: createdAt,
-      sseToken: sseToken,
-      email: email,
-    );
+    return AdminAccountEntity(createdAt: createdAt, email: email);
   }
 
   Map<String, dynamic> toJSON() => {
     'id': userID,
     'created_at': createdAt.toIso8601String(),
-    'sse_token': sseToken,
   };
 
   @override

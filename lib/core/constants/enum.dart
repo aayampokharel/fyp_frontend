@@ -22,3 +22,27 @@ SystemRole stringtoSystemRole(String role) {
       return SystemRole.user;
   }
 }
+
+enum SSEType {
+  sseSingleForm('SSESINGLEFORM'),
+  sseApproval('SSEAPPROVAL');
+
+  const SSEType(this.value);
+  final String value;
+
+  // Convert from string
+  static SSEType fromString(String value) {
+    switch (value) {
+      case 'SSESINGLEFORM':
+        return SSEType.sseSingleForm;
+      case 'SSEAPPROVAL':
+        return SSEType.sseApproval;
+      default:
+        throw ArgumentError('Unknown SSEType: $value');
+    }
+  }
+
+  // Convert to string
+  @override
+  String toString() => value;
+}

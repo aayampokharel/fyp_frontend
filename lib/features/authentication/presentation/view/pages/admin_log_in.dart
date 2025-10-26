@@ -10,6 +10,7 @@ import "package:flutter_dashboard/features/authentication/presentation/view/widg
 import "package:flutter_dashboard/features/authentication/presentation/view_model/authentication_bloc.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view_model/authentication_event.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view_model/authentication_state.dart";
+import "package:flutter_dashboard/features/sse/presentation/view/widgets/notification.dart";
 
 class AdminLoginPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
@@ -80,7 +81,7 @@ class AdminLoginPage extends StatelessWidget {
   Widget _buildBlocConsumer() {
     return BlocConsumer<AuthenticationBloc, AuthenticationState>(
       listener: (context, state) {
-        if (state is FacultySuccessState) {
+        if (state is AdminAccountVerificationSuccessState) {
           _handleFacultySignInSuccess(context);
         }
       },
@@ -92,6 +93,10 @@ class AdminLoginPage extends StatelessWidget {
 
   void _handleFacultySignInSuccess(BuildContext context) {
     Navigator.pop(context);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => SseListPage()),
+    );
   }
 
   Widget _buildStateWidget(AuthenticationState state) {

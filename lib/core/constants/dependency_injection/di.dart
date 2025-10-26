@@ -16,6 +16,10 @@ import 'package:flutter_dashboard/features/authentication/domain/use_case/admin_
 import 'package:flutter_dashboard/features/authentication/domain/use_case/faculty_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/institution_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/user_account_usecase.dart';
+import 'package:flutter_dashboard/features/sse/data/data_source/sse_data_source.dart';
+import 'package:flutter_dashboard/features/sse/data/repository/sse_repository_impl.dart';
+import 'package:flutter_dashboard/features/sse/domain/repository/sse_repository.dart';
+import 'package:flutter_dashboard/features/sse/domain/usecase/sse_use_case.dart';
 import 'package:get_it/get_it.dart';
 
 final getIt = GetIt.instance;
@@ -87,5 +91,15 @@ Future _authDependencies() async {
 
   getIt.registerLazySingleton<AdminAccountUseCase>(
     () => AdminAccountUseCase(getIt<AdminAccountRepository>()),
+  );
+  //===============================sse==x
+  getIt.registerLazySingleton<SseRemoteDataSource>(() => SseRemoteDataSource());
+  getIt.registerLazySingleton<SseRepositoryImpl>(
+    () => SseRepositoryImpl(getIt<SseRemoteDataSource>()),
+  );
+  getIt.registerLazySingleton<SseRepository>(() => getIt<SseRepositoryImpl>());
+
+  getIt.registerLazySingleton<SseUseCase>(
+    () => SseUseCase(getIt<SseRepository>()),
   );
 }
