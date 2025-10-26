@@ -55,3 +55,9 @@ class CreateFacultyEvent extends AuthenticationEvent {
     required this.facultyHodSignatureBase64,
   });
 }
+
+class AdminLoginEvent extends AuthenticationEvent {
+  final String email;
+  final String password;
+  AdminLoginEvent({required this.email, required this.password});
+}

@@ -1,14 +1,18 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dashboard/core/wrappers/dio_client.dart';
+import 'package:flutter_dashboard/features/authentication/data/data_source/admin_remote_data_source.dart';
 import 'package:flutter_dashboard/features/authentication/data/data_source/faculty_remote_data_source.dart';
 import 'package:flutter_dashboard/features/authentication/data/data_source/institution_remote_data_source.dart';
 import 'package:flutter_dashboard/features/authentication/data/data_source/user_account_remote_data_source.dart';
+import 'package:flutter_dashboard/features/authentication/data/repository/admin_account_repository_impl.dart';
 import 'package:flutter_dashboard/features/authentication/data/repository/faculty_repository_impl.dart';
 import 'package:flutter_dashboard/features/authentication/data/repository/institution_repository_impl.dart';
 import 'package:flutter_dashboard/features/authentication/data/repository/user_account_repository_impl.dart';
+import 'package:flutter_dashboard/features/authentication/domain/repository/admin_repository.dart';
 import 'package:flutter_dashboard/features/authentication/domain/repository/faculty_repository.dart';
 import 'package:flutter_dashboard/features/authentication/domain/repository/institution_repository.dart';
 import 'package:flutter_dashboard/features/authentication/domain/repository/user_account_repository.dart';
+import 'package:flutter_dashboard/features/authentication/domain/use_case/admin_account_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/faculty_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/institution_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/user_account_usecase.dart';
@@ -69,5 +73,19 @@ Future _authDependencies() async {
 
   getIt.registerLazySingleton<FacultyUseCase>(
     () => FacultyUseCase(getIt<FacultyRepository>()),
+  );
+  //===============================admin==x
+  getIt.registerLazySingleton<AdminAccountRemoteDataSource>(
+    () => AdminAccountRemoteDataSource(getIt<DioClient>()),
+  );
+  getIt.registerLazySingleton<AdminAccountRepositoryImpl>(
+    () => AdminAccountRepositoryImpl(getIt<AdminAccountRemoteDataSource>()),
+  );
+  getIt.registerLazySingleton<AdminAccountRepository>(
+    () => getIt<AdminAccountRepositoryImpl>(),
+  );
+
+  getIt.registerLazySingleton<AdminAccountUseCase>(
+    () => AdminAccountUseCase(getIt<AdminAccountRepository>()),
   );
 }

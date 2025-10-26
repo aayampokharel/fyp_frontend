@@ -1,9 +1,12 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter_dashboard/core/constants/enum.dart';
+import 'package:flutter_dashboard/core/errors/app_logger.dart';
 import 'package:flutter_dashboard/core/use_case.dart';
+import 'package:flutter_dashboard/features/authentication/domain/entity/admin_account_entity.dart';
 import 'package:flutter_dashboard/features/authentication/domain/entity/faculty_entity.dart';
 import 'package:flutter_dashboard/features/authentication/domain/entity/institution_entity.dart';
 import 'package:flutter_dashboard/features/authentication/domain/entity/user_account_entity.dart';
+import 'package:flutter_dashboard/features/authentication/domain/use_case/admin_account_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/faculty_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/institution_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/user_account_usecase.dart';
@@ -16,10 +19,13 @@ class AuthenticationBloc
   UserAccountUseCase userAccountUsecase;
   FacultyUseCase facultyUsecase;
 
+  AdminAccountUseCase adminAccountUsecase;
+
   AuthenticationBloc({
     required this.institutionUsecase,
     required this.userAccountUsecase,
     required this.facultyUsecase,
+    required this.adminAccountUsecase,
   }) : super(AuthenticationInitialState()) {
     on<CreateFacultyEvent>((event, emit) async {
       emit(AuthenticationLoadingState());
@@ -76,6 +82,29 @@ class AuthenticationBloc
           ),
         ),
         (right) => emit(AuthenticationSuccessState(institutionEntity: right)),
+      );
+    });
+
+    on<AdminLoginEvent>((event, emit) async {
+      emit(AuthenticationLoadingState());
+      AdminAccountUseCaseParams params = AdminAccountUseCaseParams(
+        email: event.email,
+        password: event.password,
+      );
+      DefaultEitherType<AdminAccountEntity> response = await adminAccountUsecase
+          .call(params);
+
+      response.fold<void>(
+        (left) => emit(
+          AuthenticationErrorState(
+            displayErrorString: left.message,
+            code: left.statusCode,
+          ),
+        ),
+        (right) {
+          AppLogger.info(right.toString());
+          emit(AdminAccountVerificationSuccessState(adminAccountEntity: right));
+        },
       );
     });
 
