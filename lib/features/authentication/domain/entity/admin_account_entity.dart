@@ -9,7 +9,7 @@ class AdminAccountEntity {
     required this.sseToken,
     required this.createdAt,
   });
-
+//// admin account entity: login for admin specific should be clickable only once then turn off the feature else map ma token gaera extra bascha and will cause errors for SSE .
   @override
   String toString() {
     // TODO: implement toString
