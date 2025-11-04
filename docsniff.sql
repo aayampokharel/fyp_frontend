@@ -1,161 +1,148 @@
--- Table: public.institutions
 
--- DROP TABLE IF EXISTS public.institutions;
+drop table if exists institution_user;
+drop table if exists user_accounts;
+drop table if exists pdf_files;
 
-CREATE TABLE IF NOT EXISTS public.institutions
-(
-    institution_id character varying(16) COLLATE pg_catalog."default" NOT NULL,
-    institution_name character varying(300) COLLATE pg_catalog."default" NOT NULL,
-    ward_number character varying(16) COLLATE pg_catalog."default" NOT NULL,
-    tole_address character varying(250) COLLATE pg_catalog."default" NOT NULL,
-    district_address character varying(250) COLLATE pg_catalog."default" NOT NULL,
-    is_active boolean DEFAULT true,
-    CONSTRAINT institutions_pkey PRIMARY KEY (institution_id),
-    CONSTRAINT institutions_institution_name_ward_number_tole_address_dist_key UNIQUE (institution_name, ward_number, tole_address, district_address, is_active)
-)
-
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.institutions
-    OWNER to postgres;
+drop table if exists certificates;
+drop table if exists pdf_file_categories;
+drop table if exists blocks;
+drop table if exists institution_faculty;
+drop table if exists institutions;
 
 
+CREATE TABLE IF NOT EXISTS  institutions(
+    institution_id VARCHAR(16) PRIMARY KEY,
+    institution_name VARCHAR(300) NOT NULL,
+    ward_number VARCHAR(16) NOT NULL,
+    tole_address VARCHAR(250) NOT NULL,
+    district_address VARCHAR(250) NOT NULL,
+	is_active BOOLEAN DEFAULT NULL,
+    is_signup_completed BOOLEAN DEFAULT FALSE
+    -- UNIQUE(institution_name, ward_number, tole_address, district_address, is_active)
+-- remove unique constraint for above . user cant insert into table only if : is_active =true
+);
 
--- Table: public.blocks
+CREATE UNIQUE INDEX unique_active_institutions 
+ON institutions (institution_name, ward_number, tole_address, district_address) 
+WHERE is_active = TRUE;
 
--- DROP TABLE IF EXISTS public.blocks;
+CREATE TABLE IF NOT EXISTS  user_accounts(
+    id VARCHAR(16) PRIMARY KEY,
+    system_role VARCHAR(16) NOT NULL Check (system_role IN ('ADMIN', 'INSTITUTE')),  -- Added NOT NULL
+    institution_role VARCHAR(16) , 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP DEFAULT NULL,
+    email VARCHAR(255) NOT NULL, 
+    password VARCHAR(255) NOT NULL
+);
 
-CREATE TABLE IF NOT EXISTS public.blocks
-(
-    block_number integer NOT NULL,
-    "timestamp" timestamp without time zone NOT NULL,
-    previous_hash character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    nonce character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    current_hash character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    merkle_root character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    status character varying(50) COLLATE pg_catalog."default" NOT NULL,
-    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT blocks_pkey PRIMARY KEY (block_number),
-    CONSTRAINT blocks_current_hash_key UNIQUE (current_hash)
-)
+CREATE TABLE IF NOT EXISTS  institution_user(
+    institution_id VARCHAR(16)  UNIQUE REFERENCES institutions(institution_id) ON DELETE CASCADE,
+    user_id VARCHAR(16) REFERENCES user_accounts(id) ON DELETE CASCADE,
+    institution_logo_base64 TEXT NOT NULL,
+    PRIMARY KEY (institution_id, user_id) 
+);
 
-TABLESPACE pg_default;
+CREATE TABLE IF NOT EXISTS  institution_faculty(
+    institution_faculty_id VARCHAR(16) PRIMARY KEY,
+    institution_id VARCHAR(16) REFERENCES institutions(institution_id) ON DELETE CASCADE,
+    faculty_name VARCHAR(200) NOT NULL,
+    faculty_public_key VARCHAR(255) NOT NULL,
+    university_affiliation VARCHAR(100) NOT NULL,
+    university_college_code VARCHAR(20) NOT NULL,
+    faculty_authority_with_signature JSONB NOT NULL DEFAULT '[]'
+);
 
-ALTER TABLE IF EXISTS public.blocks
-    OWNER to postgres;
+alter table institution_faculty
+add constraint unique_faculty_per_institution
+unique (institution_id, faculty_name);
+
+CREATE TABLE IF NOT EXISTS  pdf_file_categories(
+    category_id VARCHAR(16) PRIMARY KEY,
+    institution_id VARCHAR(16) REFERENCES institutions(institution_id) ON DELETE CASCADE,
+    institution_faculty_id VARCHAR(16) REFERENCES institution_faculty(institution_faculty_id) ON DELETE CASCADE,
+    category_name VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(institution_id, institution_faculty_id, category_name)
+);
+
+CREATE TABLE IF NOT EXISTS  pdf_files(
+    file_id VARCHAR(16) PRIMARY KEY,
+    category_id VARCHAR(16) REFERENCES pdf_file_categories(category_id) ON DELETE CASCADE,
+    pdf_data BYTEA NOT NULL, -- Using BYTEA for binary data instead of BLOB
+    file_name VARCHAR(255) NOT NULL,
+    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(file_name, category_id)
+);
+
+-- Blocks table (header only)
+CREATE TABLE IF NOT EXISTS  blocks(
+    block_number INTEGER PRIMARY KEY,
+    timestamp TIMESTAMP NOT NULL,
+    previous_hash VARCHAR(255) NOT NULL,
+    nonce VARCHAR(255) NOT NULL,
+    current_hash VARCHAR(255) UNIQUE NOT NULL,
+    merkle_root VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Enhanced Certificates table with flexible authority structure
+CREATE TABLE IF NOT EXISTS  certificates(
+     certificate_id VARCHAR(255) PRIMARY KEY,
+    block_number INTEGER NOT NULL,
+    position INTEGER NOT NULL CHECK (position BETWEEN 1 AND 4),
+    
+    -- Student Information (Required)
+    student_id VARCHAR(255) NOT NULL,
+    student_name VARCHAR(255) NOT NULL,
+    
+    -- Institution & Faculty Information
+    institution_id VARCHAR(16) REFERENCES institutions(institution_id) ON DELETE CASCADE,
+    institution_faculty_id VARCHAR(16) REFERENCES institution_faculty(institution_faculty_id) ON DELETE CASCADE,
+     pdf_category_id VARCHAR(16) REFERENCES pdf_file_categories(category_id) ON DELETE SET NULL,
 
 
--- Table: public.institution_user
+    
+    
+    -- Certificate type and basic info
+    certificate_type VARCHAR(50) NOT NULL CHECK (certificate_type IN (
+        'COURSE_COMPLETION', 
+        'CHARACTER', 
+        'LEAVING', 
+        'TRANSFER',
+        'PROVISIONAL'
+    )),
+    
+    -- Academic information (Optional fields)
+    degree VARCHAR(100),
+    college VARCHAR(255),
+    major VARCHAR(255),
+    gpa VARCHAR(10),
+    percentage DECIMAL(5,2),
+    division VARCHAR(50),
+    university_name VARCHAR(255),
+    
+    -- Date information
+    issue_date TIMESTAMP NOT NULL,
+    enrollment_date TIMESTAMP,
+    completion_date TIMESTAMP,
+    leaving_date TIMESTAMP,
+    
+    -- Reason fields (for leaving/character certificates)
+    reason_for_leaving TEXT,
+    character_remarks TEXT,
+    general_remarks TEXT,
+    
+    -- Cryptographic verification
+    certificate_hash VARCHAR(255) NOT NULL,
+    faculty_public_key VARCHAR(255) NOT NULL,
+    
+   
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    
+    FOREIGN KEY (block_number) REFERENCES blocks(block_number),
+    UNIQUE(block_number, position)
+);
 
--- DROP TABLE IF EXISTS public.institution_user;
 
-CREATE TABLE IF NOT EXISTS public.institution_user
-(
-    institution_id character varying(16) COLLATE pg_catalog."default" NOT NULL,
-    user_id character varying(16) COLLATE pg_catalog."default" NOT NULL,
-    public_key text COLLATE pg_catalog."default",
-    institution_logo_base64 text COLLATE pg_catalog."default" NOT NULL,
-    CONSTRAINT institution_user_pkey PRIMARY KEY (institution_id, user_id),
-    CONSTRAINT institution_user_institution_id_key UNIQUE (institution_id),
-    CONSTRAINT institution_user_institution_id_fkey FOREIGN KEY (institution_id)
-        REFERENCES public.institutions (institution_id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE CASCADE,
-    CONSTRAINT institution_user_user_id_fkey FOREIGN KEY (user_id)
-        REFERENCES public.user_accounts (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE CASCADE
-)
-
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.institution_user
-    OWNER to postgres;
-
-
-    -- Table: public.user_accounts
-
--- DROP TABLE IF EXISTS public.user_accounts;
-
-CREATE TABLE IF NOT EXISTS public.user_accounts
-(
-    id character varying(16) COLLATE pg_catalog."default" NOT NULL,
-    role character varying(16) COLLATE pg_catalog."default" NOT NULL,
-    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp without time zone,
-    email character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    password character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    CONSTRAINT user_accounts_pkey PRIMARY KEY (id)
-)
-
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.user_accounts
-    OWNER to postgres;
-
-    -- Table: public.institution_faculty
-
--- DROP TABLE IF EXISTS public.institution_faculty;
-
-CREATE TABLE IF NOT EXISTS public.institution_faculty
-(
-    institution_faculty_id character varying(16) COLLATE pg_catalog."default" NOT NULL,
-    institution_id character varying(16) COLLATE pg_catalog."default",
-    faculty character varying(200) COLLATE pg_catalog."default" NOT NULL,
-    principal_name character varying(300) COLLATE pg_catalog."default" NOT NULL,
-    principal_signature_base64 text COLLATE pg_catalog."default" NOT NULL,
-    faculty_hod_name character varying(300) COLLATE pg_catalog."default" NOT NULL,
-    university_affiliation character varying(100) COLLATE pg_catalog."default" NOT NULL,
-    university_college_code character varying(20) COLLATE pg_catalog."default" NOT NULL,
-    faculty_hod_signature_base64 text COLLATE pg_catalog."default" NOT NULL,
-    CONSTRAINT institution_faculty_pkey PRIMARY KEY (institution_faculty_id),
-    CONSTRAINT institution_faculty_institution_id_fkey FOREIGN KEY (institution_id)
-        REFERENCES public.institutions (institution_id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE CASCADE
-)
-
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.institution_faculty
-    OWNER to postgres;
-
-    -- Table: public.certificates
-
--- DROP TABLE IF EXISTS public.certificates;
-
-CREATE TABLE IF NOT EXISTS public.certificates
-(
-    id integer NOT NULL DEFAULT nextval('certificates_id_seq'::regclass),
-    certificate_id character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    block_number integer NOT NULL,
-    "position" integer NOT NULL,
-    student_id character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    student_name character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    university_name character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    degree character varying(100) COLLATE pg_catalog."default" NOT NULL,
-    college character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    major character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    gpa character varying(10) COLLATE pg_catalog."default",
-    percentage numeric(5,2),
-    division character varying(50) COLLATE pg_catalog."default" NOT NULL,
-    issue_date timestamp without time zone NOT NULL,
-    enrollment_date timestamp without time zone NOT NULL,
-    completion_date timestamp without time zone NOT NULL,
-    principal_signature character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    data_hash character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    issuer_public_key character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    certificate_type character varying(50) COLLATE pg_catalog."default" NOT NULL,
-    CONSTRAINT certificates_pkey PRIMARY KEY (id),
-    CONSTRAINT certificates_block_number_position_key UNIQUE (block_number, "position"),
-    CONSTRAINT certificates_block_number_fkey FOREIGN KEY (block_number)
-        REFERENCES public.blocks (block_number) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
-    CONSTRAINT certificates_position_check CHECK ("position" >= 1 AND "position" <= 4)
-)
-
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.certificates
-    OWNER to postgres;
