@@ -12,4 +12,10 @@ class UploadPageStartedEvent extends UploadEvent {
   });
 }
 
+class InstitutionCheckEvent extends UploadEvent {
+  String institutionID;
+
+  InstitutionCheckEvent({required this.institutionID});
+}
+
 class UploadCsvFileEvent extends UploadEvent {}

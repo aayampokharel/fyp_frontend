@@ -13,6 +13,7 @@ import 'package:flutter_dashboard/features/certificate_category_batch/domain/use
 import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/certificate_batch_usecase.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/presentation/view_model/batch_bloc.dart';
 import 'package:flutter_dashboard/features/csv_upload/domain/usecase/certificate_upload_usecase.dart';
+import 'package:flutter_dashboard/features/csv_upload/domain/usecase/check_institution_is_active_usecase.dart';
 import 'package:flutter_dashboard/features/csv_upload/presentation/view_model/upload_bloc.dart';
 
 void main() async {
@@ -47,6 +48,8 @@ class MyApp extends StatelessWidget {
           create: (context) => UploadBloc(
             certificateUploadUseCase: getIt<CertificateUploadUseCase>(),
             facultyUseCase: getIt<FacultyUseCase>(),
+            checkInstitutionIsActiveUsecase:
+                getIt<CheckInstitutionIsActiveUsecase>(),
           ),
         ),
       ],

@@ -4,7 +4,7 @@ class InstitutionEntity {
   final int wardNumber;
   final String toleAddress;
   final String districtAddress;
-  final bool isActive;
+  final bool? isActive;
 
   const InstitutionEntity(
     this.institutionName,
@@ -23,6 +23,18 @@ class InstitutionEntity {
     'district_address': districtAddress,
     'is_active': isActive,
   };
+  factory InstitutionEntity.fromJSON(Map<String, dynamic> json) {
+    final data = json['data'] ?? json; // Handles { code, message, data: {..} }
+
+    return InstitutionEntity(
+      data['institution_name'] ?? '',
+      int.tryParse(data['ward_number'].toString()) ?? 0,
+      data['tole_address'] ?? '',
+      data['district_address'] ?? '',
+      data['is_active'], // can be true, false, or null
+      institutionID: data['institution_id'] ?? '',
+    );
+  }
 
   @override
   String toString() => toJSON().toString();

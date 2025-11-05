@@ -5,6 +5,7 @@ class ApiEndpoints {
   static const String authInstitution = '/auth/new-institution';
   static const String authUser = '/auth/new-user';
   static const String authFaculty = '/auth/new-faculty';
+  static const String authVerifyInstitution = '/auth/verify-institution';
   //========================admin endpoints===============================
   static const String adminLogin = '/admin/login';
   static const String authNewAdmin = '/admin/signup';
@@ -19,4 +20,6 @@ class ApiEndpoints {
   static const String institutionIDQuery = "institution_id";
   static const String institutionFacultyIDQuery = "institution_faculty_id";
   static const String institutionCategoryIDQuery = "category_id";
+  //========================fileuploadendpoints==============================
+  static const String institutionStatus = '/institution/status';
 }

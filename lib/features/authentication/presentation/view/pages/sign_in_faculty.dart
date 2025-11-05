@@ -158,7 +158,11 @@ class SignInFacultyPage extends StatelessWidget {
     return BlocConsumer<AuthenticationBloc, AuthenticationState>(
       listener: (context, state) {
         if (state is FacultySuccessState) {
-          _handleFacultySignInSuccess(context, institutionID);
+          _handleFacultySignInSuccess(
+            context,
+            institutionID,
+            state.facultyEntity,
+          );
         }
       },
       builder: (context, state) {
@@ -167,13 +171,19 @@ class SignInFacultyPage extends StatelessWidget {
     );
   }
 
-  void _handleFacultySignInSuccess(BuildContext context, String institutionID) {
+  void _handleFacultySignInSuccess(
+    BuildContext context,
+    String institutionID,
+    FacultyEntity facultyEntity,
+  ) {
     Navigator.pop(context);
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            InstitutionCsvUploadPage(institutionID: institutionID),
+        builder: (context) => InstitutionCsvUploadPage(
+          institutionID: institutionID,
+          facultyEntity: facultyEntity,
+        ),
       ),
     );
   }

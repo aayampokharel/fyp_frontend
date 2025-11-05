@@ -26,9 +26,13 @@ import 'package:flutter_dashboard/features/certificate_category_batch/domain/rep
 import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/category_batch_usecase.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/certificate_batch_usecase.dart';
 import 'package:flutter_dashboard/features/csv_upload/data/data_source/certificate_list_remote_data_source.dart';
+import 'package:flutter_dashboard/features/csv_upload/data/data_source/institution_is_active_data_source.dart';
 import 'package:flutter_dashboard/features/csv_upload/data/repository/file_upload_repository_impl.dart';
+import 'package:flutter_dashboard/features/csv_upload/data/repository/institution_is_active_impl.dart';
 import 'package:flutter_dashboard/features/csv_upload/domain/repository/file_upload_irepository.dart';
+import 'package:flutter_dashboard/features/csv_upload/domain/repository/institution_is_active_irepository.dart';
 import 'package:flutter_dashboard/features/csv_upload/domain/usecase/certificate_upload_usecase.dart';
+import 'package:flutter_dashboard/features/csv_upload/domain/usecase/check_institution_is_active_usecase.dart';
 import 'package:flutter_dashboard/features/sse/data/data_source/sse_data_source.dart';
 import 'package:flutter_dashboard/features/sse/data/repository/sse_repository_impl.dart';
 import 'package:flutter_dashboard/features/sse/domain/repository/sse_repository.dart';
@@ -155,5 +159,22 @@ Future _authDependencies() async {
   );
   getIt.registerLazySingleton<CertificateUploadUseCase>(
     () => CertificateUploadUseCase(getIt<FileUploadIrepository>()),
+  );
+  //===============================check-institution-is-active==x
+  getIt.registerLazySingleton<InstitutionIsActiveRemoteDataSource>(
+    () => InstitutionIsActiveRemoteDataSource(getIt<DioClient>()),
+  );
+  getIt.registerLazySingleton<InstitutionIsActiveRepositoryImpl>(
+    () => InstitutionIsActiveRepositoryImpl(
+      getIt<InstitutionIsActiveRemoteDataSource>(),
+    ),
+  );
+  getIt.registerLazySingleton<InstitutionIsActiveIrepository>(
+    () => getIt<InstitutionIsActiveRepositoryImpl>(),
+  );
+  getIt.registerLazySingleton<CheckInstitutionIsActiveUsecase>(
+    () => CheckInstitutionIsActiveUsecase(
+      getIt<InstitutionIsActiveIrepository>(),
+    ),
   );
 }
