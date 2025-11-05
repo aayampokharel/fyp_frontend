@@ -178,10 +178,7 @@ class _InstitutionUploadPageState extends State<InstitutionCsvUploadPage> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 20),
-
-              // Info Text
               Text(
                 "Upload a CSV file containing student certificate data",
                 style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
