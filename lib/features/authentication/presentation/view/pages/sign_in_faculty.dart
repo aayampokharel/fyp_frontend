@@ -178,10 +178,8 @@ class SignInFacultyPage extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => InstitutionCsvUploadPage(
-          institutionID: institutionID,
-          facultyEntity: facultyEntity,
-        ),
+        builder: (context) =>
+            InstitutionCsvUploadPage(institutionID: institutionID),
       ),
     );
   }

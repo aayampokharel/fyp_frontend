@@ -14,6 +14,7 @@ import 'package:flutter_dashboard/features/authentication/domain/repository/inst
 import 'package:flutter_dashboard/features/authentication/domain/repository/user_account_repository.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/admin_account_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/faculty_usecase.dart';
+import 'package:flutter_dashboard/features/authentication/domain/use_case/institute_login_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/institution_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/user_account_usecase.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/data/data_source/category_batch_remote_data_source.dart';
@@ -63,6 +64,12 @@ Future _authDependencies() async {
   );
   getIt.registerLazySingleton<InstitutionUseCase>(
     () => InstitutionUseCase(getIt<InstitutionRepository>()),
+  );
+
+  //================================instituteAccountusecase==x
+
+  getIt.registerLazySingleton<InstituteAccountUseCase>(
+    () => InstituteAccountUseCase(getIt<InstitutionRepository>()),
   );
 
   //================================useraccount==x

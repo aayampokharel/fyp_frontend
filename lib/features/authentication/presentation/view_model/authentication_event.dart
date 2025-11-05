@@ -60,3 +60,9 @@ class AdminLoginEvent extends AuthenticationEvent {
   final String password;
   AdminLoginEvent({required this.email, required this.password});
 }
+
+class InstituteLoginEvent extends AuthenticationEvent {
+  final String email;
+  final String password;
+  InstituteLoginEvent({required this.email, required this.password});
+}

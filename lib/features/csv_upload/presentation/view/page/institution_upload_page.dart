@@ -10,12 +10,12 @@ import 'package:flutter_dashboard/features/csv_upload/presentation/view_model/up
 
 class InstitutionCsvUploadPage extends StatefulWidget {
   final String institutionID;
-  final FacultyEntity facultyEntity;
+  //final []FacultyEntity facultyEntity;
 
   const InstitutionCsvUploadPage({
     super.key,
     required this.institutionID,
-    required this.facultyEntity,
+    //required this.facultyEntity,
   });
 
   @override

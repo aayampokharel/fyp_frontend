@@ -6,6 +6,7 @@ class ApiEndpoints {
   static const String authUser = '/auth/new-user';
   static const String authFaculty = '/auth/new-faculty';
   static const String authVerifyInstitution = '/auth/verify-institution';
+  static const String authInstitutionLogin = "/auth/institution/login";
   //========================admin endpoints===============================
   static const String adminLogin = '/admin/login';
   static const String authNewAdmin = '/admin/signup';

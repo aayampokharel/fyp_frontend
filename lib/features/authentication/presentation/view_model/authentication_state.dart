@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter_dashboard/features/authentication/domain/entity/admin_account_entity.dart';
 import 'package:flutter_dashboard/features/authentication/domain/entity/faculty_entity.dart';
+import 'package:flutter_dashboard/features/authentication/domain/entity/institute_account_entity.dart';
 import 'package:flutter_dashboard/features/authentication/domain/entity/institution_entity.dart';
 import 'package:flutter_dashboard/features/authentication/domain/entity/user_account_entity.dart';
 
@@ -40,4 +41,16 @@ class FacultySuccessState extends AuthenticationState {
 class AdminAccountVerificationSuccessState extends AuthenticationState {
   AdminAccountEntity adminAccountEntity;
   AdminAccountVerificationSuccessState({required this.adminAccountEntity});
+}
+
+class InstituteAccountVerificationSuccessState extends AuthenticationState {
+  InstituteAccountEntity instituteAccountEntity;
+  InstituteAccountVerificationSuccessState({
+    required this.instituteAccountEntity,
+  });
+}
+
+class InstituteAccountVerificationFailureState extends AuthenticationState {
+  String errorMsg;
+  InstituteAccountVerificationFailureState({required this.errorMsg});
 }
