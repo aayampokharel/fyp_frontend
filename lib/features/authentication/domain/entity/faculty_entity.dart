@@ -1,46 +1,48 @@
 class FacultyEntity {
   String institutionFacultyID;
-  String faculty;
-  String principalName;
-  String principalSignatureBase64;
-  String facultyHodName;
+  String institutionID;
+  String facultyName;
+  String facultyPublicKey;
+  List<Map<String, String>> facultyAuthorityWithSignatures;
   String universityAffiliation;
   String universityCollegeCode;
-  String facultyHodSignatureBase64;
 
   FacultyEntity({
     required this.institutionFacultyID,
-    required this.faculty,
-    required this.principalName,
-    required this.principalSignatureBase64,
-    required this.facultyHodName,
+    required this.institutionID,
+    required this.facultyName,
+    required this.facultyPublicKey,
+    required this.facultyAuthorityWithSignatures,
     required this.universityAffiliation,
     required this.universityCollegeCode,
-    required this.facultyHodSignatureBase64,
   });
 
-  FacultyEntity fromJSON(Map<String, dynamic> json) {
+  factory FacultyEntity.fromJSON(Map<String, dynamic> json) {
     return FacultyEntity(
-      faculty: faculty,
       institutionFacultyID: json['institution_faculty_id'] ?? "",
-      principalName: principalName,
-      principalSignatureBase64: principalSignatureBase64,
-      facultyHodName: facultyHodName,
-      universityAffiliation: universityAffiliation,
-      universityCollegeCode: universityCollegeCode,
-      facultyHodSignatureBase64: facultyHodSignatureBase64,
+      institutionID: json['institution_id'] ?? "",
+      facultyName: json['faculty_name'] ?? "",
+      facultyPublicKey: json['faculty_public_key'] ?? "",
+      facultyAuthorityWithSignatures:
+          (json['faculty_authority_with_signatures'] as List<dynamic>?)
+              ?.map((e) => Map<String, String>.from(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      universityAffiliation: json['university_affiliation'] ?? "",
+      universityCollegeCode: json['university_college_code'] ?? "",
     );
   }
 
   Map<String, dynamic> toJSON() => <String, dynamic>{
     'institution_faculty_id': institutionFacultyID,
-    'faculty': faculty,
-    'principal_name': principalName,
-    'principal_signature_base64': principalSignatureBase64,
-    'faculty_hod_name': facultyHodName,
+    'institution_id': institutionID,
+    'faculty_name': facultyName,
+    'faculty_public_key': facultyPublicKey,
+    'faculty_authority_with_signatures': facultyAuthorityWithSignatures
+        .map((e) => e)
+        .toList(),
     'university_affiliation': universityAffiliation,
     'university_college_code': universityCollegeCode,
-    'faculty_hod_signature_base64': facultyHodSignatureBase64,
   };
 
   @override

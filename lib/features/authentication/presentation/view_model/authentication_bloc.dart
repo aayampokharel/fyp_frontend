@@ -31,21 +31,14 @@ class AuthenticationBloc
       emit(AuthenticationLoadingState());
       FacultyUseCaseParams facultyParams = FacultyUseCaseParams(
         facultyEntity: FacultyEntity(
+          facultyPublicKey: "",
           institutionFacultyID: "",
-          // faculty: event.faculty,
-          // principalName: event.principalName,
-          // principalSignatureBase64: event.principalSignatureBase64,
-          // facultyHodName: event.facultyHodName,
-          // universityAffiliation: event.universityAffiliation,
-          // universityCollegeCode: event.universityCollegeCode,
-          // facultyHodSignatureBase64: event.facultyHodSignatureBase64,
-          faculty: "event.faculty",
-          principalName: "event.principalName",
-          principalSignatureBase64: "event.principalSignatureBase64",
-          facultyHodName: "event.facultyHodName",
+          institutionID: event.institutionID,
+          facultyName: "event.faculty",
+          //! to include the signature in a map and things
+          facultyAuthorityWithSignatures: [],
           universityAffiliation: "event.universityAffiliation",
           universityCollegeCode: "001",
-          facultyHodSignatureBase64: "event.facultyHodSignatureBase64",
         ),
         institutionID: event.institutionID,
       );

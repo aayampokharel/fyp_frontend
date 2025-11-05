@@ -19,7 +19,7 @@ class FacultyRemoteDataSource {
       );
       if (response.statusCode == 200) {
         var facultyEntityObj = facultyRequestModel.toEntity();
-        return facultyEntityObj.fromJSON(
+        return FacultyEntity.fromJSON(
           response.data['data'] as Map<String, dynamic>,
         );
       } else {

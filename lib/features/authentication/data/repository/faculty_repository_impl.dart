@@ -19,7 +19,6 @@ class FacultyRepositoryImpl implements FacultyRepository {
     try {
       FacultyRequestModel facultyRequestModel = FacultyRequestModel.fromEntity(
         facultyEntity,
-        institutionID,
       );
       FacultyEntity facultyEntityResponse =
           await _facultyRemoteDataSource.InsertFaculty(facultyRequestModel);

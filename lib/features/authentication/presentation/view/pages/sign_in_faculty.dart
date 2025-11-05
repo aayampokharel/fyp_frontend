@@ -15,6 +15,7 @@ import "package:flutter_dashboard/features/authentication/presentation/view/widg
 import "package:flutter_dashboard/features/authentication/presentation/view_model/authentication_bloc.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view_model/authentication_event.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view_model/authentication_state.dart";
+import "package:flutter_dashboard/features/csv_upload/presentation/view/page/institution_upload_page.dart";
 
 class SignInFacultyPage extends StatelessWidget {
   final TextEditingController facultyController = TextEditingController();
@@ -145,7 +146,7 @@ class SignInFacultyPage extends StatelessWidget {
               ),
 
               // Bloc Consumer for State Management
-              _buildBlocConsumer(),
+              _buildBlocConsumer(institutionID),
             ],
           ),
         ),
@@ -153,11 +154,11 @@ class SignInFacultyPage extends StatelessWidget {
     );
   }
 
-  Widget _buildBlocConsumer() {
+  Widget _buildBlocConsumer(String institutionID) {
     return BlocConsumer<AuthenticationBloc, AuthenticationState>(
       listener: (context, state) {
         if (state is FacultySuccessState) {
-          _handleFacultySignInSuccess(context);
+          _handleFacultySignInSuccess(context, institutionID);
         }
       },
       builder: (context, state) {
@@ -166,11 +167,14 @@ class SignInFacultyPage extends StatelessWidget {
     );
   }
 
-  void _handleFacultySignInSuccess(BuildContext context) {
+  void _handleFacultySignInSuccess(BuildContext context, String institutionID) {
     Navigator.pop(context);
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => ),
+      MaterialPageRoute(
+        builder: (context) =>
+            InstitutionCsvUploadPage(institutionID: institutionID),
+      ),
     );
   }
 
@@ -185,7 +189,7 @@ class SignInFacultyPage extends StatelessWidget {
       return const CircularProgressIndicator();
     } else if (state is FacultySuccessState) {
       return Text(
-        "Success: ${state.facultyEntity.faculty} ${state.facultyEntity.principalName} ${state.facultyEntity.universityAffiliation} ${state.facultyEntity.universityCollegeCode}",
+        "Success: ${state.facultyEntity.facultyName} ${state.facultyEntity.facultyAuthorityWithSignatures} ${state.facultyEntity.universityAffiliation} ${state.facultyEntity.universityCollegeCode}",
       );
     } else {
       return const SizedBox.shrink();
