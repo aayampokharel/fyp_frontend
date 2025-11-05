@@ -6,7 +6,6 @@ import 'package:flutter_dashboard/features/authentication/domain/use_case/admin_
 import 'package:flutter_dashboard/features/authentication/domain/use_case/faculty_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/institution_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/user_account_usecase.dart';
-import 'package:flutter_dashboard/features/authentication/presentation/view/pages/admin_log_in.dart';
 import 'package:flutter_dashboard/features/authentication/presentation/view/pages/sign_in_institution_page.dart';
 import 'package:flutter_dashboard/features/authentication/presentation/view_model/authentication_bloc.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/category_batch_usecase.dart';

@@ -9,7 +9,7 @@ import 'package:flutter_dashboard/features/csv_upload/domain/repository/file_upl
 import 'package:fpdart/fpdart.dart';
 
 class FileUploadRepositoryImpl implements FileUploadIrepository {
-  CertificateListRemoteDataSource _certificateListRemoteDataSource;
+  final CertificateListRemoteDataSource _certificateListRemoteDataSource;
 
   FileUploadRepositoryImpl(this._certificateListRemoteDataSource);
 

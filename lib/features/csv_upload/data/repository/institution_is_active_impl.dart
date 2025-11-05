@@ -13,7 +13,8 @@ import 'package:fpdart/fpdart.dart';
 
 class InstitutionIsActiveRepositoryImpl
     implements InstitutionIsActiveIrepository {
-  InstitutionIsActiveRemoteDataSource _institutionIsActiveRemoteDataSource;
+  final InstitutionIsActiveRemoteDataSource
+  _institutionIsActiveRemoteDataSource;
 
   InstitutionIsActiveRepositoryImpl(this._institutionIsActiveRemoteDataSource);
 

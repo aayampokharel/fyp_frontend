@@ -8,7 +8,7 @@ import 'package:flutter_dashboard/features/authentication/domain/repository/facu
 import 'package:fpdart/fpdart.dart';
 
 class FacultyRepositoryImpl implements FacultyRepository {
-  FacultyRemoteDataSource _facultyRemoteDataSource;
+  final FacultyRemoteDataSource _facultyRemoteDataSource;
   FacultyRepositoryImpl(this._facultyRemoteDataSource);
 
   @override

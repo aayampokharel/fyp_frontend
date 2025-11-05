@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class MinimalCertificateDataModel {
   // Student Information (Required)
   final String studentId;

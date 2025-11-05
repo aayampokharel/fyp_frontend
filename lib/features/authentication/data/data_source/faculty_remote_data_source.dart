@@ -6,7 +6,7 @@ import 'package:flutter_dashboard/features/authentication/data/model/faculty_mod
 import 'package:flutter_dashboard/features/authentication/domain/entity/faculty_entity.dart';
 
 class FacultyRemoteDataSource {
-  DioClient _dioClient;
+  final DioClient _dioClient;
   FacultyRemoteDataSource(this._dioClient);
 
   Future<FacultyEntity> InsertFaculty(

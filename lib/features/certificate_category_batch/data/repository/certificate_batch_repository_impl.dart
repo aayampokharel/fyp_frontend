@@ -11,7 +11,7 @@ import 'package:flutter_dashboard/features/csv_upload/domain/entity/certificate_
 import 'package:fpdart/fpdart.dart';
 
 class CertificateBatchRepositoryImpl implements CertificateBatchIrepository {
-  CertificateBatchRemoteDataSource _certificateBatchRemoteDataSource;
+  final CertificateBatchRemoteDataSource _certificateBatchRemoteDataSource;
 
   CertificateBatchRepositoryImpl(this._certificateBatchRemoteDataSource);
 

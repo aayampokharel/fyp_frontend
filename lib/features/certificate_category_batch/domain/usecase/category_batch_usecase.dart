@@ -15,7 +15,7 @@ class CategoryBatchUseCaseParams {
 class CategoryBatchUseCase
     implements
         UseCase<List<CertificateCategoryEntity>, CategoryBatchUseCaseParams> {
-  CategoryBatchIrepository _categoryBatchIrepository;
+  final CategoryBatchIrepository _categoryBatchIrepository;
   CategoryBatchUseCase(this._categoryBatchIrepository);
   @override
   DefaultFutureEitherType<List<CertificateCategoryEntity>> call(

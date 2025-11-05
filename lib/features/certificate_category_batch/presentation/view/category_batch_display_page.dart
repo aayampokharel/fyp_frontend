@@ -19,7 +19,7 @@ class CategorySelectionPage extends StatefulWidget {
 }
 
 class _CategorySelectionPageState extends State<CategorySelectionPage> {
-  bool _hasTriggeredLoad = false;
+  final bool _hasTriggeredLoad = false;
 
   @override
   void initState() {
@@ -61,7 +61,7 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
                   ),
                   child: ListTile(
                     title: Text(
-                      item.categoryName!,
+                      item.categoryName,
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text('Created: ${item.createdAt}'),

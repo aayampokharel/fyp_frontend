@@ -7,7 +7,7 @@ import 'package:flutter_dashboard/features/csv_upload/data/models/minimal_certif
 import 'package:flutter_dashboard/features/csv_upload/domain/entity/certificate_data_entity.dart';
 
 class CertificateListRemoteDataSource {
-  DioClient _dioClient;
+  final DioClient _dioClient;
   CertificateListRemoteDataSource(this._dioClient);
 
   Future<String> uploadCertificateListEntity(

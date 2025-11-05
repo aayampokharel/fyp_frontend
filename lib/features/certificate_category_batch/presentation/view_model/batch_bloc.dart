@@ -1,10 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/category_batch_usecase.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/certificate_batch_usecase.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/presentation/view_model/batch_event.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/presentation/view_model/batch_state.dart';
-import 'package:flutter_dashboard/features/csv_upload/domain/usecase/certificate_upload_usecase.dart';
 
 class BatchBloc extends Bloc<BatchEvent, BatchState> {
   CategoryBatchUseCase categoryBatchUseCase;

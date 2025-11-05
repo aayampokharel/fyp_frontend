@@ -7,7 +7,7 @@ import 'package:flutter_dashboard/features/certificate_category_batch/domain/rep
 import 'package:fpdart/fpdart.dart';
 
 class CategoryBatchRepositoryImpl implements CategoryBatchIrepository {
-  CategoryBatchRemoteDataSource _categoryBatchRemoteDataSource;
+  final CategoryBatchRemoteDataSource _categoryBatchRemoteDataSource;
 
   CategoryBatchRepositoryImpl(this._categoryBatchRemoteDataSource);
   @override

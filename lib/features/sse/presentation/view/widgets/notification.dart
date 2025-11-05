@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dashboard/core/constants/dependency_injection/di.dart';
 import 'package:flutter_dashboard/core/constants/enum.dart';
-import 'package:flutter_dashboard/features/sse/data/data_source/sse_data_source.dart';
-import 'package:flutter_dashboard/features/sse/data/repository/sse_repository_impl.dart';
 import 'package:flutter_dashboard/features/sse/domain/usecase/sse_use_case.dart';
 
 class SseListPage extends StatefulWidget {

@@ -1,9 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_dashboard/core/constants/api_endpoints.dart';
 import 'package:flutter_dashboard/core/errors/errorz.dart';
 import 'package:flutter_dashboard/core/wrappers/dio_client.dart';
-import 'package:flutter_dashboard/features/certificate_category_batch/domain/entity/certificate_category_entity.dart';
 import 'package:flutter_dashboard/features/csv_upload/domain/entity/certificate_data_entity.dart';
 
 class CertificateBatchRemoteDataSource {

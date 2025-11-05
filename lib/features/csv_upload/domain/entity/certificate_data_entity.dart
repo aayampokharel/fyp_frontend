@@ -138,12 +138,15 @@ class CertificateDataEntity {
     if (universityName != null) data['university_name'] = universityName;
 
     data['issue_date'] = issueDate.toIso8601String();
-    if (enrollmentDate != null)
+    if (enrollmentDate != null) {
       data['enrollment_date'] = enrollmentDate!.toIso8601String();
-    if (completionDate != null)
+    }
+    if (completionDate != null) {
       data['completion_date'] = completionDate!.toIso8601String();
-    if (leavingDate != null)
+    }
+    if (leavingDate != null) {
       data['leaving_date'] = leavingDate!.toIso8601String();
+    }
 
     if (reasonForLeaving != null) data['reason_for_leaving'] = reasonForLeaving;
     if (characterRemarks != null) data['character_remarks'] = characterRemarks;

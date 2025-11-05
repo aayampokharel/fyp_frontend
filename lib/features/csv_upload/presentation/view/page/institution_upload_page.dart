@@ -224,6 +224,8 @@ class _InstitutionUploadPageState extends State<InstitutionCsvUploadPage> {
 }
 
 class CategoriesPage extends StatelessWidget {
+  const CategoriesPage({super.key});
+
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text("Categories")),
@@ -232,6 +234,8 @@ class CategoriesPage extends StatelessWidget {
 }
 
 class SettingsPage extends StatelessWidget {
+  const SettingsPage({super.key});
+
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text("Settings")),
@@ -240,6 +244,8 @@ class SettingsPage extends StatelessWidget {
 }
 
 class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key});
+
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text("Profile")),

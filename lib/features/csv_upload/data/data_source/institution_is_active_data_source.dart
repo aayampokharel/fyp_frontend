@@ -10,7 +10,7 @@ import 'package:flutter_dashboard/features/csv_upload/domain/entity/certificate_
 import 'package:flutter_dashboard/features/csv_upload/domain/usecase/check_institution_is_active_usecase.dart';
 
 class InstitutionIsActiveRemoteDataSource {
-  DioClient _dioClient;
+  final DioClient _dioClient;
   InstitutionIsActiveRemoteDataSource(this._dioClient);
 
   Future<InstitutionEntity> CheckInstitutionIsActive(
