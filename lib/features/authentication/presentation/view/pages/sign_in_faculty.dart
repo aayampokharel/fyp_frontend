@@ -170,7 +170,7 @@ class SignInFacultyPage extends StatelessWidget {
     Navigator.pop(context);
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => InstitutionInitialLoading()),
+      MaterialPageRoute(builder: (context) => ),
     );
   }
 
