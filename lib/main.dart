@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
             bodyMedium: TextStyle(color: Colors.black87),
           ),
         ),
-        home: AdminLoginPage(),
+        home: SignInPage(),
       ),
     );
   }

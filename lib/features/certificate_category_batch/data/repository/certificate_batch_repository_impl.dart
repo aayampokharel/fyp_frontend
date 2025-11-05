@@ -1,0 +1,37 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter_dashboard/core/errors/errorz.dart';
+import 'package:flutter_dashboard/core/use_case.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/data/data_source/category_batch_remote_data_source.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/data/data_source/certificate_batch_remote_data_source.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/domain/entity/certificate_category_entity.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/domain/repository/category_batch_irepository.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/domain/repository/certificate_batch_iresponsibility.dart';
+import 'package:flutter_dashboard/features/csv_upload/data/data_source/certificate_list_remote_data_source.dart';
+import 'package:flutter_dashboard/features/csv_upload/domain/entity/certificate_data_entity.dart';
+import 'package:fpdart/fpdart.dart';
+
+class CertificateBatchRepositoryImpl implements CertificateBatchIrepository {
+  CertificateBatchRemoteDataSource certificateBatchRemoteDataSource;
+
+  CertificateBatchRepositoryImpl({
+    required this.certificateBatchRemoteDataSource,
+  });
+
+  @override
+  DefaultFutureEitherType<List<CertificateDataEntity>>
+  getCertificateBatchForCategoryID(
+    String institutionID,
+    String institutionFacultyID,
+    String categoryID,
+  ) async {
+    try {
+      final response = await certificateBatchRemoteDataSource
+          .getCertificateBatch(institutionID, institutionFacultyID, categoryID);
+      return Right(response);
+    } on ServerError catch (e) {
+      return Left(Errorz(message: e.message, statusCode: e.statusCode));
+    } catch (e) {
+      return Left(Errorz(message: e.toString(), statusCode: e.hashCode));
+    }
+  }
+}
