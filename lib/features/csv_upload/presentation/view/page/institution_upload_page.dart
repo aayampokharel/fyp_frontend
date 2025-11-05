@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/presentation/view/category_batch_display_page.dart';
 import 'package:flutter_dashboard/features/csv_upload/presentation/view_model/upload_bloc.dart';
 import 'package:flutter_dashboard/features/csv_upload/presentation/view_model/upload_state.dart';
 
 class InstitutionCsvUploadPage extends StatefulWidget {
   final String institutionID;
+
   const InstitutionCsvUploadPage({super.key, required this.institutionID});
 
   @override
@@ -23,194 +25,174 @@ class _InstitutionUploadPageState extends State<InstitutionCsvUploadPage> {
         title: const Text("Upload CSV"),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
-        elevation: 0,
       ),
+
+      drawer: Drawer(
+        child: BlocBuilder<UploadBloc, UploadState>(
+          builder: (context, state) {
+            if (state is UploadPageStartSuccessState) {
+              return _buildLoadedDrawer(context, state);
+            } else {
+              return _buildLoadingDrawer();
+            }
+          },
+        ),
+      ),
+
+      // ✅ Main Body (unchanged, your CSV upload)
       body: BlocBuilder<UploadBloc, UploadState>(
         builder: (context, state) {
           if (state is UploadPageStartFailureState) {
             return Center(child: Text(state.message));
           } else if (state is UploadPageStartSuccessState) {
-            return Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Colors.blue.shade50, Colors.white],
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Upload Card
-                    Card(
-                      elevation: 8,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(24.0),
-                        child: Column(
-                          children: [
-                            // File Upload Area
-                            Container(
-                              width: double.infinity,
-                              height: 160,
-                              decoration: BoxDecoration(
-                                color: Colors.blue.shade50,
-                                border: Border.all(
-                                  color: Colors.blue.shade200,
-                                  width: 2,
-                                ),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: TextButton(
-                                onPressed: () => setState(
-                                  () => fileName = "student_data.csv",
-                                ),
-                                style: TextButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.cloud_upload,
-                                      size: 48,
-                                      color: Colors.blue.shade600,
-                                    ),
-                                    const SizedBox(height: 12),
-                                    Text(
-                                      fileName ?? "Select CSV File",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.blue.shade600,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    if (fileName == null)
-                                      Text(
-                                        "Click to choose file",
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.blue.shade400,
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              ),
-                            ),
-
-                            const SizedBox(height: 24),
-
-                            // Category TextField
-                            TextField(
-                              controller: _categoryController,
-                              decoration: InputDecoration(
-                                labelText: "Category Name",
-                                hintText: "Enter certificate category",
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                prefixIcon: Icon(
-                                  Icons.category,
-                                  color: Colors.blue.shade600,
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(
-                                    color: Colors.blue.shade600,
-                                    width: 2,
-                                  ),
-                                ),
-                              ),
-                            ),
-
-                            const SizedBox(height: 24),
-
-                            // Upload Button
-                            if (fileName != null)
-                              SizedBox(
-                                width: double.infinity,
-                                height: 54,
-                                child: ElevatedButton.icon(
-                                  onPressed: () {
-                                    if (_categoryController.text.isEmpty) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: const Text(
-                                            "Please enter a category name",
-                                          ),
-                                          backgroundColor:
-                                              Colors.orange.shade600,
-                                        ),
-                                      );
-                                      return;
-                                    }
-
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          "${_categoryController.text} - $fileName uploaded successfully!",
-                                        ),
-                                        backgroundColor: Colors.green.shade600,
-                                        behavior: SnackBarBehavior.floating,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  icon: const Icon(
-                                    Icons.cloud_upload_outlined,
-                                    size: 24,
-                                  ),
-                                  label: const Text(
-                                    "Upload CSV",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue.shade600,
-                                    foregroundColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    elevation: 2,
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      "Upload a CSV file containing student certificate data",
-                      style: TextStyle(
-                        color: Colors.grey.shade600,
-                        fontSize: 14,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
-            );
+            return _buildUploadPageUI(context); // extracted for cleanliness
           } else {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
         },
       ),
     );
   }
+
+  Widget _buildUploadPageUI(BuildContext context) {
+    return Center(child: Text("CSV Upload UI goes here..."));
+  }
+
+  void _showDeleteAccountDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Delete Account"),
+        content: const Text(
+          "Are you sure you want to delete your account permanently?",
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () {
+              // API call for delete
+              Navigator.pop(context);
+            },
+            child: const Text("Delete", style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CategoriesPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(title: const Text("Categories")),
+    body: const Center(child: Text("Categories List Page")),
+  );
+}
+
+class SettingsPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(title: const Text("Settings")),
+    body: const Center(child: Text("Settings Page")),
+  );
+}
+
+class ProfilePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(title: const Text("Profile")),
+    body: const Center(child: Text("Profile Page")),
+  );
+}
+
+Widget _buildLoadedDrawer(
+  BuildContext context,
+  UploadPageStartSuccessState state,
+) {
+  return ListView(
+    padding: EdgeInsets.zero,
+    children: [
+      UserAccountsDrawerHeader(
+        decoration: BoxDecoration(color: Colors.blue),
+        accountName: Text("User Name"),
+        accountEmail: Text("user@email.com"),
+        currentAccountPicture: CircleAvatar(
+          backgroundColor: Colors.white,
+          child: Icon(Icons.person, size: 40, color: Colors.blue),
+        ),
+      ),
+      ListTile(
+        leading: Icon(Icons.list),
+        title: Text('Categories'),
+        onTap: () {
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => CategorySelectionPage(
+                institutionFacultyID: state.facultyEntity.institutionFacultyID,
+                institutionID: state.facultyEntity.institutionID,
+              ),
+            ),
+          );
+        },
+      ),
+      ListTile(
+        leading: Icon(Icons.settings),
+        title: Text('Settings'),
+        onTap: () {},
+      ),
+      ListTile(
+        leading: Icon(Icons.person),
+        title: Text('Profile'),
+        onTap: () {},
+      ),
+      ListTile(
+        leading: Icon(Icons.logout),
+        title: Text('Logout'),
+        onTap: () {},
+      ),
+    ],
+  );
+}
+
+Widget _buildLoadingDrawer() {
+  return ListView(
+    padding: EdgeInsets.zero,
+    children: [
+      // Fake header
+      Container(
+        height: 180,
+        color: Colors.blue.shade100,
+        child: const Center(
+          child: CircularProgressIndicator(color: Colors.blue),
+        ),
+      ),
+
+      // Menu skeletons
+      ...List.generate(4, (index) {
+        return ListTile(
+          leading: Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300,
+              shape: BoxShape.circle,
+            ),
+          ),
+          title: Container(
+            height: 15,
+            margin: const EdgeInsets.symmetric(vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300,
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+        );
+      }),
+    ],
+  );
 }

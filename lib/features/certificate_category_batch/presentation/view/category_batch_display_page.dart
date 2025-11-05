@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/domain/entity/certificate_category_entity.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/presentation/view_model/batch_bloc.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/presentation/view_model/batch_event.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/presentation/view_model/batch_state.dart';
@@ -34,12 +35,13 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
     });
   }
 
-  final List<Map<String, String>> categories = const [
-    {'name': 'Computer Science', 'createdAt': '2025-11-03'},
-    {'name': 'Mathematics', 'createdAt': '2025-10-30'},
-    {'name': 'Physics', 'createdAt': '2025-09-15'},
-  ];
+  // final List<Map<String, String>> categories = const [
+  //   {'name': 'Computer Science', 'createdAt': '2025-11-03'},
+  //   {'name': 'Mathematics', 'createdAt': '2025-10-30'},
+  //   {'name': 'Physics', 'createdAt': '2025-09-15'},
+  // ];
 
+  List<CertificateCategoryEntity> categories = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,6 +49,7 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
       body: BlocBuilder<BatchBloc, BatchState>(
         builder: (context, state) {
           if (state is CategoryBatchLoadSuccessState) {
+            categories = state.batches;
             return ListView.builder(
               itemCount: categories.length,
               itemBuilder: (context, index) {
@@ -58,14 +61,16 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
                   ),
                   child: ListTile(
                     title: Text(
-                      item['name']!,
+                      item.categoryName!,
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    subtitle: Text('Created: ${item['createdAt']}'),
+                    subtitle: Text('Created: ${item.createdAt}'),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: () {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Selected: ${item['name']}')),
+                        SnackBar(
+                          content: Text('Selected: ${item.categoryName}'),
+                        ),
                       );
                     },
                   ),
