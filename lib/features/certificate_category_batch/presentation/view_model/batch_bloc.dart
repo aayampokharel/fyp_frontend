@@ -1,21 +1,23 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/category_batch_use_case.dart';
-import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/certificate_batch_use_case.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/category_batch_usecase.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/certificate_batch_usecase.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/presentation/view_model/batch_event.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/presentation/view_model/batch_state.dart';
-import 'package:flutter_dashboard/features/csv_upload/domain/usecase/certificate_upload_use_case.dart';
+import 'package:flutter_dashboard/features/csv_upload/domain/usecase/certificate_upload_usecase.dart';
 
 class BatchBloc extends Bloc<BatchEvent, BatchState> {
-  CategoryBatchUseCase _categoryBatchUseCase;
-  CertificateBatchUseCase _certificateBatchUseCase;
+  CategoryBatchUseCase categoryBatchUseCase;
+  CertificateBatchUseCase certificateBatchUseCase;
 
-  BatchBloc(this._categoryBatchUseCase, this._certificateBatchUseCase)
-    : super(BatchInitialState()) {
+  BatchBloc({
+    required this.categoryBatchUseCase,
+    required this.certificateBatchUseCase,
+  }) : super(BatchInitialState()) {
     on<GetCategoryBatchListEvent>((event, emit) async {
       try {
         emit(BatchLoadingState());
-        final categoryBatchList = await _categoryBatchUseCase.call(
+        final categoryBatchList = await categoryBatchUseCase.call(
           CategoryBatchUseCaseParams(
             institutionID: event.institutionID,
             institutionFacultyID: event.institutionFacultyID,
@@ -31,7 +33,7 @@ class BatchBloc extends Bloc<BatchEvent, BatchState> {
     });
     on<GetCertificatesBatchListEvent>((event, emit) async {
       try {
-        final certificatesBatchList = await _certificateBatchUseCase.call(
+        final certificatesBatchList = await certificateBatchUseCase.call(
           CertificateBatchUseCaseParams(
             institutionID: event.institutionID,
             institutionFacultyID: event.institutionFacultyID,

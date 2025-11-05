@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dashboard/core/wrappers/dio_client.dart';
 import 'package:flutter_dashboard/features/authentication/data/data_source/admin_remote_data_source.dart';
 import 'package:flutter_dashboard/features/authentication/data/data_source/faculty_remote_data_source.dart';
@@ -16,6 +17,18 @@ import 'package:flutter_dashboard/features/authentication/domain/use_case/admin_
 import 'package:flutter_dashboard/features/authentication/domain/use_case/faculty_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/institution_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/user_account_usecase.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/data/data_source/category_batch_remote_data_source.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/data/data_source/certificate_batch_remote_data_source.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/data/repository/category_batch_repository_impl.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/data/repository/certificate_batch_repository_impl.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/domain/repository/category_batch_irepository.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/domain/repository/certificate_batch_iresponsibility.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/category_batch_usecase.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/certificate_batch_usecase.dart';
+import 'package:flutter_dashboard/features/csv_upload/data/data_source/certificate_list_remote_data_source.dart';
+import 'package:flutter_dashboard/features/csv_upload/data/repository/file_upload_repository_impl.dart';
+import 'package:flutter_dashboard/features/csv_upload/domain/repository/file_upload_irepository.dart';
+import 'package:flutter_dashboard/features/csv_upload/domain/usecase/certificate_upload_usecase.dart';
 import 'package:flutter_dashboard/features/sse/data/data_source/sse_data_source.dart';
 import 'package:flutter_dashboard/features/sse/data/repository/sse_repository_impl.dart';
 import 'package:flutter_dashboard/features/sse/domain/repository/sse_repository.dart';
@@ -101,5 +114,46 @@ Future _authDependencies() async {
 
   getIt.registerLazySingleton<SseUseCase>(
     () => SseUseCase(getIt<SseRepository>()),
+  );
+  //===============================category-batch==x
+  getIt.registerLazySingleton<CategoryBatchRemoteDataSource>(
+    () => CategoryBatchRemoteDataSource(getIt<DioClient>()),
+  );
+  getIt.registerLazySingleton<CategoryBatchRepositoryImpl>(
+    () => CategoryBatchRepositoryImpl(getIt<CategoryBatchRemoteDataSource>()),
+  );
+  getIt.registerLazySingleton<CategoryBatchIrepository>(
+    () => getIt<CategoryBatchRepositoryImpl>(),
+  );
+  getIt.registerLazySingleton<CategoryBatchUseCase>(
+    () => CategoryBatchUseCase(getIt<CategoryBatchIrepository>()),
+  );
+  //===============================certificate-batch==x
+  getIt.registerLazySingleton<CertificateBatchRemoteDataSource>(
+    () => CertificateBatchRemoteDataSource(getIt<DioClient>()),
+  );
+  getIt.registerLazySingleton<CertificateBatchRepositoryImpl>(
+    () => CertificateBatchRepositoryImpl(
+      getIt<CertificateBatchRemoteDataSource>(),
+    ),
+  );
+  getIt.registerLazySingleton<CertificateBatchIrepository>(
+    () => getIt<CertificateBatchRepositoryImpl>(),
+  );
+  getIt.registerLazySingleton<CertificateBatchUseCase>(
+    () => CertificateBatchUseCase(getIt<CertificateBatchIrepository>()),
+  );
+  //===============================certificate-upload==x
+  getIt.registerLazySingleton<CertificateListRemoteDataSource>(
+    () => CertificateListRemoteDataSource(getIt<DioClient>()),
+  );
+  getIt.registerLazySingleton<FileUploadRepositoryImpl>(
+    () => FileUploadRepositoryImpl(getIt<CertificateListRemoteDataSource>()),
+  );
+  getIt.registerLazySingleton<FileUploadIrepository>(
+    () => getIt<FileUploadRepositoryImpl>(),
+  );
+  getIt.registerLazySingleton<CertificateUploadUseCase>(
+    () => CertificateUploadUseCase(getIt<FileUploadIrepository>()),
   );
 }

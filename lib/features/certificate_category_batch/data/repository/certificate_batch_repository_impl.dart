@@ -11,11 +11,9 @@ import 'package:flutter_dashboard/features/csv_upload/domain/entity/certificate_
 import 'package:fpdart/fpdart.dart';
 
 class CertificateBatchRepositoryImpl implements CertificateBatchIrepository {
-  CertificateBatchRemoteDataSource certificateBatchRemoteDataSource;
+  CertificateBatchRemoteDataSource _certificateBatchRemoteDataSource;
 
-  CertificateBatchRepositoryImpl({
-    required this.certificateBatchRemoteDataSource,
-  });
+  CertificateBatchRepositoryImpl(this._certificateBatchRemoteDataSource);
 
   @override
   DefaultFutureEitherType<List<CertificateDataEntity>>
@@ -25,7 +23,7 @@ class CertificateBatchRepositoryImpl implements CertificateBatchIrepository {
     String categoryID,
   ) async {
     try {
-      final response = await certificateBatchRemoteDataSource
+      final response = await _certificateBatchRemoteDataSource
           .getCertificateBatch(institutionID, institutionFacultyID, categoryID);
       return Right(response);
     } on ServerError catch (e) {

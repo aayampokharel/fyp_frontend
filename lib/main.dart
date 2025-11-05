@@ -9,6 +9,11 @@ import 'package:flutter_dashboard/features/authentication/domain/use_case/user_a
 import 'package:flutter_dashboard/features/authentication/presentation/view/pages/admin_log_in.dart';
 import 'package:flutter_dashboard/features/authentication/presentation/view/pages/sign_in_institution_page.dart';
 import 'package:flutter_dashboard/features/authentication/presentation/view_model/authentication_bloc.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/category_batch_usecase.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/certificate_batch_usecase.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/presentation/view_model/batch_bloc.dart';
+import 'package:flutter_dashboard/features/csv_upload/domain/usecase/certificate_upload_usecase.dart';
+import 'package:flutter_dashboard/features/csv_upload/presentation/view_model/upload_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,6 +35,18 @@ class MyApp extends StatelessWidget {
             userAccountUsecase: getIt<UserAccountUseCase>(),
             facultyUsecase: getIt<FacultyUseCase>(),
             adminAccountUsecase: getIt<AdminAccountUseCase>(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => BatchBloc(
+            certificateBatchUseCase: getIt<CertificateBatchUseCase>(),
+            categoryBatchUseCase: getIt<CategoryBatchUseCase>(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => UploadBloc(
+            certificateUploadUseCase: getIt<CertificateUploadUseCase>(),
+            facultyUseCase: getIt<FacultyUseCase>(),
           ),
         ),
       ],
