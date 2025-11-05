@@ -44,7 +44,7 @@ class AuthenticationBloc
           principalSignatureBase64: "event.principalSignatureBase64",
           facultyHodName: "event.facultyHodName",
           universityAffiliation: "event.universityAffiliation",
-          universityCollegeCode: "event.universityCollegeCode",
+          universityCollegeCode: "001",
           facultyHodSignatureBase64: "event.facultyHodSignatureBase64",
         ),
         institutionID: event.institutionID,

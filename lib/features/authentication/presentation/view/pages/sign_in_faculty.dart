@@ -7,6 +7,7 @@ import "package:flutter_dashboard/core/constants/image_constants.dart";
 import "package:flutter_dashboard/core/constants/string_constants.dart";
 import "package:flutter_dashboard/features/authentication/domain/entity/faculty_entity.dart";
 import "package:flutter_dashboard/features/authentication/domain/use_case/user_account_usecase.dart";
+import "package:flutter_dashboard/features/authentication/presentation/view/pages/institution_initial_loading.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view/widgets/colored_button_widget.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view/widgets/container_with_two_parts_widget.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view/widgets/nav_bar_widget.dart";
@@ -167,6 +168,10 @@ class SignInFacultyPage extends StatelessWidget {
 
   void _handleFacultySignInSuccess(BuildContext context) {
     Navigator.pop(context);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => InstitutionInitialLoading()),
+    );
   }
 
   Widget _buildStateWidget(AuthenticationState state) {

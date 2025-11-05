@@ -28,7 +28,7 @@ WHERE is_active = TRUE;
 
 CREATE TABLE IF NOT EXISTS  user_accounts(
     id VARCHAR(16) PRIMARY KEY,
-    system_role VARCHAR(16) NOT NULL Check (system_role IN ('ADMIN', 'INSTITUTE')),  -- Added NOT NULL
+    system_role VARCHAR(16) DEFAULT 'INSTITUTE' NOT NULL Check (system_role IN ('ADMIN', 'INSTITUTE')),  -- Added NOT NULL
     institution_role VARCHAR(16) , 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP DEFAULT NULL,
