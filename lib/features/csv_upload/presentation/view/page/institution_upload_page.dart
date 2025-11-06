@@ -1,41 +1,34 @@
-import 'package:dotted_border/dotted_border.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dashboard/features/authentication/domain/entity/faculty_entity.dart';
+import 'package:flutter_dashboard/core/errors/app_logger.dart';
 import 'package:flutter_dashboard/features/authentication/domain/entity/institution_entity.dart';
-import 'package:flutter_dashboard/features/certificate_category_batch/presentation/view/category_batch_display_page.dart';
 import 'package:flutter_dashboard/features/csv_upload/presentation/view_model/upload_bloc.dart';
 import 'package:flutter_dashboard/features/csv_upload/presentation/view_model/upload_event.dart';
 import 'package:flutter_dashboard/features/csv_upload/presentation/view_model/upload_state.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/presentation/view/category_batch_display_page.dart';
+import 'package:universal_html/html.dart' as html;
 
 class InstitutionCsvUploadPage extends StatefulWidget {
   final String institutionID;
-  //final []FacultyEntity facultyEntity;
 
-  const InstitutionCsvUploadPage({
-    super.key,
-    required this.institutionID,
-    //required this.facultyEntity,
-  });
+  const InstitutionCsvUploadPage({super.key, required this.institutionID});
 
   @override
   State<InstitutionCsvUploadPage> createState() =>
-      _InstitutionUploadPageState();
+      _InstitutionCsvUploadPageState();
 }
 
-class _InstitutionUploadPageState extends State<InstitutionCsvUploadPage> {
+class _InstitutionCsvUploadPageState extends State<InstitutionCsvUploadPage> {
   String? fileName;
+  PlatformFile? pickedFile;
   final TextEditingController _categoryController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    // context.read<UploadBloc>().add(
-    //   UploadPageStartedEvent(
-    //     institutionID: widget.institutionID,
-    //     facultyEntity: widget.facultyEntity,
-    //   ),
-    // );
     context.read<UploadBloc>().add(
       InstitutionCheckEvent(institutionID: widget.institutionID),
     );
@@ -49,7 +42,6 @@ class _InstitutionUploadPageState extends State<InstitutionCsvUploadPage> {
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
       ),
-
       drawer: Drawer(
         child: BlocBuilder<UploadBloc, UploadState>(
           builder: (context, state) {
@@ -79,178 +71,300 @@ class _InstitutionUploadPageState extends State<InstitutionCsvUploadPage> {
     BuildContext context,
     InstitutionEntity institutionEntity,
   ) {
-    // ✅ 1. Yet to be verified (isActive == null)
     if (institutionEntity.isActive == null) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.access_time, size: 60, color: Colors.orange),
-              const SizedBox(height: 16),
-              Text(
-                "Institution Verification Pending",
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                "${institutionEntity.institutionName}\n${institutionEntity.toleAddress}, ${institutionEntity.districtAddress}",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                "Your institution has been registered.\n"
-                "Manual verification is in progress and may take a few days.\n"
-                "You can close this page and return after approval.",
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
-      );
+      return _buildPendingVerificationUI(institutionEntity);
     } else if (institutionEntity.isActive!) {
       return Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 🔹 CSV Drag/Select Box
+            // File Picker (CSV only)
             GestureDetector(
-              onTap: () {
-                // TODO: Implement file picker
+              onTap: () async {
+                final result = await FilePicker.platform.pickFiles(
+                  type: FileType.custom,
+                  allowedExtensions: ['csv'],
+                  allowMultiple: false,
+                );
+
+                if (result != null && result.files.isNotEmpty) {
+                  setState(() {
+                    pickedFile = result.files.first;
+                    fileName = pickedFile!.name;
+                    _showCsvPreview(result.files.first);
+                  });
+                }
               },
-              child: DottedBorder(
-                child: Container(
-                  height: 150,
-                  width: double.infinity,
-                  alignment: Alignment.center,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(Icons.upload_file, size: 50, color: Colors.grey),
-                      SizedBox(height: 10),
-                      Text("Drag & Drop CSV here or Click to Upload"),
+              child: Container(
+                height: 150,
+                width: double.infinity,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.upload_file,
+                      size: 50,
+                      color: fileName == null ? Colors.grey : Colors.green,
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      fileName ?? "Click to select CSV file",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: fileName == null ? Colors.grey : Colors.black,
+                        fontWeight: fileName == null
+                            ? FontWeight.normal
+                            : FontWeight.bold,
+                      ),
+                    ),
+                    if (fileName != null) ...[
+                      const SizedBox(height: 5),
+                      Text(
+                        "File size: ${_formatFileSize(pickedFile!.size)}",
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
+                      ),
                     ],
-                  ),
+                  ],
                 ),
               ),
             ),
 
             const SizedBox(height: 20),
 
-            // 🔹 Category Name TextField
+            // CSV Format Help
+            _buildCsvFormatHelp(),
+
+            const SizedBox(height: 20),
+
+            // Category TextField
             TextField(
-              controller: _categoryController, // Already defined in your class
+              controller: _categoryController,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: "Enter Category Name",
+                hintText: "e.g., CS_2021_Computer_Science",
                 prefixIcon: Icon(Icons.category),
               ),
             ),
 
+            const SizedBox(height: 10),
+            Text(
+              "This will be used to organize your certificates",
+              style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+            ),
+
             const SizedBox(height: 20),
 
-            // 🔹 Upload Button
-            ElevatedButton.icon(
-              onPressed: () {
-                // TODO: Implement upload functionality
-              },
-              icon: const Icon(Icons.cloud_upload),
-              label: const Text("Upload CSV"),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 30,
-                  vertical: 15,
+            // Upload Button
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed:
+                    pickedFile != null && _categoryController.text.isNotEmpty
+                    ? () {
+                        context.read<UploadBloc>().add(
+                          UploadCsvFileEvent(
+                            institutionID: widget.institutionID,
+                            categoryName: _categoryController.text,
+                            platformFile: pickedFile,
+                          ),
+                        );
+                      }
+                    : null,
+                icon: const Icon(Icons.cloud_upload),
+                label: const Text("Upload CSV"),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  backgroundColor:
+                      pickedFile != null && _categoryController.text.isNotEmpty
+                      ? Colors.blue
+                      : Colors.grey,
                 ),
               ),
             ),
-          ],
-        ),
-      );
-    }
-    // ✅ 3. Institution is Rejected or Disabled
-    else {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.error_outline, size: 60, color: Colors.red),
-            const SizedBox(height: 16),
-            const Text(
-              "Institution Not Approved",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
+
             const SizedBox(height: 10),
-            const Text(
-              "Your institution has been rejected or disabled.\n"
-              "Please contact admin for further details.",
-              textAlign: TextAlign.center,
+
+            // Sample CSV Download
+            TextButton.icon(
+              onPressed: _downloadSampleCsv,
+              icon: const Icon(Icons.download),
+              label: const Text("Download Sample CSV Template"),
             ),
           ],
         ),
       );
+    } else {
+      return _buildRejectedUI();
     }
   }
 
-  void _showDeleteAccountDialog(BuildContext context) {
+  // Helper method to show CSV preview
+  void _showCsvPreview(PlatformFile file) {
+    if (file.bytes != null) {
+      final content = String.fromCharCodes(file.bytes!);
+      final lines = content.split('\n').take(3); // Show first 3 lines
+      AppLogger.info("CSV Preview:\n${lines.join('\n')}");
+    }
+  }
+
+  // Helper method to format file size
+  String _formatFileSize(int bytes) {
+    if (bytes < 1024) return '$bytes B';
+    if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
+    return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+  }
+
+  // CSV Format Help Widget
+  Widget _buildCsvFormatHelp() {
+    return ExpansionTile(
+      title: const Text("CSV Format Requirements"),
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Required Columns:",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                children: const [
+                  Chip(label: Text("certificate_id")),
+                  Chip(label: Text("student_id")),
+                  Chip(label: Text("student_name")),
+                  Chip(label: Text("certificate_type")),
+                  Chip(label: Text("issue_date")),
+                ],
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                "Certificate Types:",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                children: const [
+                  Chip(label: Text("COURSE_COMPLETION")),
+                  Chip(label: Text("CHARACTER")),
+                  Chip(label: Text("LEAVING")),
+                  Chip(label: Text("TRANSFER")),
+                  Chip(label: Text("PROVISIONAL")),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Sample CSV Download
+  void _downloadSampleCsv() {
+    const sampleCsv = '''
+certificate_id,block_number,position,student_id,student_name,certificate_type,degree,college,major,gpa,percentage,division,university_name,issue_date,enrollment_date,completion_date,leaving_date,reason_for_leaving,character_remarks,general_remarks
+CERT_2024_001,12345,1,STU_2020_001,John Doe,COURSE_COMPLETION,Bachelor of Science,Engineering College,Computer Science,3.8,85.5,First Class,University of Technology,2024-01-15,2020-06-01,2024-05-30,2024-05-30,Graduation,Excellent character,Completed with distinction
+CERT_2024_002,12346,2,STU_2021_002,Jane Smith,CHARACTER,,,,,,,,,2024-01-16,2021-07-01,,2024-01-16,Transfer,Good conduct,Transfer certificate
+''';
+
+    // For web, you can show the CSV content or implement download
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("Delete Account"),
-        content: const Text(
-          "Are you sure you want to delete your account permanently?",
-        ),
+      builder: (context) => AlertDialog(
+        title: const Text("Sample CSV Template"),
+        content: SingleChildScrollView(child: SelectableText(sampleCsv)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
+            child: const Text("Close"),
           ),
-          TextButton(
+          ElevatedButton(
             onPressed: () {
-              // API call for delete
+              // Implement download logic for web
+              _downloadCsvFile(sampleCsv, 'sample_certificate_template.csv');
               Navigator.pop(context);
             },
-            child: const Text("Delete", style: TextStyle(color: Colors.red)),
+            child: const Text("Download"),
           ),
         ],
       ),
     );
   }
-}
 
-class CategoriesPage extends StatelessWidget {
-  const CategoriesPage({super.key});
+  // Download CSV file for web
+  void _downloadCsvFile(String content, String filename) {
+    final bytes = utf8.encode(content);
+    final blob = html.Blob([bytes]);
+    final url = html.Url.createObjectUrlFromBlob(blob);
+    final anchor = html.document.createElement('a') as html.AnchorElement
+      ..href = url
+      ..style.display = 'none'
+      ..download = filename;
 
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text("Categories")),
-    body: const Center(child: Text("Categories List Page")),
-  );
-}
+    html.document.body!.children.add(anchor);
+    anchor.click();
+    html.document.body!.children.remove(anchor);
+    html.Url.revokeObjectUrl(url);
+  }
 
-class SettingsPage extends StatelessWidget {
-  const SettingsPage({super.key});
+  Widget _buildPendingVerificationUI(InstitutionEntity entity) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.access_time, size: 60, color: Colors.orange),
+            const SizedBox(height: 16),
+            Text(
+              "Institution Verification Pending",
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              "${entity.institutionName}\n${entity.toleAddress}, ${entity.districtAddress}",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text("Settings")),
-    body: const Center(child: Text("Settings Page")),
-  );
-}
-
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text("Profile")),
-    body: const Center(child: Text("Profile Page")),
-  );
+  Widget _buildRejectedUI() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const [
+          Icon(Icons.error_outline, size: 60, color: Colors.red),
+          SizedBox(height: 16),
+          Text(
+            "Institution Not Approved",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 10),
+          Text(
+            "Your institution has been rejected or disabled.\nPlease contact admin for details.",
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 Widget _buildLoadedDrawer(
@@ -308,7 +422,6 @@ Widget _buildLoadingDrawer() {
   return ListView(
     padding: EdgeInsets.zero,
     children: [
-      // Fake header
       Container(
         height: 180,
         color: Colors.blue.shade100,
@@ -316,8 +429,6 @@ Widget _buildLoadingDrawer() {
           child: CircularProgressIndicator(color: Colors.blue),
         ),
       ),
-
-      // Menu skeletons
       ...List.generate(4, (index) {
         return ListTile(
           leading: Container(

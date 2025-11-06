@@ -115,14 +115,14 @@ class CreateCertificateDataRequest {
     return certificateData.map((cert) => cert.studentId).toSet();
   }
 
-  // Get certificates by type
-  Map<String, List<MinimalCertificateDataModel>> get certificatesByType {
-    final Map<String, List<MinimalCertificateDataModel>> result = {};
-    for (final cert in certificateData) {
-      result.putIfAbsent(cert.certificateType, () => []).add(cert);
-    }
-    return result;
-  }
+  // // Get certificates by type
+  // Map<String, List<MinimalCertificateDataModel>> get certificatesByType {
+  //   final Map<String, List<MinimalCertificateDataModel>> result = {};
+  //   for (final cert in certificateData) {
+  //     result.putIfAbsent(cert.certificateType, () => []).add(cert);
+  //   }
+  //   return result;
+  // }
 
   // Add a certificate to the list
   CreateCertificateDataRequest addCertificate(

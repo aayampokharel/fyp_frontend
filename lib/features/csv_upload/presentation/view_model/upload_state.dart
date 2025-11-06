@@ -22,9 +22,15 @@ class UploadPageStartFailureState extends UploadState {
 
 class UploadCsvFileLoadingState extends UploadState {}
 
-class UploadCsvFileSuccessState extends UploadState {}
+class UploadCsvFileSuccessState extends UploadState {
+  String message;
+  UploadCsvFileSuccessState({required this.message});
+}
 
-class UploadCsvFileFailureState extends UploadState {}
+class UploadCsvFileFailureState extends UploadState {
+  String message;
+  UploadCsvFileFailureState({required this.message});
+}
 
 class InstitutionCheckSuccessState extends UploadState {
   InstitutionEntity institutionEntity;

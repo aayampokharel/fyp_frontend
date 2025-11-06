@@ -26,6 +26,22 @@ class FileUploadRepositoryImpl implements FileUploadIrepository {
       List<MinimalCertificateDataModel> minimalCertificateDataModelList =
           certificateDataList.map((element) => element.toModel()).toList();
 
+      // var minimalCertificateDataModelList = [
+      //   MinimalCertificateDataModel(
+      //     degree: "Bachelors",
+      //     college: "St. Xavier's College",
+      //     studentId: "123",
+      //     studentName: "aayam pokharel",
+      //     institutionId: "123",
+      //     institutionFacultyId: "123",
+      //     certificateType: "COMPLETION",
+      //     issueDate: DateTime.now(),
+      //     enrollmentDate: DateTime.now(),
+      //     completionDate: DateTime.now(),
+      //     leavingDate: DateTime.now(),
+      //   ),
+      // ];
+
       final response = await _certificateListRemoteDataSource
           .uploadCertificateListEntity(
             minimalCertificateDataModelList,

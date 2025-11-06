@@ -21,7 +21,7 @@ class InstitutionIsActiveRemoteDataSource {
         ApiEndpoints.baseUrl + ApiEndpoints.authVerifyInstitution,
         queryParameters: {ApiEndpoints.institutionIDQuery: instituitonID},
       );
-      AppLogger.error(response.data.toString());
+      AppLogger.info(response.data.toString());
       if (response.statusCode != 200) {
         AppLogger.error(response.data.toString());
         throw Errorz(
@@ -29,7 +29,7 @@ class InstitutionIsActiveRemoteDataSource {
           statusCode: response.data['code'] ?? response.statusCode,
         );
       } else {
-        AppLogger.error(response.data['data'].toString());
+        AppLogger.info(response.data['data'].toString());
         return InstitutionEntity.fromJSON(
           response.data['data'] as Map<String, dynamic>,
         );

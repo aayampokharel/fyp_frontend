@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dashboard/core/constants/api_endpoints.dart';
+import 'package:flutter_dashboard/core/errors/app_logger.dart';
 import 'package:flutter_dashboard/core/errors/errorz.dart';
 import 'package:flutter_dashboard/core/wrappers/dio_client.dart';
 import 'package:flutter_dashboard/features/csv_upload/data/models/create_certificate_data_request.dart';
@@ -19,8 +20,9 @@ class CertificateListRemoteDataSource {
     String categoryName,
   ) async {
     try {
+      AppLogger.info("to be sent");
       var response = await _dioClient.dio.post(
-        ApiEndpoints.baseUrl + ApiEndpoints.certificatesupload,
+        ApiEndpoints.certificatesupload,
         data: CreateCertificateDataRequest(
           institutionId: instituitonID,
           institutionFacultyId: institutionFacultyID,

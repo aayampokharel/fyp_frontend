@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_dashboard/features/authentication/domain/entity/faculty_entity.dart';
 
 abstract class UploadEvent {}
@@ -18,4 +19,17 @@ class InstitutionCheckEvent extends UploadEvent {
   InstitutionCheckEvent({required this.institutionID});
 }
 
-class UploadCsvFileEvent extends UploadEvent {}
+class UploadCsvFileEvent extends UploadEvent {
+  String institutionID;
+  String categoryName;
+  PlatformFile? platformFile;
+  String? facultyPublicKey;
+  String? pdfCategoryID;
+  String? institutionFacultyID;
+
+  UploadCsvFileEvent({
+    required this.institutionID,
+    required this.categoryName,
+    this.platformFile,
+  });
+}
