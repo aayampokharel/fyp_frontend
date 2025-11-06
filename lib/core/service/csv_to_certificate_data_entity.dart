@@ -23,7 +23,8 @@ Future<List<CertificateDataEntity>> parseCsvFileInBackground(
 }
 
 List<CertificateDataEntity> _parseCsvFile(Map<String, dynamic> params) {
-  final content = params['content'] as String;
+  final rawContent = params['content'] as String;
+  final content = rawContent.replaceAll('\r\n', '\n');
   final institutionId = params['institutionId'] as String;
   final institutionFacultyId = params['institutionFacultyId'] as String;
   final pdfCategoryId = params['pdfCategoryId'] as String;

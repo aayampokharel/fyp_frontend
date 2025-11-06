@@ -223,6 +223,26 @@ class _InstitutionCsvUploadPageState extends State<InstitutionCsvUploadPage> {
                   width: double.infinity,
                   child: OutlinedButton.icon(
                     onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CategorySelectionPage(
+                            institutionFacultyID:
+                                selectedFaculty?.institutionFacultyID ?? '',
+                            institutionID: institutionID,
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.settings),
+                    label: const Text('Category'),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () {
                       // Settings functionality
                     },
                     icon: const Icon(Icons.settings),

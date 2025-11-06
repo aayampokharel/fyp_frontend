@@ -21,6 +21,8 @@ class CertificateListRemoteDataSource {
   ) async {
     try {
       AppLogger.info("to be sent");
+      AppLogger.info(certificateDataList.toString());
+      AppLogger.info("======");
       var response = await _dioClient.dio.post(
         ApiEndpoints.certificatesupload,
         data: CreateCertificateDataRequest(
