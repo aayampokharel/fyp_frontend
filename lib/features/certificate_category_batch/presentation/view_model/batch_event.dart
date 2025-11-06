@@ -33,3 +33,9 @@ class DownloadIndividualPDFButtonPressedEvent extends BatchEvent {
     required this.categoryID,
   });
 }
+
+class PreviewCertificateHTMLButtonPressedEvent extends BatchEvent {
+  String id;
+
+  PreviewCertificateHTMLButtonPressedEvent({required this.id});
+}

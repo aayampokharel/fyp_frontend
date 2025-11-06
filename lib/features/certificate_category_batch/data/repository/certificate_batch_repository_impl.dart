@@ -53,4 +53,18 @@ class CertificateBatchRepositoryImpl implements CertificateBatchIrepository {
       return Left(Errorz(message: e.toString(), statusCode: e.hashCode));
     }
   }
+
+  @override
+  DefaultFutureEitherType<void> getCertificateHTMLPreview(String id) async {
+    try {
+      AppLogger.debug("id: $id");
+      final response = await _certificateBatchRemoteDataSource
+          .getCertificateHTMLPreview(id);
+      return Right(response);
+    } on ServerError catch (e) {
+      return Left(Errorz(message: e.message, statusCode: e.statusCode));
+    } catch (e) {
+      return Left(Errorz(message: e.toString(), statusCode: e.hashCode));
+    }
+  }
 }

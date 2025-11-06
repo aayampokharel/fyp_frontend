@@ -25,6 +25,7 @@ import 'package:flutter_dashboard/features/certificate_category_batch/domain/rep
 import 'package:flutter_dashboard/features/certificate_category_batch/domain/repository/certificate_batch_iresponsibility.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/category_batch_usecase.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/certificate_batch_usecase.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/certificate_html_preview_usecase.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/individual_certificate_download_usecase.dart';
 import 'package:flutter_dashboard/features/csv_upload/data/data_source/category_creation_remote_data_source.dart';
 import 'package:flutter_dashboard/features/csv_upload/data/data_source/certificate_list_remote_data_source.dart';
@@ -159,6 +160,9 @@ Future _authDependencies() async {
     () => IndividualCertificateDownloadPDFUseCase(
       getIt<CertificateBatchIrepository>(),
     ),
+  );
+  getIt.registerLazySingleton<CertificateHTMLPreviewUseCase>(
+    () => CertificateHTMLPreviewUseCase(getIt<CertificateBatchIrepository>()),
   );
   getIt.registerLazySingleton<CertificateBatchUseCase>(
     () => CertificateBatchUseCase(getIt<CertificateBatchIrepository>()),

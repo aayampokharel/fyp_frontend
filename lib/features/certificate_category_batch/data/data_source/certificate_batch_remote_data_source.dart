@@ -76,4 +76,22 @@ class CertificateBatchRemoteDataSource {
       throw Errorz(message: e.toString(), statusCode: e.hashCode);
     }
   }
+
+  Future<void> getCertificateHTMLPreview(String id) async {
+    try {
+      final url = Uri.parse(
+        ApiEndpoints.baseUrl + ApiEndpoints.certificatePreview,
+      ).replace(queryParameters: {ApiEndpoints.idQuery: id}).toString();
+
+      print('Generated URL: $url');
+
+      if (await canLaunchUrl(Uri.parse(url))) {
+        await launchUrl(Uri.parse(url), webOnlyWindowName: '_blank');
+      } else {
+        throw Errorz(message: 'Could not launch $url', statusCode: 404);
+      }
+    } catch (e) {
+      throw Errorz(message: e.toString(), statusCode: e.hashCode);
+    }
+  }
 }

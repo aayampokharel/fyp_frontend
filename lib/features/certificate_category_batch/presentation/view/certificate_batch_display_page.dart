@@ -44,7 +44,11 @@ class _CertificateSelectionPageState
   List<CertificateDataEntity> categories = [];
 
   void _onViewPressed(CertificateDataEntity certificate) {
-    print('View pressed for: ${certificate.studentName}');
+    context.read<BatchBloc>().add(
+      PreviewCertificateHTMLButtonPressedEvent(
+        id: "123",
+      ), //! to be changed later .
+    );
   }
 
   void _onDownloadPressed(CertificateDataEntity certificate) {
@@ -161,7 +165,6 @@ class _CertificateSelectionPageState
 
                           const SizedBox(height: 16),
 
-                          // Buttons row - aligned to bottom right
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [

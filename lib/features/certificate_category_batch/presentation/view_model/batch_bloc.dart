@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/category_batch_usecase.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/certificate_batch_usecase.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/certificate_html_preview_usecase.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/individual_certificate_download_usecase.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/presentation/view_model/batch_event.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/presentation/view_model/batch_state.dart';
@@ -10,11 +11,13 @@ class BatchBloc extends Bloc<BatchEvent, BatchState> {
   CertificateBatchUseCase certificateBatchUseCase;
   IndividualCertificateDownloadPDFUseCase
   individualCertificateDownloadPDFUseCase;
+  CertificateHTMLPreviewUseCase certificateHTMLPreviewUseCase;
 
   BatchBloc({
     required this.categoryBatchUseCase,
     required this.certificateBatchUseCase,
     required this.individualCertificateDownloadPDFUseCase,
+    required this.certificateHTMLPreviewUseCase,
   }) : super(BatchInitialState()) {
     on<GetCategoryBatchListEvent>((event, emit) async {
       try {
@@ -66,6 +69,14 @@ class BatchBloc extends Bloc<BatchEvent, BatchState> {
         // (left) => emit(CertificateBatchSelectFailureState(left.message)),
         // (right) => emit(CertificateBatchSelectSuccessState(right)),
         // );
+      } catch (e) {
+        emit(CertificateBatchSelectFailureState(e.toString()));
+      }
+    });
+    on<PreviewCertificateHTMLButtonPressedEvent>((event, emit) async {
+      try {
+        await certificateHTMLPreviewUseCase.call(event.id);
+        //   //! throw error notification only no success thing .
       } catch (e) {
         emit(CertificateBatchSelectFailureState(e.toString()));
       }
