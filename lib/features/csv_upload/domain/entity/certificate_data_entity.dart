@@ -6,6 +6,7 @@ class CertificateDataEntity {
   // === ALWAYS REQUIRED FIELDS ===
   final String certificateId;
   final int blockNumber;
+  final String PDFFileID;
   final int position; // 1-4
   final String studentId;
   final String studentName;
@@ -56,6 +57,7 @@ class CertificateDataEntity {
     required this.createdAt,
 
     // Conditionally required - use empty strings as defaults
+    this.PDFFileID = "",
     this.degree = "",
     this.college = "",
     this.major = "",
@@ -80,7 +82,7 @@ class CertificateDataEntity {
 
   factory CertificateDataEntity.fromJSON(Map<String, dynamic> json) {
     return CertificateDataEntity(
-      // Required fields
+      PDFFileID: json['pdf_file_id'] as String,
       certificateId: json['certificate_id'] as String,
       blockNumber: json['block_number'] as int,
       position: json['position'] as int,
@@ -128,6 +130,7 @@ class CertificateDataEntity {
     final Map<String, dynamic> data = <String, dynamic>{};
 
     // Required fields
+    data['pdf_file_id'] = PDFFileID;
     data['certificate_id'] = certificateId;
     data['block_number'] = blockNumber;
     data['position'] = position;
@@ -179,6 +182,7 @@ class CertificateDataEntity {
   String toString() {
     return 'CertificateDataEntity(\n'
         '  certificateId: $certificateId,\n'
+        '  PDFFileID: $PDFFileID,\n'
         '  blockNumber: $blockNumber,\n'
         '  position: $position,\n'
         '  studentId: $studentId,\n'

@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter_dashboard/core/errors/app_logger.dart';
 import 'package:flutter_dashboard/core/errors/errorz.dart';
 import 'package:flutter_dashboard/core/use_case.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/data/data_source/category_batch_remote_data_source.dart';
@@ -25,6 +26,26 @@ class CertificateBatchRepositoryImpl implements CertificateBatchIrepository {
     try {
       final response = await _certificateBatchRemoteDataSource
           .getCertificateBatch(institutionID, institutionFacultyID, categoryID);
+      return Right(response);
+    } on ServerError catch (e) {
+      return Left(Errorz(message: e.message, statusCode: e.statusCode));
+    } catch (e) {
+      return Left(Errorz(message: e.toString(), statusCode: e.hashCode));
+    }
+  }
+
+  @override
+  DefaultFutureEitherType<void> getIndividualCertificatePDF(
+    String categoryName,
+    String fileID,
+    String categoryID,
+  ) async {
+    try {
+      AppLogger.debug(
+        "categoryName: $categoryName, fileID: $fileID, categoryID: $categoryID",
+      );
+      final response = await _certificateBatchRemoteDataSource
+          .downloadIndividualCertificatePDF(categoryName, categoryID, fileID);
       return Right(response);
     } on ServerError catch (e) {
       return Left(Errorz(message: e.message, statusCode: e.statusCode));

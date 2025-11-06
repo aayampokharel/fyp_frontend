@@ -20,8 +20,13 @@ class ApiEndpoints {
   static const String getCertificates = '/institution/certificates';
   static const String postcategory = '/institution/category';
   static const String institutionIDQuery = "institution_id";
+  static const String isDownloadAllQuery = "is_download_all";
   static const String institutionFacultyIDQuery = "institution_faculty_id";
-  static const String institutionCategoryIDQuery = "category_id";
+  static const String categoryIDQuery = "category_id";
+  static const String fileIDQuery = "file_id";
+  static const String categoryNameQuery = "category_name";
+
   //========================fileuploadendpoints==============================
   static const String institutionStatus = '/institution/status';
+  static const String certificateDownload = '/certificate/download';
 }

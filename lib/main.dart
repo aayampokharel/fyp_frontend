@@ -12,6 +12,7 @@ import 'package:flutter_dashboard/features/authentication/presentation/view/page
 import 'package:flutter_dashboard/features/authentication/presentation/view_model/authentication_bloc.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/category_batch_usecase.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/certificate_batch_usecase.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/individual_certificate_download_usecase.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/presentation/view_model/batch_bloc.dart';
 import 'package:flutter_dashboard/features/csv_upload/domain/usecase/category_creation_usecase.dart';
 import 'package:flutter_dashboard/features/csv_upload/domain/usecase/certificate_upload_usecase.dart';
@@ -45,6 +46,8 @@ class MyApp extends StatelessWidget {
           create: (context) => BatchBloc(
             certificateBatchUseCase: getIt<CertificateBatchUseCase>(),
             categoryBatchUseCase: getIt<CategoryBatchUseCase>(),
+            individualCertificateDownloadPDFUseCase:
+                getIt<IndividualCertificateDownloadPDFUseCase>(),
           ),
         ),
         BlocProvider(

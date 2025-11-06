@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dashboard/core/constants/api_endpoints.dart';
+import 'package:flutter_dashboard/core/errors/app_logger.dart';
 import 'package:flutter_dashboard/core/errors/errorz.dart';
 import 'package:flutter_dashboard/core/wrappers/dio_client.dart';
 import 'package:flutter_dashboard/features/csv_upload/domain/entity/certificate_data_entity.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CertificateBatchRemoteDataSource {
   final DioClient _dioClient;
@@ -20,7 +22,7 @@ class CertificateBatchRemoteDataSource {
         queryParameters: {
           ApiEndpoints.institutionIDQuery: institutionID,
           ApiEndpoints.institutionFacultyIDQuery: institutionFacultyID,
-          ApiEndpoints.institutionCategoryIDQuery: categoryID,
+          ApiEndpoints.categoryIDQuery: categoryID,
         },
       );
       if (response.statusCode == 200) {
@@ -41,6 +43,35 @@ class CertificateBatchRemoteDataSource {
       }
     } on DioException catch (e) {
       throw ServerError(extraMsg: e.message);
+    } catch (e) {
+      throw Errorz(message: e.toString(), statusCode: e.hashCode);
+    }
+  }
+
+  Future<void> downloadIndividualCertificatePDF(
+    String categoryName,
+    String categoryID,
+    String fileID,
+  ) async {
+    try {
+      final url =
+          Uri.parse(ApiEndpoints.baseUrl + ApiEndpoints.certificateDownload)
+              .replace(
+                queryParameters: {
+                  ApiEndpoints.categoryIDQuery: categoryID,
+                  ApiEndpoints.categoryNameQuery: categoryName,
+                  ApiEndpoints.fileIDQuery: fileID,
+                  ApiEndpoints.isDownloadAllQuery: false.toString(),
+                },
+              )
+              .toString();
+
+      print('Generated URL: $url');
+      if (await canLaunchUrl(Uri.parse(url))) {
+        await launchUrl(Uri.parse(url), webOnlyWindowName: '_blank');
+      } else {
+        throw Errorz(message: 'Could not launch $url', statusCode: 404);
+      }
     } catch (e) {
       throw Errorz(message: e.toString(), statusCode: e.hashCode);
     }

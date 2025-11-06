@@ -70,6 +70,7 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
                         context,
                         MaterialPageRoute(
                           builder: (_) => CertificateBatchDisplayPage(
+                            categoryName: item.categoryName,
                             institutionID: widget.institutionID,
                             institutionFacultyID: widget.institutionFacultyID,
                             categoryID: item.categoryID,
