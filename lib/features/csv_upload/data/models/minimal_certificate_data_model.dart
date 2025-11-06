@@ -14,7 +14,7 @@ class MinimalCertificateDataModel {
 
   final String? major;
   final String? gpa;
-  final double? percentage;
+  final String? percentage;
   final String? division;
   final String? universityName;
 
@@ -38,7 +38,7 @@ class MinimalCertificateDataModel {
 
     this.major = "",
     this.gpa = "",
-    this.percentage,
+    this.percentage = "",
     this.division = "",
     this.universityName = "",
 
@@ -64,9 +64,7 @@ class MinimalCertificateDataModel {
 
       major: json['major'] as String? ?? "",
       gpa: json['gpa'] as String? ?? "",
-      percentage: json['percentage'] != null
-          ? (json['percentage'] as num).toDouble()
-          : null,
+      percentage: json['percentage'] as String? ?? "",
       division: json['division'] as String? ?? "",
       universityName: json['university_name'] as String? ?? "",
       reasonForLeaving: json['reason_for_leaving'] as String?,

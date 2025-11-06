@@ -239,7 +239,7 @@ class CertificateDataEntity {
       college: college,
       major: major.isNotEmpty ? major : null,
       gpa: gpa.isNotEmpty ? gpa : null,
-      percentage: percentage,
+      percentage: percentage.toString(),
       division: division.isNotEmpty ? division : null,
       universityName: universityName.isNotEmpty ? universityName : null,
       reasonForLeaving: reasonForLeaving,

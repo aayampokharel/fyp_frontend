@@ -37,8 +37,6 @@ List<CertificateDataEntity> _parseCsvFile(Map<String, dynamic> params) {
       .map((e) => e.toString().trim().toLowerCase())
       .toList();
   final dataRows = rows.skip(1);
-
-  // Create column index mapping
   final columnMap = _createColumnMap(headerRow);
 
   List<CertificateDataEntity> certificates = [];
@@ -123,9 +121,11 @@ CertificateDataEntity _parseRowWithColumnMapping(
 
   double? getDoubleValue(String columnName) {
     final index = columnMap[columnName];
-    return index != null && index < row.length
-        ? double.tryParse(row[index].toString())
-        : null;
+    if (index != null && index < row.length) {
+      final value = row[index].toString().trim(); // trim spaces
+      return value.isNotEmpty ? double.tryParse(value) : null;
+    }
+    return null;
   }
 
   DateTime getDateValue(String columnName) {
