@@ -23,13 +23,18 @@ class UploadCsvFileEvent extends UploadEvent {
   String institutionID;
   String categoryName;
   PlatformFile? platformFile;
-  String? facultyPublicKey;
-  String? pdfCategoryID;
-  String? institutionFacultyID;
+  String facultyPublicKey;
+  String institutionFacultyName;
+  // String pdfCategoryID;
+  String institutionFacultyID;
 
   UploadCsvFileEvent({
     required this.institutionID,
     required this.categoryName,
+    required this.facultyPublicKey,
+    required this.institutionFacultyName,
+    // required this.pdfCategoryID,
+    required this.institutionFacultyID,
     this.platformFile,
   });
 }

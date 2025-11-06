@@ -25,12 +25,16 @@ import 'package:flutter_dashboard/features/certificate_category_batch/domain/rep
 import 'package:flutter_dashboard/features/certificate_category_batch/domain/repository/certificate_batch_iresponsibility.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/category_batch_usecase.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/certificate_batch_usecase.dart';
+import 'package:flutter_dashboard/features/csv_upload/data/data_source/category_creation_remote_data_source.dart';
 import 'package:flutter_dashboard/features/csv_upload/data/data_source/certificate_list_remote_data_source.dart';
 import 'package:flutter_dashboard/features/csv_upload/data/data_source/institution_is_active_data_source.dart';
+import 'package:flutter_dashboard/features/csv_upload/data/repository/category_creation_repository_impl.dart';
 import 'package:flutter_dashboard/features/csv_upload/data/repository/file_upload_repository_impl.dart';
 import 'package:flutter_dashboard/features/csv_upload/data/repository/institution_is_active_impl.dart';
+import 'package:flutter_dashboard/features/csv_upload/domain/repository/category_creation_irepository.dart';
 import 'package:flutter_dashboard/features/csv_upload/domain/repository/file_upload_irepository.dart';
 import 'package:flutter_dashboard/features/csv_upload/domain/repository/institution_is_active_irepository.dart';
+import 'package:flutter_dashboard/features/csv_upload/domain/usecase/category_creation_usecase.dart';
 import 'package:flutter_dashboard/features/csv_upload/domain/usecase/certificate_upload_usecase.dart';
 import 'package:flutter_dashboard/features/csv_upload/domain/usecase/check_institution_is_active_usecase.dart';
 import 'package:flutter_dashboard/features/sse/data/data_source/sse_data_source.dart';
@@ -182,5 +186,20 @@ Future _authDependencies() async {
     () => CheckInstitutionIsActiveUsecase(
       getIt<InstitutionIsActiveIrepository>(),
     ),
+  );
+  //===============================category-registration==x
+  getIt.registerLazySingleton<CategoryCreationRemoteDataSource>(
+    () => CategoryCreationRemoteDataSource(getIt<DioClient>()),
+  );
+  getIt.registerLazySingleton<CategoryCreationRepositoryImpl>(
+    () => CategoryCreationRepositoryImpl(
+      getIt<CategoryCreationRemoteDataSource>(),
+    ),
+  );
+  getIt.registerLazySingleton<CategoryCreationIRepository>(
+    () => getIt<CategoryCreationRepositoryImpl>(),
+  );
+  getIt.registerLazySingleton<CategoryCreationUseCase>(
+    () => CategoryCreationUseCase(getIt<CategoryCreationIRepository>()),
   );
 }

@@ -4,7 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dashboard/core/errors/app_logger.dart';
 import 'package:flutter_dashboard/core/service/csv_to_certificate_data_entity.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/faculty_usecase.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/domain/entity/certificate_category_entity.dart';
 import 'package:flutter_dashboard/features/csv_upload/domain/entity/certificate_data_entity.dart';
+import 'package:flutter_dashboard/features/csv_upload/domain/usecase/category_creation_usecase.dart';
 import 'package:flutter_dashboard/features/csv_upload/domain/usecase/certificate_upload_usecase.dart';
 import 'package:flutter_dashboard/features/csv_upload/domain/usecase/check_institution_is_active_usecase.dart';
 import 'package:flutter_dashboard/features/csv_upload/presentation/view_model/upload_event.dart';
@@ -13,11 +15,14 @@ import 'package:flutter_dashboard/features/csv_upload/presentation/view_model/up
 class UploadBloc extends Bloc<UploadEvent, UploadState> {
   final CertificateUploadUseCase certificateUploadUseCase;
   final FacultyUseCase facultyUseCase;
+
+  final CategoryCreationUseCase categoryCreationUseCase;
   final CheckInstitutionIsActiveUsecase checkInstitutionIsActiveUsecase;
   UploadBloc({
     required this.certificateUploadUseCase,
     required this.facultyUseCase,
     required this.checkInstitutionIsActiveUsecase,
+    required this.categoryCreationUseCase,
   }) : super(UploadPageInitialState()) {
     on<UploadPageStartedEvent>((event, emit) async {
       emit(UploadPageLoadingState());
@@ -40,45 +45,68 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
       );
       institutionEntity.fold(
         (left) => emit(InstitutionCheckFailureState(message: left.message)),
-        (right) => emit(InstitutionCheckSuccessState(institutionEntity: right)),
+        (right) => emit(
+          InstitutionCheckSuccessState(institutionWithFacultiesEntity: right),
+        ),
       );
     });
 
     on<UploadCsvFileEvent>((event, emit) async {
-      emit(UploadCsvFileLoadingState());
-      AppLogger.info("Started CSV upload process");
-
       try {
+        AppLogger.info("Started CSV upload process");
+
         if (event.platformFile == null) {
-          throw Exception("No file selected");
+          emit(UploadCsvFileFailureState(message: "No file selected"));
+          return;
         }
 
-        // Get CSV content from PlatformFile
+        final categoryResult = await categoryCreationUseCase.call(
+          CertificateCategoryCreationUseCaseParams(
+            facultyName: event.institutionFacultyName,
+            preferredCategoryName: event.categoryName,
+            institutionId: event.institutionID,
+            institutionFacultyId: event.institutionFacultyID,
+          ),
+        );
+
+        if (categoryResult.isLeft()) {
+          emit(
+            UploadCsvFileFailureState(
+              message: categoryResult.fold((l) => l.message, (r) => ""),
+            ),
+          );
+          return;
+        }
+
+        final right = categoryResult.getRight().toNullable()!;
+        final institutionFacultyID = right.institutionFacultyID;
+        final pdfCategoryID = right.categoryID;
+
         final csvContent = await getCsvContent(event.platformFile!);
         AppLogger.info("CSV file loaded: ${event.platformFile!.name}");
 
         final certificates = await parseCsvFileInBackground(
           csvContent,
           event.institutionID,
-          "144c483c-5a39-49", // institutionFacultyId
-          "451c55a1-3673-4b", // pdfCategoryId
-          event.facultyPublicKey ?? "",
+          institutionFacultyID,
+          pdfCategoryID,
+          event.facultyPublicKey,
         );
-
         AppLogger.info("Parsed ${certificates.length} certificates");
 
-        final res = await certificateUploadUseCase.call(
+        // Upload to server
+        final uploadResult = await certificateUploadUseCase.call(
           CertificateUseCaseParams(
             certificateDataList: certificates,
             instituitonID: event.institutionID,
-            institutionFacultyID: "144c483c-5a39-49",
-            institutionFacultyName: "csit",
-            categoryID: "451c55a1-3673-4b",
+            institutionFacultyID: institutionFacultyID,
+            institutionFacultyName: event.institutionFacultyName,
+            categoryID: pdfCategoryID,
             categoryName: event.categoryName,
           ),
         );
 
-        res.fold(
+        uploadResult.fold(
           (left) => emit(UploadCsvFileFailureState(message: left.message)),
           (right) => emit(UploadCsvFileSuccessState(message: right)),
         );

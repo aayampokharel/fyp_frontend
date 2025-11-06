@@ -3,7 +3,9 @@ import 'package:flutter_dashboard/core/constants/api_endpoints.dart';
 import 'package:flutter_dashboard/core/errors/app_logger.dart';
 import 'package:flutter_dashboard/core/errors/errorz.dart';
 import 'package:flutter_dashboard/core/wrappers/dio_client.dart';
+import 'package:flutter_dashboard/features/authentication/domain/entity/faculty_entity.dart';
 import 'package:flutter_dashboard/features/authentication/domain/entity/institution_entity.dart';
+import 'package:flutter_dashboard/features/authentication/domain/entity/institution_faculty_entity.dart';
 import 'package:flutter_dashboard/features/csv_upload/data/models/create_certificate_data_request.dart';
 import 'package:flutter_dashboard/features/csv_upload/data/models/minimal_certificate_data_model.dart';
 import 'package:flutter_dashboard/features/csv_upload/domain/entity/certificate_data_entity.dart';
@@ -13,7 +15,7 @@ class InstitutionIsActiveRemoteDataSource {
   final DioClient _dioClient;
   InstitutionIsActiveRemoteDataSource(this._dioClient);
 
-  Future<InstitutionEntity> CheckInstitutionIsActive(
+  Future<InstitutionWithFacultiesEntity> CheckInstitutionIsActive(
     String instituitonID,
   ) async {
     try {
@@ -30,8 +32,15 @@ class InstitutionIsActiveRemoteDataSource {
         );
       } else {
         AppLogger.info(response.data['data'].toString());
-        return InstitutionEntity.fromJSON(
-          response.data['data'] as Map<String, dynamic>,
+        final data = response.data['data'] as Map<String, dynamic>;
+        final institution = InstitutionEntity.fromJSON(data);
+        final facultiesList = (data['faculties_list'] as List)
+            .map((facultyJson) => FacultyEntity.fromJSON(facultyJson))
+            .toList();
+
+        return InstitutionWithFacultiesEntity(
+          institution: institution,
+          faculties: facultiesList,
         );
       }
     } on DioException catch (e) {

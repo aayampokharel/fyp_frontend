@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dashboard/core/errors/app_logger.dart';
+import 'package:flutter_dashboard/features/authentication/domain/entity/faculty_entity.dart';
 import 'package:flutter_dashboard/features/authentication/domain/entity/institution_entity.dart';
 import 'package:flutter_dashboard/features/csv_upload/presentation/view_model/upload_bloc.dart';
 import 'package:flutter_dashboard/features/csv_upload/presentation/view_model/upload_event.dart';
@@ -23,7 +24,10 @@ class InstitutionCsvUploadPage extends StatefulWidget {
 
 class _InstitutionCsvUploadPageState extends State<InstitutionCsvUploadPage> {
   String? fileName;
+
   PlatformFile? pickedFile;
+  List<FacultyEntity> facultyList = [];
+  FacultyEntity? selectedFaculty; // Track selected faculty
   final TextEditingController _categoryController = TextEditingController();
 
   @override
@@ -35,6 +39,7 @@ class _InstitutionCsvUploadPageState extends State<InstitutionCsvUploadPage> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -42,27 +47,206 @@ class _InstitutionCsvUploadPageState extends State<InstitutionCsvUploadPage> {
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
       ),
-      drawer: Drawer(
-        child: BlocBuilder<UploadBloc, UploadState>(
-          builder: (context, state) {
-            if (state is UploadPageStartSuccessState) {
-              return _buildLoadedDrawer(context, state);
-            } else {
-              return _buildLoadingDrawer();
-            }
-          },
-        ),
+      body: Row(
+        children: [
+          // Sidebar - Always visible
+          BlocBuilder<UploadBloc, UploadState>(
+            builder: (context, state) {
+              if (state is InstitutionCheckSuccessState) {
+                facultyList = state.institutionWithFacultiesEntity.faculties;
+                // Set first faculty as default selection
+                if (facultyList.isNotEmpty && selectedFaculty == null) {
+                  selectedFaculty = facultyList.first;
+                }
+                return _buildFacultiesSidebar(widget.institutionID);
+              } else {
+                return _buildLoadingSidebar();
+              }
+            },
+          ),
+
+          // Main content area
+          Expanded(
+            child: BlocBuilder<UploadBloc, UploadState>(
+              builder: (context, state) {
+                if (state is InstitutionCheckFailureState) {
+                  return Center(child: Text(state.message));
+                } else if (state is InstitutionCheckSuccessState) {
+                  facultyList = state.institutionWithFacultiesEntity.faculties;
+                  // Set first faculty as default selection if not already set
+                  if (facultyList.isNotEmpty && selectedFaculty == null) {
+                    selectedFaculty = facultyList.first;
+                  }
+                  return _buildUploadPageUI(
+                    context,
+                    state.institutionWithFacultiesEntity.institution,
+                  );
+                } else {
+                  return const Center(child: CircularProgressIndicator());
+                }
+              },
+            ),
+          ),
+        ],
       ),
-      body: BlocBuilder<UploadBloc, UploadState>(
-        builder: (context, state) {
-          if (state is InstitutionCheckFailureState) {
-            return Center(child: Text(state.message));
-          } else if (state is InstitutionCheckSuccessState) {
-            return _buildUploadPageUI(context, state.institutionEntity);
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        },
+    );
+  }
+
+  // Sidebar with faculties list
+  Widget _buildFacultiesSidebar(String institutionID) {
+    return Container(
+      width: 280,
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        border: Border(right: BorderSide(color: Colors.grey[300]!)),
+      ),
+      child: Column(
+        children: [
+          // User info section
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.blue,
+              border: Border(bottom: BorderSide(color: Colors.blue.shade700)),
+            ),
+            child: Column(
+              children: [
+                CircleAvatar(
+                  backgroundColor: Colors.white,
+                  radius: 30,
+                  child: Icon(Icons.person, size: 40, color: Colors.blue),
+                ),
+                const SizedBox(height: 10),
+              ],
+            ),
+          ),
+
+          // Faculties Section
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "SELECT FACULTY",
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[600],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                ...facultyList.map((faculty) {
+                  final isSelected =
+                      selectedFaculty?.institutionFacultyID ==
+                      faculty.institutionFacultyID;
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    color: isSelected
+                        ? Colors.blue.withOpacity(0.1)
+                        : Colors.white,
+                    elevation: isSelected ? 2 : 0,
+                    child: ListTile(
+                      dense: true,
+                      leading: Icon(
+                        Icons.school,
+                        color: isSelected ? Colors.blue : Colors.grey,
+                      ),
+                      title: Text(
+                        faculty.facultyName.isNotEmpty
+                            ? faculty.facultyName
+                            : "Unnamed Faculty",
+                        style: TextStyle(
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                          color: isSelected ? Colors.blue : Colors.black87,
+                        ),
+                      ),
+                      subtitle: faculty.universityAffiliation.isNotEmpty
+                          ? Text(
+                              faculty.universityAffiliation,
+                              style: TextStyle(fontSize: 11),
+                            )
+                          : null,
+                      trailing: isSelected
+                          ? Icon(
+                              Icons.check_circle,
+                              color: Colors.blue,
+                              size: 16,
+                            )
+                          : null,
+                      onTap: () {
+                        setState(() {
+                          selectedFaculty = faculty;
+                        });
+                      },
+                    ),
+                  );
+                }),
+              ],
+            ),
+          ),
+
+          const Spacer(),
+
+          // Navigation Section
+          Container(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                // SizedBox(
+                //   width: double.infinity,
+                //   child: ElevatedButton.icon(
+                //     onPressed: () {
+                //       Navigator.push(
+                //         context,
+                //         MaterialPageRoute(
+                //           builder: (_) => CategorySelectionPage(
+                //             institutionFacultyID:
+                //                 selectedFaculty?.institutionFacultyID ?? '',
+                //             institutionID: institutionID,
+                //           ),
+                //         ),
+                //       );
+                //     },
+                //     icon: const Icon(Icons.list),
+                //     label: const Text('View Categories'),
+                //     style: ElevatedButton.styleFrom(
+                //       backgroundColor: Colors.green,
+                //       foregroundColor: Colors.white,
+                //     ),
+                //   ),
+                // ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      // Settings functionality
+                    },
+                    icon: const Icon(Icons.settings),
+                    label: const Text('Settings'),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      // Logout functionality
+                    },
+                    icon: const Icon(Icons.logout),
+                    label: const Text('Logout'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.red,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -79,6 +263,50 @@ class _InstitutionCsvUploadPageState extends State<InstitutionCsvUploadPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Selected Faculty Info
+            if (selectedFaculty != null) ...[
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      Icon(Icons.school, color: Colors.blue),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Selected Faculty: ${selectedFaculty!.facultyName.isNotEmpty ? selectedFaculty!.facultyName : 'Unnamed Faculty'}",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            if (selectedFaculty!
+                                .universityAffiliation
+                                .isNotEmpty)
+                              Text(
+                                selectedFaculty!.universityAffiliation,
+                                style: TextStyle(color: Colors.grey[600]),
+                              ),
+                          ],
+                        ),
+                      ),
+                      Chip(
+                        label: Text(
+                          selectedFaculty!.universityCollegeCode,
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        backgroundColor: Colors.blue,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
+
             // File Picker (CSV only)
             GestureDetector(
               onTap: () async {
@@ -169,13 +397,22 @@ class _InstitutionCsvUploadPageState extends State<InstitutionCsvUploadPage> {
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed:
-                    pickedFile != null && _categoryController.text.isNotEmpty
+                    pickedFile != null &&
+                        _categoryController.text.isNotEmpty &&
+                        selectedFaculty != null
                     ? () {
                         context.read<UploadBloc>().add(
                           UploadCsvFileEvent(
                             institutionID: widget.institutionID,
                             categoryName: _categoryController.text,
                             platformFile: pickedFile,
+                            facultyPublicKey: selectedFaculty!.facultyPublicKey,
+                            institutionFacultyName:
+                                selectedFaculty!.facultyName == ""
+                                ? institutionEntity.institutionName + " faculty"
+                                : selectedFaculty!.facultyName,
+                            institutionFacultyID:
+                                selectedFaculty!.institutionFacultyID,
                           ),
                         );
                       }
@@ -185,7 +422,9 @@ class _InstitutionCsvUploadPageState extends State<InstitutionCsvUploadPage> {
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 15),
                   backgroundColor:
-                      pickedFile != null && _categoryController.text.isNotEmpty
+                      pickedFile != null &&
+                          _categoryController.text.isNotEmpty &&
+                          selectedFaculty != null
                       ? Colors.blue
                       : Colors.grey,
                 ),
@@ -208,23 +447,71 @@ class _InstitutionCsvUploadPageState extends State<InstitutionCsvUploadPage> {
     }
   }
 
-  // Helper method to show CSV preview
+  // Loading sidebar
+  Widget _buildLoadingSidebar() {
+    return Container(
+      width: 280,
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        border: Border(right: BorderSide(color: Colors.grey[300]!)),
+      ),
+      child: Column(
+        children: [
+          Container(
+            height: 180,
+            color: Colors.blue.shade100,
+            child: const Center(
+              child: CircularProgressIndicator(color: Colors.blue),
+            ),
+          ),
+          ...List.generate(4, (index) {
+            return ListTile(
+              leading: Container(
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              title: Container(
+                height: 15,
+                margin: const EdgeInsets.symmetric(vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  // Keep old sidebar for compatibility (if needed elsewhere)
+  Widget _buildLoadedDrawer(
+    BuildContext context,
+    UploadPageStartSuccessState state,
+  ) {
+    return _buildFacultiesSidebar(widget.institutionID);
+  }
+
+  // Rest of your helper methods remain the same...
   void _showCsvPreview(PlatformFile file) {
     if (file.bytes != null) {
       final content = String.fromCharCodes(file.bytes!);
-      final lines = content.split('\n').take(3); // Show first 3 lines
+      final lines = content.split('\n').take(3);
       AppLogger.info("CSV Preview:\n${lines.join('\n')}");
     }
   }
 
-  // Helper method to format file size
   String _formatFileSize(int bytes) {
     if (bytes < 1024) return '$bytes B';
     if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
     return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
   }
 
-  // CSV Format Help Widget
   Widget _buildCsvFormatHelp() {
     return ExpansionTile(
       title: const Text("CSV Format Requirements"),
@@ -272,7 +559,6 @@ class _InstitutionCsvUploadPageState extends State<InstitutionCsvUploadPage> {
     );
   }
 
-  // Sample CSV Download
   void _downloadSampleCsv() {
     const sampleCsv = '''
 certificate_id,block_number,position,student_id,student_name,certificate_type,degree,college,major,gpa,percentage,division,university_name,issue_date,enrollment_date,completion_date,leaving_date,reason_for_leaving,character_remarks,general_remarks
@@ -280,7 +566,6 @@ CERT_2024_001,12345,1,STU_2020_001,John Doe,COURSE_COMPLETION,Bachelor of Scienc
 CERT_2024_002,12346,2,STU_2021_002,Jane Smith,CHARACTER,,,,,,,,,2024-01-16,2021-07-01,,2024-01-16,Transfer,Good conduct,Transfer certificate
 ''';
 
-    // For web, you can show the CSV content or implement download
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -293,7 +578,6 @@ CERT_2024_002,12346,2,STU_2021_002,Jane Smith,CHARACTER,,,,,,,,,2024-01-16,2021-
           ),
           ElevatedButton(
             onPressed: () {
-              // Implement download logic for web
               _downloadCsvFile(sampleCsv, 'sample_certificate_template.csv');
               Navigator.pop(context);
             },
@@ -304,7 +588,6 @@ CERT_2024_002,12346,2,STU_2021_002,Jane Smith,CHARACTER,,,,,,,,,2024-01-16,2021-
     );
   }
 
-  // Download CSV file for web
   void _downloadCsvFile(String content, String filename) {
     final bytes = utf8.encode(content);
     final blob = html.Blob([bytes]);
@@ -365,90 +648,104 @@ CERT_2024_002,12346,2,STU_2021_002,Jane Smith,CHARACTER,,,,,,,,,2024-01-16,2021-
       ),
     );
   }
-}
 
-Widget _buildLoadedDrawer(
-  BuildContext context,
-  UploadPageStartSuccessState state,
-) {
-  return ListView(
-    padding: EdgeInsets.zero,
-    children: [
-      UserAccountsDrawerHeader(
-        decoration: BoxDecoration(color: Colors.blue),
-        accountName: Text("User Name"),
-        accountEmail: Text("user@email.com"),
-        currentAccountPicture: CircleAvatar(
-          backgroundColor: Colors.white,
-          child: Icon(Icons.person, size: 40, color: Colors.blue),
-        ),
-      ),
-      ListTile(
-        leading: Icon(Icons.list),
-        title: Text('Categories'),
-        onTap: () {
-          Navigator.pop(context);
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => CategorySelectionPage(
-                institutionFacultyID: state.facultyEntity.institutionFacultyID,
-                institutionID: state.facultyEntity.institutionID,
-              ),
-            ),
-          );
-        },
-      ),
-      ListTile(
-        leading: Icon(Icons.settings),
-        title: Text('Settings'),
-        onTap: () {},
-      ),
-      ListTile(
-        leading: Icon(Icons.person),
-        title: Text('Profile'),
-        onTap: () {},
-      ),
-      ListTile(
-        leading: Icon(Icons.logout),
-        title: Text('Logout'),
-        onTap: () {},
-      ),
-    ],
-  );
-}
+  Widget _buildLoadedSidebar(
+    BuildContext context,
+    InstitutionCheckSuccessState state,
+    FacultyEntity? selectedFaculty,
+  ) {
+    final faculties = state.institutionWithFacultiesEntity.faculties;
+    if (faculties.isNotEmpty && selectedFaculty == null) {
+      selectedFaculty = faculties.first;
+    }
 
-Widget _buildLoadingDrawer() {
-  return ListView(
-    padding: EdgeInsets.zero,
-    children: [
-      Container(
-        height: 180,
-        color: Colors.blue.shade100,
-        child: const Center(
-          child: CircularProgressIndicator(color: Colors.blue),
-        ),
-      ),
-      ...List.generate(4, (index) {
-        return ListTile(
-          leading: Container(
-            width: 24,
-            height: 24,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade300,
-              shape: BoxShape.circle,
+    return Container(
+      width: 280,
+      color: Colors.grey[50],
+      child: Column(
+        children: [
+          // Institution Info
+          Container(
+            padding: const EdgeInsets.all(16),
+            color: Colors.blue,
+            child: Column(
+              children: [
+                CircleAvatar(
+                  backgroundColor: Colors.white,
+                  child: Icon(Icons.person, color: Colors.blue),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  state
+                      .institutionWithFacultiesEntity
+                      .institution
+                      .institutionName,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
           ),
-          title: Container(
-            height: 15,
-            margin: const EdgeInsets.symmetric(vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade300,
-              borderRadius: BorderRadius.circular(4),
+
+          // Faculties List
+          Expanded(
+            child: ListView.builder(
+              itemCount: faculties.length,
+              itemBuilder: (context, index) {
+                final faculty = faculties[index];
+                final isSelected =
+                    selectedFaculty?.institutionFacultyID ==
+                    faculty.institutionFacultyID;
+
+                return ListTile(
+                  leading: Icon(
+                    Icons.school,
+                    color: isSelected ? Colors.blue : Colors.grey,
+                  ),
+                  title: Text(
+                    faculty.facultyName.isEmpty
+                        ? "Unnamed Faculty"
+                        : faculty.facultyName,
+                  ),
+                  trailing: isSelected
+                      ? Icon(Icons.check, color: Colors.blue)
+                      : null,
+                  tileColor: isSelected ? Colors.blue.withOpacity(0.1) : null,
+                  onTap: () => setState(() => selectedFaculty = faculty),
+                );
+              },
             ),
           ),
-        );
-      }),
-    ],
-  );
+
+          // Actions
+          Container(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                ElevatedButton(
+                  onPressed: selectedFaculty != null
+                      ? () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => CategorySelectionPage(
+                                institutionFacultyID:
+                                    selectedFaculty!.institutionFacultyID,
+                                institutionID: widget.institutionID,
+                              ),
+                            ),
+                          );
+                        }
+                      : null,
+                  child: const Text('View Categories'),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

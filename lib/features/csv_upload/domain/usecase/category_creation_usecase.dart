@@ -1,22 +1,41 @@
-// import 'package:flutter_dashboard/core/use_case.dart';
-// import 'package:flutter_dashboard/features/csv_upload/domain/entity/certificate_data_entity.dart';
-// import 'package:flutter_dashboard/features/csv_upload/domain/repository/file_upload_irepository.dart';
+import 'package:flutter_dashboard/core/use_case.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/domain/entity/certificate_category_entity.dart';
+import 'package:flutter_dashboard/features/csv_upload/domain/entity/certificate_data_entity.dart';
+import 'package:flutter_dashboard/features/csv_upload/domain/repository/category_creation_irepository.dart';
+import 'package:flutter_dashboard/features/csv_upload/domain/repository/file_upload_irepository.dart';
 
-// class CertificateUploadUseCase implements UseCase<String, String> {
-//   final FileUploadIrepository _fileUploadIrepository;
+class CertificateCategoryCreationUseCaseParams {
+  String facultyName;
+  String preferredCategoryName;
+  String institutionId;
+  String institutionFacultyId;
 
-//   CertificateUploadUseCase(this._fileUploadIrepository);
-//   @override
-//   DefaultFutureEitherType<String> call(
-//     CertificateCategoryCreationUseCaseParams params,
-//   ) {
-//     return _fileUploadIrepository.uploadCSVFileAsEntityList(
-//       params.certificateDataList,
-//       params.instituitonID,
-//       params.institutionFacultyID,
-//       params.institutionFacultyName,
-//       params.categoryID,
-//       params.categoryName,
-//     );
-//   }
-// }
+  CertificateCategoryCreationUseCaseParams({
+    required this.facultyName,
+    required this.preferredCategoryName,
+    required this.institutionId,
+    required this.institutionFacultyId,
+  });
+}
+
+class CategoryCreationUseCase
+    implements
+        UseCase<
+          CertificateCategoryEntity,
+          CertificateCategoryCreationUseCaseParams
+        > {
+  final CategoryCreationIRepository _categoryCreationRepository;
+
+  CategoryCreationUseCase(this._categoryCreationRepository);
+  @override
+  DefaultFutureEitherType<CertificateCategoryEntity> call(
+    CertificateCategoryCreationUseCaseParams params,
+  ) {
+    return _categoryCreationRepository.categoryCreation(
+      params.facultyName,
+      params.preferredCategoryName,
+      params.institutionId,
+      params.institutionFacultyId,
+    );
+  }
+}
