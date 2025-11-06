@@ -7,16 +7,16 @@ import 'package:flutter_dashboard/features/certificate_category_batch/domain/rep
 import 'package:fpdart/fpdart.dart';
 
 class CategoryBatchRepositoryImpl implements CategoryBatchIrepository {
-  CategoryBatchRemoteDataSource categoryBatchRemoteDataSource;
+  final CategoryBatchRemoteDataSource _categoryBatchRemoteDataSource;
 
-  CategoryBatchRepositoryImpl({required this.categoryBatchRemoteDataSource});
+  CategoryBatchRepositoryImpl(this._categoryBatchRemoteDataSource);
   @override
   DefaultFutureEitherType<List<CertificateCategoryEntity>> getCategoryBatch(
     String institutionID,
     String institutionFacultyID,
   ) async {
     try {
-      final response = await categoryBatchRemoteDataSource.getCategoryBatch(
+      final response = await _categoryBatchRemoteDataSource.getCategoryBatch(
         institutionID,
         institutionFacultyID,
       );

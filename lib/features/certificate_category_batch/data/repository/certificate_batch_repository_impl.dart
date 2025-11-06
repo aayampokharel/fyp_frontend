@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter_dashboard/core/errors/app_logger.dart';
 import 'package:flutter_dashboard/core/errors/errorz.dart';
 import 'package:flutter_dashboard/core/use_case.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/data/data_source/category_batch_remote_data_source.dart';
@@ -11,11 +12,9 @@ import 'package:flutter_dashboard/features/csv_upload/domain/entity/certificate_
 import 'package:fpdart/fpdart.dart';
 
 class CertificateBatchRepositoryImpl implements CertificateBatchIrepository {
-  CertificateBatchRemoteDataSource certificateBatchRemoteDataSource;
+  final CertificateBatchRemoteDataSource _certificateBatchRemoteDataSource;
 
-  CertificateBatchRepositoryImpl({
-    required this.certificateBatchRemoteDataSource,
-  });
+  CertificateBatchRepositoryImpl(this._certificateBatchRemoteDataSource);
 
   @override
   DefaultFutureEitherType<List<CertificateDataEntity>>
@@ -25,8 +24,42 @@ class CertificateBatchRepositoryImpl implements CertificateBatchIrepository {
     String categoryID,
   ) async {
     try {
-      final response = await certificateBatchRemoteDataSource
+      final response = await _certificateBatchRemoteDataSource
           .getCertificateBatch(institutionID, institutionFacultyID, categoryID);
+      return Right(response);
+    } on ServerError catch (e) {
+      return Left(Errorz(message: e.message, statusCode: e.statusCode));
+    } catch (e) {
+      return Left(Errorz(message: e.toString(), statusCode: e.hashCode));
+    }
+  }
+
+  @override
+  DefaultFutureEitherType<void> getIndividualCertificatePDF(
+    String categoryName,
+    String fileID,
+    String categoryID,
+  ) async {
+    try {
+      AppLogger.debug(
+        "categoryName: $categoryName, fileID: $fileID, categoryID: $categoryID",
+      );
+      final response = await _certificateBatchRemoteDataSource
+          .downloadIndividualCertificatePDF(categoryName, categoryID, fileID);
+      return Right(response);
+    } on ServerError catch (e) {
+      return Left(Errorz(message: e.message, statusCode: e.statusCode));
+    } catch (e) {
+      return Left(Errorz(message: e.toString(), statusCode: e.hashCode));
+    }
+  }
+
+  @override
+  DefaultFutureEitherType<void> getCertificateHTMLPreview(String id) async {
+    try {
+      AppLogger.debug("id: $id");
+      final response = await _certificateBatchRemoteDataSource
+          .getCertificateHTMLPreview(id);
       return Right(response);
     } on ServerError catch (e) {
       return Left(Errorz(message: e.message, statusCode: e.statusCode));

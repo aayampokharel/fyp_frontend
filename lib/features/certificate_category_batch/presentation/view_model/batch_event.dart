@@ -21,3 +21,21 @@ class GetCertificatesBatchListEvent extends BatchEvent {
     required this.categoryID,
   });
 }
+
+class DownloadIndividualPDFButtonPressedEvent extends BatchEvent {
+  String fileID;
+  String categoryName;
+  String categoryID;
+
+  DownloadIndividualPDFButtonPressedEvent({
+    required this.fileID,
+    required this.categoryName,
+    required this.categoryID,
+  });
+}
+
+class PreviewCertificateHTMLButtonPressedEvent extends BatchEvent {
+  String id;
+
+  PreviewCertificateHTMLButtonPressedEvent({required this.id});
+}

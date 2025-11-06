@@ -1,14 +1,24 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dashboard/core/constants/color_constants.dart';
 import 'package:flutter_dashboard/core/constants/dependency_injection/di.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/admin_account_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/faculty_usecase.dart';
+import 'package:flutter_dashboard/features/authentication/domain/use_case/institute_login_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/institution_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/user_account_usecase.dart';
-import 'package:flutter_dashboard/features/authentication/presentation/view/pages/admin_log_in.dart';
 import 'package:flutter_dashboard/features/authentication/presentation/view/pages/sign_in_institution_page.dart';
 import 'package:flutter_dashboard/features/authentication/presentation/view_model/authentication_bloc.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/category_batch_usecase.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/certificate_batch_usecase.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/certificate_html_preview_usecase.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/individual_certificate_download_usecase.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/presentation/view_model/batch_bloc.dart';
+import 'package:flutter_dashboard/features/csv_upload/domain/usecase/category_creation_usecase.dart';
+import 'package:flutter_dashboard/features/csv_upload/domain/usecase/certificate_upload_usecase.dart';
+import 'package:flutter_dashboard/features/csv_upload/domain/usecase/check_institution_is_active_usecase.dart';
+import 'package:flutter_dashboard/features/csv_upload/presentation/view_model/upload_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,10 +36,30 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(
           create: (context) => AuthenticationBloc(
+            instituteAccountUsecase: getIt<InstituteAccountUseCase>(),
             institutionUsecase: getIt<InstitutionUseCase>(),
             userAccountUsecase: getIt<UserAccountUseCase>(),
             facultyUsecase: getIt<FacultyUseCase>(),
             adminAccountUsecase: getIt<AdminAccountUseCase>(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => BatchBloc(
+            certificateBatchUseCase: getIt<CertificateBatchUseCase>(),
+            categoryBatchUseCase: getIt<CategoryBatchUseCase>(),
+            individualCertificateDownloadPDFUseCase:
+                getIt<IndividualCertificateDownloadPDFUseCase>(),
+            certificateHTMLPreviewUseCase:
+                getIt<CertificateHTMLPreviewUseCase>(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => UploadBloc(
+            certificateUploadUseCase: getIt<CertificateUploadUseCase>(),
+            facultyUseCase: getIt<FacultyUseCase>(),
+            categoryCreationUseCase: getIt<CategoryCreationUseCase>(),
+            checkInstitutionIsActiveUsecase:
+                getIt<CheckInstitutionIsActiveUsecase>(),
           ),
         ),
       ],

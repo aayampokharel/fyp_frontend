@@ -5,6 +5,7 @@ import "package:flutter_dashboard/core/constants/dependency_injection/di.dart";
 import "package:flutter_dashboard/core/constants/image_constants.dart";
 import "package:flutter_dashboard/core/constants/string_constants.dart";
 import "package:flutter_dashboard/features/authentication/domain/use_case/institution_usecase.dart";
+import "package:flutter_dashboard/features/authentication/presentation/view/pages/log_in_page.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view/pages/sign_in_user_account_page.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view/widgets/colored_button_widget.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view/widgets/container_with_two_parts_widget.dart";
@@ -126,6 +127,64 @@ class SignInPage extends StatelessWidget {
                     return const SizedBox.shrink();
                   }
                 },
+              ),
+              SizedBox(height: 20),
+
+              BlocConsumer<AuthenticationBloc, AuthenticationState>(
+                listener: (context, state) {
+                  if (state is AuthenticationSuccessState) {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => SignInUserAccountPage(
+                          institutionID: state.institutionEntity.institutionID,
+                        ),
+                      ),
+                    );
+                  }
+                },
+                builder: (context, state) {
+                  if (state is AuthenticationInitialState) {
+                    return const Text("");
+                  } else if (state is AuthenticationErrorState) {
+                    return Text(
+                      state.displayErrorString + state.code.toString(),
+                      style: TextStyle(color: Colors.red),
+                    );
+                  } else if (state is AuthenticationLoadingState) {
+                    return const CircularProgressIndicator();
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                },
+              ),
+
+              SizedBox(height: 30),
+
+              // ✅ Add this section:
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("Already have an account? "),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => LoginPage(), // navigate to LoginPage
+                        ),
+                      );
+                    },
+                    child: Text(
+                      "Log In",
+                      style: TextStyle(
+                        color: ColorConstants.accentPurple,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

@@ -2,12 +2,10 @@ import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:flutter_dashboard/core/constants/color_constants.dart";
 import "package:flutter_dashboard/core/constants/dependency_injection/di.dart";
-import "package:flutter_dashboard/core/constants/enum.dart";
 import "package:flutter_dashboard/core/constants/image_constants.dart";
 import "package:flutter_dashboard/core/constants/string_constants.dart";
 import "package:flutter_dashboard/features/authentication/domain/entity/faculty_entity.dart";
 import "package:flutter_dashboard/features/authentication/domain/use_case/user_account_usecase.dart";
-import "package:flutter_dashboard/features/authentication/presentation/view/pages/institution_initial_loading.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view/widgets/colored_button_widget.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view/widgets/container_with_two_parts_widget.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view/widgets/nav_bar_widget.dart";
@@ -15,6 +13,7 @@ import "package:flutter_dashboard/features/authentication/presentation/view/widg
 import "package:flutter_dashboard/features/authentication/presentation/view_model/authentication_bloc.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view_model/authentication_event.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view_model/authentication_state.dart";
+import "package:flutter_dashboard/features/csv_upload/presentation/view/page/institution_upload_page.dart";
 
 class SignInFacultyPage extends StatelessWidget {
   final TextEditingController facultyController = TextEditingController();
@@ -145,7 +144,7 @@ class SignInFacultyPage extends StatelessWidget {
               ),
 
               // Bloc Consumer for State Management
-              _buildBlocConsumer(),
+              _buildBlocConsumer(institutionID),
             ],
           ),
         ),
@@ -153,11 +152,15 @@ class SignInFacultyPage extends StatelessWidget {
     );
   }
 
-  Widget _buildBlocConsumer() {
+  Widget _buildBlocConsumer(String institutionID) {
     return BlocConsumer<AuthenticationBloc, AuthenticationState>(
       listener: (context, state) {
         if (state is FacultySuccessState) {
-          _handleFacultySignInSuccess(context);
+          _handleFacultySignInSuccess(
+            context,
+            institutionID,
+            state.facultyEntity,
+          );
         }
       },
       builder: (context, state) {
@@ -166,11 +169,18 @@ class SignInFacultyPage extends StatelessWidget {
     );
   }
 
-  void _handleFacultySignInSuccess(BuildContext context) {
+  void _handleFacultySignInSuccess(
+    BuildContext context,
+    String institutionID,
+    FacultyEntity facultyEntity,
+  ) {
     Navigator.pop(context);
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => InstitutionInitialLoading()),
+      MaterialPageRoute(
+        builder: (context) =>
+            InstitutionCsvUploadPage(institutionID: institutionID),
+      ),
     );
   }
 
@@ -185,7 +195,7 @@ class SignInFacultyPage extends StatelessWidget {
       return const CircularProgressIndicator();
     } else if (state is FacultySuccessState) {
       return Text(
-        "Success: ${state.facultyEntity.faculty} ${state.facultyEntity.principalName} ${state.facultyEntity.universityAffiliation} ${state.facultyEntity.universityCollegeCode}",
+        "Success: ${state.facultyEntity.facultyName} ${state.facultyEntity.facultyAuthorityWithSignatures} ${state.facultyEntity.universityAffiliation} ${state.facultyEntity.universityCollegeCode}",
       );
     } else {
       return const SizedBox.shrink();

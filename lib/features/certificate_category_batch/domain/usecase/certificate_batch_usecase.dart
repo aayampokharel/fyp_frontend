@@ -19,7 +19,7 @@ class CertificateBatchUseCaseParams {
 class CertificateBatchUseCase
     implements
         UseCase<List<CertificateDataEntity>, CertificateBatchUseCaseParams> {
-  CertificateBatchIrepository _certificateBatchIrepository;
+  final CertificateBatchIrepository _certificateBatchIrepository;
   CertificateBatchUseCase(this._certificateBatchIrepository);
   @override
   DefaultFutureEitherType<List<CertificateDataEntity>> call(

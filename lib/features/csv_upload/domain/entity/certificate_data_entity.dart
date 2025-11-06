@@ -3,52 +3,46 @@ import 'dart:convert';
 import 'package:flutter_dashboard/features/csv_upload/data/models/minimal_certificate_data_model.dart';
 
 class CertificateDataEntity {
-  // Core Certificate Identity
+  // === ALWAYS REQUIRED FIELDS ===
   final String certificateId;
   final int blockNumber;
+  final String PDFFileID;
   final int position; // 1-4
-
-  // Student Information (Required)
   final String studentId;
   final String studentName;
-
-  // Institution & Faculty Information
   final String institutionId;
   final String institutionFacultyId;
   final String pdfCategoryId;
-
-  // Certificate Type
   final String
   certificateType; // COURSE_COMPLETION, CHARACTER, LEAVING, TRANSFER, PROVISIONAL
-
-  // Academic Information (Optional)
-  final String? degree;
-  final String? college;
-  final String? major;
-  final String? gpa;
-  final double? percentage;
-  final String? division;
-  final String? universityName;
-
-  // Date Information
   final DateTime issueDate;
-  final DateTime? enrollmentDate;
-  final DateTime? completionDate;
-  final DateTime? leavingDate;
+  final String facultyPublicKey;
+  final DateTime createdAt;
 
-  // Reason Fields
+  // === CONDITIONALLY REQUIRED FIELDS (provide empty defaults) ===
+  final String degree;
+  final String college;
+  final String major;
+  final String gpa;
+  final double? percentage;
+  final String division;
+  final String universityName;
+
+  // === DATE FIELDS (Required with fallbacks) ===
+  final DateTime enrollmentDate;
+  final DateTime completionDate;
+  final DateTime leavingDate;
+
+  // === TRULY OPTIONAL FIELDS ===
   final String? reasonForLeaving;
   final String? characterRemarks;
   final String? generalRemarks;
 
-  // Cryptographic Verification
+  // === CRYPTOGRAPHIC VERIFICATION ===
   String? certificateHash;
-  final String facultyPublicKey;
-
-  // Timestamps
-  final DateTime createdAt;
 
   CertificateDataEntity({
+    // Required for ALL certificates
     required this.certificateId,
     required this.blockNumber,
     required this.position,
@@ -58,27 +52,37 @@ class CertificateDataEntity {
     required this.institutionFacultyId,
     required this.pdfCategoryId,
     required this.certificateType,
-    this.degree,
-    this.college,
-    this.major,
-    this.gpa,
-    this.percentage,
-    this.division,
-    this.universityName,
     required this.issueDate,
-    this.enrollmentDate,
-    this.completionDate,
-    this.leavingDate,
+    required this.facultyPublicKey,
+    required this.createdAt,
+
+    // Conditionally required - use empty strings as defaults
+    this.PDFFileID = "",
+    this.degree = "",
+    this.college = "",
+    this.major = "",
+    this.gpa = "",
+    this.percentage,
+    this.division = "",
+    this.universityName = "",
+
+    // Date fields with fallbacks to issueDate
+    required DateTime? enrollmentDate,
+    required DateTime? completionDate,
+    required DateTime? leavingDate,
+
+    // Truly optional
     this.reasonForLeaving,
     this.characterRemarks,
     this.generalRemarks,
     this.certificateHash,
-    required this.facultyPublicKey,
-    required this.createdAt,
-  });
+  }) : enrollmentDate = enrollmentDate ?? issueDate,
+       completionDate = completionDate ?? issueDate,
+       leavingDate = leavingDate ?? issueDate;
 
   factory CertificateDataEntity.fromJSON(Map<String, dynamic> json) {
     return CertificateDataEntity(
+      PDFFileID: json['pdf_file_id'] as String,
       certificateId: json['certificate_id'] as String,
       blockNumber: json['block_number'] as int,
       position: json['position'] as int,
@@ -88,16 +92,22 @@ class CertificateDataEntity {
       institutionFacultyId: json['institution_faculty_id'] as String,
       pdfCategoryId: json['pdf_category_id'] as String,
       certificateType: json['certificate_type'] as String,
-      degree: json['degree'] as String?,
-      college: json['college'] as String?,
-      major: json['major'] as String?,
-      gpa: json['gpa'] as String?,
+      issueDate: DateTime.parse(json['issue_date'] as String),
+      facultyPublicKey: json['faculty_public_key'] as String,
+      createdAt: DateTime.parse(json['created_at'] as String),
+
+      // Conditionally required fields with fallbacks
+      degree: json['degree'] as String? ?? "",
+      college: json['college'] as String? ?? "",
+      major: json['major'] as String? ?? "",
+      gpa: json['gpa'] as String? ?? "",
       percentage: json['percentage'] != null
           ? (json['percentage'] as num).toDouble()
           : null,
-      division: json['division'] as String?,
-      universityName: json['university_name'] as String?,
-      issueDate: DateTime.parse(json['issue_date'] as String),
+      division: json['division'] as String? ?? "",
+      universityName: json['university_name'] as String? ?? "",
+
+      // Date fields with null handling
       enrollmentDate: json['enrollment_date'] != null
           ? DateTime.parse(json['enrollment_date'] as String)
           : null,
@@ -107,17 +117,20 @@ class CertificateDataEntity {
       leavingDate: json['leaving_date'] != null
           ? DateTime.parse(json['leaving_date'] as String)
           : null,
+
+      // Optional fields
       reasonForLeaving: json['reason_for_leaving'] as String?,
       characterRemarks: json['character_remarks'] as String?,
       generalRemarks: json['general_remarks'] as String?,
-      certificateHash: json['certificate_hash'] as String,
-      facultyPublicKey: json['faculty_public_key'] as String,
-      createdAt: DateTime.parse(json['created_at'] as String),
+      certificateHash: json['certificate_hash'] as String?,
     );
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
+
+    // Required fields
+    data['pdf_file_id'] = PDFFileID;
     data['certificate_id'] = certificateId;
     data['block_number'] = blockNumber;
     data['position'] = position;
@@ -127,31 +140,29 @@ class CertificateDataEntity {
     data['institution_faculty_id'] = institutionFacultyId;
     data['pdf_category_id'] = pdfCategoryId;
     data['certificate_type'] = certificateType;
+    data['issue_date'] = _formatDateForBackend(issueDate);
+    data['faculty_public_key'] = facultyPublicKey;
+    data['created_at'] = _formatDateForBackend(createdAt);
 
-    // Only include optional fields if they are not null
-    if (degree != null) data['degree'] = degree;
-    if (college != null) data['college'] = college;
-    if (major != null) data['major'] = major;
-    if (gpa != null) data['gpa'] = gpa;
+    // Conditionally required fields - always include with empty string defaults
+    data['degree'] = degree;
+    data['college'] = college;
+    data['major'] = major;
+    data['gpa'] = gpa;
     if (percentage != null) data['percentage'] = percentage;
-    if (division != null) data['division'] = division;
-    if (universityName != null) data['university_name'] = universityName;
+    data['division'] = division;
+    data['university_name'] = universityName;
 
-    data['issue_date'] = issueDate.toIso8601String();
-    if (enrollmentDate != null)
-      data['enrollment_date'] = enrollmentDate!.toIso8601String();
-    if (completionDate != null)
-      data['completion_date'] = completionDate!.toIso8601String();
-    if (leavingDate != null)
-      data['leaving_date'] = leavingDate!.toIso8601String();
+    // Date fields - always include (they have fallbacks)
+    data['enrollment_date'] = enrollmentDate.toIso8601String();
+    data['completion_date'] = completionDate.toIso8601String();
+    data['leaving_date'] = leavingDate.toIso8601String();
 
+    // Optional fields (only include if not null)
     if (reasonForLeaving != null) data['reason_for_leaving'] = reasonForLeaving;
     if (characterRemarks != null) data['character_remarks'] = characterRemarks;
     if (generalRemarks != null) data['general_remarks'] = generalRemarks;
-
-    data['certificate_hash'] = certificateHash;
-    data['faculty_public_key'] = facultyPublicKey;
-    data['created_at'] = createdAt.toIso8601String();
+    if (certificateHash != null) data['certificate_hash'] = certificateHash;
 
     return data;
   }
@@ -171,6 +182,7 @@ class CertificateDataEntity {
   String toString() {
     return 'CertificateDataEntity(\n'
         '  certificateId: $certificateId,\n'
+        '  PDFFileID: $PDFFileID,\n'
         '  blockNumber: $blockNumber,\n'
         '  position: $position,\n'
         '  studentId: $studentId,\n'
@@ -215,6 +227,7 @@ class CertificateDataEntity {
     return '$studentName ($studentId) - $certificateType - ${issueDate.year}';
   }
 
+  // In your CertificateDataEntity class, update the toModel() method:
   MinimalCertificateDataModel toModel() {
     return MinimalCertificateDataModel(
       institutionId: institutionId,
@@ -228,14 +241,18 @@ class CertificateDataEntity {
       certificateType: certificateType,
       degree: degree,
       college: college,
-      major: major,
-      gpa: gpa,
-      percentage: percentage,
-      division: division,
-      universityName: universityName,
+      major: major.isNotEmpty ? major : null,
+      gpa: gpa.isNotEmpty ? gpa : null,
+      percentage: percentage.toString(),
+      division: division.isNotEmpty ? division : null,
+      universityName: universityName.isNotEmpty ? universityName : null,
       reasonForLeaving: reasonForLeaving,
       characterRemarks: characterRemarks,
       generalRemarks: generalRemarks,
     );
+  }
+
+  String _formatDateForBackend(DateTime date) {
+    return date.toUtc().toIso8601String().replaceAll('000Z', 'Z');
   }
 }

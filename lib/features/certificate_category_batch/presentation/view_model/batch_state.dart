@@ -20,11 +20,23 @@ class CategoryBatchLoadFailureState extends BatchState {
 
 // States for selecting a batch
 class CategoryBatchSelectSuccessState extends BatchState {
-  final List<CertificateDataEntity> selectedBatch;
-  CategoryBatchSelectSuccessState(this.selectedBatch);
+  final List<CertificateCategoryEntity> selectedCategoryBatch;
+  CategoryBatchSelectSuccessState(this.selectedCategoryBatch);
 }
 
 class CategoryBatchSelectFailureState extends BatchState {
   final String errorMsg;
   CategoryBatchSelectFailureState(this.errorMsg);
+}
+
+class CertificateBatchSelectSuccessState extends BatchState {
+  final List<CertificateDataEntity> selectedCertificateBatch;
+  CertificateBatchSelectSuccessState(this.selectedCertificateBatch);
+}
+
+class CertificateBatchSelectLoadingState extends BatchState {}
+
+class CertificateBatchSelectFailureState extends BatchState {
+  final String errorMsg;
+  CertificateBatchSelectFailureState(this.errorMsg);
 }

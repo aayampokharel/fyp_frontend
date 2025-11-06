@@ -13,7 +13,7 @@ class FacultyUseCaseParams {
 }
 
 class FacultyUseCase implements UseCase<FacultyEntity, FacultyUseCaseParams> {
-  FacultyRepository _facultyRepository;
+  final FacultyRepository _facultyRepository;
   FacultyUseCase(this._facultyRepository);
 
   @override

@@ -9,9 +9,9 @@ import 'package:flutter_dashboard/features/csv_upload/domain/repository/file_upl
 import 'package:fpdart/fpdart.dart';
 
 class FileUploadRepositoryImpl implements FileUploadIrepository {
-  CertificateListRemoteDataSource certificateListRemoteDataSource;
+  final CertificateListRemoteDataSource _certificateListRemoteDataSource;
 
-  FileUploadRepositoryImpl({required this.certificateListRemoteDataSource});
+  FileUploadRepositoryImpl(this._certificateListRemoteDataSource);
 
   @override
   DefaultFutureEitherType<String> uploadCSVFileAsEntityList(
@@ -23,10 +23,12 @@ class FileUploadRepositoryImpl implements FileUploadIrepository {
     String categoryName,
   ) async {
     try {
+      AppLogger.info("category-id");
+      AppLogger.info(categoryID);
       List<MinimalCertificateDataModel> minimalCertificateDataModelList =
           certificateDataList.map((element) => element.toModel()).toList();
 
-      final response = await certificateListRemoteDataSource
+      final response = await _certificateListRemoteDataSource
           .uploadCertificateListEntity(
             minimalCertificateDataModelList,
             instituitonID,

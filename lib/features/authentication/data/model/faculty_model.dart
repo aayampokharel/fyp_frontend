@@ -2,64 +2,49 @@
 import 'package:flutter_dashboard/features/authentication/domain/entity/faculty_entity.dart';
 
 class FacultyRequestModel {
-  String faculty;
+  String facultyName;
   String institutionID;
-  String principalName;
-  String principalSignatureBase64;
-  String facultyHodName;
+  List<Map<String, String>> facultyAuthorityWithSignatures;
   String universityAffiliation;
   String universityCollegeCode;
-  String facultyHodSignatureBase64;
+
   FacultyRequestModel({
-    required this.faculty,
+    required this.facultyName,
     required this.institutionID,
-    required this.principalName,
-    required this.principalSignatureBase64,
-    required this.facultyHodName,
     required this.universityAffiliation,
     required this.universityCollegeCode,
-    required this.facultyHodSignatureBase64,
+    required this.facultyAuthorityWithSignatures,
   });
 
   FacultyEntity toEntity() {
     return FacultyEntity(
-      faculty: faculty,
+      facultyName: facultyName,
+      institutionID: institutionID,
       institutionFacultyID: "",
-      principalName: principalName,
-      principalSignatureBase64: principalSignatureBase64,
-      facultyHodName: facultyHodName,
+      facultyPublicKey: "",
+      facultyAuthorityWithSignatures: facultyAuthorityWithSignatures,
       universityAffiliation: universityAffiliation,
       universityCollegeCode: universityCollegeCode,
-      facultyHodSignatureBase64: facultyHodSignatureBase64,
     );
   }
 
   Map<String, dynamic> toJSON() {
     return {
-      "faculty": faculty,
+      "faculty_name": facultyName,
       "institution_id": institutionID,
-      "principal_name": principalName,
-      "principal_signature_base64": principalSignatureBase64,
-      "faculty_hod_name": facultyHodName,
+      "faculty_authority_with_signatures": facultyAuthorityWithSignatures,
       "university_affiliation": universityAffiliation,
       "university_college_code": universityCollegeCode,
-      "faculty_hod_signature_base64": facultyHodSignatureBase64,
     };
   }
 
-  factory FacultyRequestModel.fromEntity(
-    FacultyEntity facultyEntity,
-    String institutionID,
-  ) {
+  factory FacultyRequestModel.fromEntity(FacultyEntity entity) {
     return FacultyRequestModel(
-      faculty: facultyEntity.faculty,
-      institutionID: institutionID,
-      principalName: facultyEntity.principalName,
-      principalSignatureBase64: facultyEntity.principalSignatureBase64,
-      facultyHodName: facultyEntity.facultyHodName,
-      universityAffiliation: facultyEntity.universityAffiliation,
-      universityCollegeCode: facultyEntity.universityCollegeCode,
-      facultyHodSignatureBase64: facultyEntity.facultyHodSignatureBase64,
+      facultyName: entity.facultyName,
+      institutionID: entity.institutionID,
+      facultyAuthorityWithSignatures: entity.facultyAuthorityWithSignatures,
+      universityAffiliation: entity.universityAffiliation,
+      universityCollegeCode: entity.universityCollegeCode,
     );
   }
 

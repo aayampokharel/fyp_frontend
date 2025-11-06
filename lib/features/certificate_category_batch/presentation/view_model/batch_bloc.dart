@@ -1,21 +1,28 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/category_batch_use_case.dart';
-import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/certificate_batch_use_case.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/category_batch_usecase.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/certificate_batch_usecase.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/certificate_html_preview_usecase.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/individual_certificate_download_usecase.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/presentation/view_model/batch_event.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/presentation/view_model/batch_state.dart';
-import 'package:flutter_dashboard/features/csv_upload/domain/usecase/certificate_upload_use_case.dart';
 
 class BatchBloc extends Bloc<BatchEvent, BatchState> {
-  CategoryBatchUseCase _categoryBatchUseCase;
-  CertificateBatchUseCase _certificateBatchUseCase;
+  CategoryBatchUseCase categoryBatchUseCase;
+  CertificateBatchUseCase certificateBatchUseCase;
+  IndividualCertificateDownloadPDFUseCase
+  individualCertificateDownloadPDFUseCase;
+  CertificateHTMLPreviewUseCase certificateHTMLPreviewUseCase;
 
-  BatchBloc(this._categoryBatchUseCase, this._certificateBatchUseCase)
-    : super(BatchInitialState()) {
+  BatchBloc({
+    required this.categoryBatchUseCase,
+    required this.certificateBatchUseCase,
+    required this.individualCertificateDownloadPDFUseCase,
+    required this.certificateHTMLPreviewUseCase,
+  }) : super(BatchInitialState()) {
     on<GetCategoryBatchListEvent>((event, emit) async {
       try {
         emit(BatchLoadingState());
-        final categoryBatchList = await _categoryBatchUseCase.call(
+        final categoryBatchList = await categoryBatchUseCase.call(
           CategoryBatchUseCaseParams(
             institutionID: event.institutionID,
             institutionFacultyID: event.institutionFacultyID,
@@ -31,7 +38,8 @@ class BatchBloc extends Bloc<BatchEvent, BatchState> {
     });
     on<GetCertificatesBatchListEvent>((event, emit) async {
       try {
-        final certificatesBatchList = await _certificateBatchUseCase.call(
+        emit(CertificateBatchSelectLoadingState());
+        final certificatesBatchList = await certificateBatchUseCase.call(
           CertificateBatchUseCaseParams(
             institutionID: event.institutionID,
             institutionFacultyID: event.institutionFacultyID,
@@ -39,11 +47,38 @@ class BatchBloc extends Bloc<BatchEvent, BatchState> {
           ),
         );
         certificatesBatchList.fold(
-          (left) => emit(CategoryBatchLoadFailureState(left.message)),
-          (right) => emit(CategoryBatchSelectSuccessState(right)),
+          (left) => emit(CertificateBatchSelectFailureState(left.message)),
+          (right) => emit(CertificateBatchSelectSuccessState(right)),
         );
       } catch (e) {
-        emit(CategoryBatchLoadFailureState(e.toString()));
+        emit(CertificateBatchSelectFailureState(e.toString()));
+      }
+    });
+    on<DownloadIndividualPDFButtonPressedEvent>((event, emit) async {
+      try {
+        //emit(CertificateBatchSelectLoadingState());
+        await individualCertificateDownloadPDFUseCase.call(
+          IndividualCertificateDownloadPDFUseCaseParams(
+            categoryID: event.categoryID,
+            categoryName: event.categoryName,
+            fileID: event.fileID,
+          ),
+        );
+        //   //! throw error notification only no success thing .
+        // res.fold(
+        // (left) => emit(CertificateBatchSelectFailureState(left.message)),
+        // (right) => emit(CertificateBatchSelectSuccessState(right)),
+        // );
+      } catch (e) {
+        emit(CertificateBatchSelectFailureState(e.toString()));
+      }
+    });
+    on<PreviewCertificateHTMLButtonPressedEvent>((event, emit) async {
+      try {
+        await certificateHTMLPreviewUseCase.call(event.id);
+        //   //! throw error notification only no success thing .
+      } catch (e) {
+        emit(CertificateBatchSelectFailureState(e.toString()));
       }
     });
   }

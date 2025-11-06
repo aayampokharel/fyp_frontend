@@ -110,7 +110,7 @@ class AdminLoginPage extends StatelessWidget {
       return const CircularProgressIndicator();
     } else if (state is FacultySuccessState) {
       return Text(
-        "Success: ${state.facultyEntity.faculty} ${state.facultyEntity.principalName} ${state.facultyEntity.universityAffiliation} ${state.facultyEntity.universityCollegeCode}",
+        "Success: ${state.facultyEntity.facultyName} ${state.facultyEntity.facultyAuthorityWithSignatures} ${state.facultyEntity.universityAffiliation} ${state.facultyEntity.universityCollegeCode}",
       );
     } else {
       return const SizedBox.shrink();

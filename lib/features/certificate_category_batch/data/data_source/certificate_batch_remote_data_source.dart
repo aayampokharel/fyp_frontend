@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_dashboard/core/constants/api_endpoints.dart';
+import 'package:flutter_dashboard/core/errors/app_logger.dart';
 import 'package:flutter_dashboard/core/errors/errorz.dart';
 import 'package:flutter_dashboard/core/wrappers/dio_client.dart';
-import 'package:flutter_dashboard/features/certificate_category_batch/domain/entity/certificate_category_entity.dart';
 import 'package:flutter_dashboard/features/csv_upload/domain/entity/certificate_data_entity.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CertificateBatchRemoteDataSource {
   final DioClient _dioClient;
@@ -18,19 +18,23 @@ class CertificateBatchRemoteDataSource {
   ) async {
     try {
       final response = await _dioClient.dio.get(
-        ApiEndpoints.getCertificates,
+        ApiEndpoints.getCertificatesBatch,
         queryParameters: {
           ApiEndpoints.institutionIDQuery: institutionID,
           ApiEndpoints.institutionFacultyIDQuery: institutionFacultyID,
-          ApiEndpoints.institutionCategoryIDQuery: categoryID,
+          ApiEndpoints.categoryIDQuery: categoryID,
         },
       );
       if (response.statusCode == 200) {
-        List<dynamic> categoriesList = response.data['data'];
-        List<CertificateDataEntity> categoriesEntityList = categoriesList
-            .map((elem) => CertificateDataEntity.fromJSON(elem))
-            .toList();
-        return categoriesEntityList;
+        final data = response.data['data'];
+
+        if (data != null && data is List) {
+          return data
+              .map((elem) => CertificateDataEntity.fromJSON(elem))
+              .toList();
+        } else {
+          return [];
+        }
       } else {
         throw Errorz(
           message: response.data['message'] ?? "Error:",
@@ -39,6 +43,53 @@ class CertificateBatchRemoteDataSource {
       }
     } on DioException catch (e) {
       throw ServerError(extraMsg: e.message);
+    } catch (e) {
+      throw Errorz(message: e.toString(), statusCode: e.hashCode);
+    }
+  }
+
+  Future<void> downloadIndividualCertificatePDF(
+    String categoryName,
+    String categoryID,
+    String fileID,
+  ) async {
+    try {
+      final url =
+          Uri.parse(ApiEndpoints.baseUrl + ApiEndpoints.certificateDownload)
+              .replace(
+                queryParameters: {
+                  ApiEndpoints.categoryIDQuery: categoryID,
+                  ApiEndpoints.categoryNameQuery: categoryName,
+                  ApiEndpoints.fileIDQuery: fileID,
+                  ApiEndpoints.isDownloadAllQuery: false.toString(),
+                },
+              )
+              .toString();
+
+      print('Generated URL: $url');
+      if (await canLaunchUrl(Uri.parse(url))) {
+        await launchUrl(Uri.parse(url), webOnlyWindowName: '_blank');
+      } else {
+        throw Errorz(message: 'Could not launch $url', statusCode: 404);
+      }
+    } catch (e) {
+      throw Errorz(message: e.toString(), statusCode: e.hashCode);
+    }
+  }
+
+  Future<void> getCertificateHTMLPreview(String id) async {
+    try {
+      final url = Uri.parse(
+        ApiEndpoints.baseUrl + ApiEndpoints.certificatePreview,
+      ).replace(queryParameters: {ApiEndpoints.idQuery: id}).toString();
+
+      print('Generated URL: $url');
+
+      if (await canLaunchUrl(Uri.parse(url))) {
+        await launchUrl(Uri.parse(url), webOnlyWindowName: '_blank');
+      } else {
+        throw Errorz(message: 'Could not launch $url', statusCode: 404);
+      }
     } catch (e) {
       throw Errorz(message: e.toString(), statusCode: e.hashCode);
     }

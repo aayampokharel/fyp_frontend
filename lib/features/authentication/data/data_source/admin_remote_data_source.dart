@@ -3,7 +3,6 @@ import 'package:flutter_dashboard/core/constants/api_endpoints.dart';
 import 'package:flutter_dashboard/core/errors/errorz.dart';
 import 'package:flutter_dashboard/core/wrappers/dio_client.dart';
 import 'package:flutter_dashboard/features/authentication/data/model/Admin_account_model.dart';
-import 'package:flutter_dashboard/features/authentication/data/model/user_account_model.dart';
 
 import '../../../../core/errors/app_logger.dart' show AppLogger;
 

@@ -4,10 +4,12 @@ import 'package:flutter_dashboard/core/errors/app_logger.dart';
 import 'package:flutter_dashboard/core/use_case.dart';
 import 'package:flutter_dashboard/features/authentication/domain/entity/admin_account_entity.dart';
 import 'package:flutter_dashboard/features/authentication/domain/entity/faculty_entity.dart';
+import 'package:flutter_dashboard/features/authentication/domain/entity/institute_account_entity.dart';
 import 'package:flutter_dashboard/features/authentication/domain/entity/institution_entity.dart';
 import 'package:flutter_dashboard/features/authentication/domain/entity/user_account_entity.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/admin_account_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/faculty_usecase.dart';
+import 'package:flutter_dashboard/features/authentication/domain/use_case/institute_login_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/institution_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/user_account_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/presentation/view_model/authentication_event.dart';
@@ -16,6 +18,7 @@ import 'package:flutter_dashboard/features/authentication/presentation/view_mode
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   InstitutionUseCase institutionUsecase;
+  InstituteAccountUseCase instituteAccountUsecase;
   UserAccountUseCase userAccountUsecase;
   FacultyUseCase facultyUsecase;
 
@@ -26,26 +29,20 @@ class AuthenticationBloc
     required this.userAccountUsecase,
     required this.facultyUsecase,
     required this.adminAccountUsecase,
+    required this.instituteAccountUsecase,
   }) : super(AuthenticationInitialState()) {
     on<CreateFacultyEvent>((event, emit) async {
       emit(AuthenticationLoadingState());
       FacultyUseCaseParams facultyParams = FacultyUseCaseParams(
         facultyEntity: FacultyEntity(
+          facultyPublicKey: "",
           institutionFacultyID: "",
-          // faculty: event.faculty,
-          // principalName: event.principalName,
-          // principalSignatureBase64: event.principalSignatureBase64,
-          // facultyHodName: event.facultyHodName,
-          // universityAffiliation: event.universityAffiliation,
-          // universityCollegeCode: event.universityCollegeCode,
-          // facultyHodSignatureBase64: event.facultyHodSignatureBase64,
-          faculty: "event.faculty",
-          principalName: "event.principalName",
-          principalSignatureBase64: "event.principalSignatureBase64",
-          facultyHodName: "event.facultyHodName",
+          institutionID: event.institutionID,
+          facultyName: "event.faculty",
+          //! to include the signature in a map and things
+          facultyAuthorityWithSignatures: [],
           universityAffiliation: "event.universityAffiliation",
           universityCollegeCode: "001",
-          facultyHodSignatureBase64: "event.facultyHodSignatureBase64",
         ),
         institutionID: event.institutionID,
       );
@@ -104,6 +101,31 @@ class AuthenticationBloc
         (right) {
           AppLogger.info(right.toString());
           emit(AdminAccountVerificationSuccessState(adminAccountEntity: right));
+        },
+      );
+    });
+
+    on<InstituteLoginEvent>((event, emit) async {
+      emit(AuthenticationLoadingState());
+      var params = InstituteAccountUseCaseParams(
+        email: event.email,
+        password: event.password,
+      );
+
+      DefaultEitherType<InstituteAccountEntity> response =
+          await instituteAccountUsecase.call(params);
+
+      response.fold<void>(
+        (left) => emit(
+          InstituteAccountVerificationFailureState(errorMsg: left.message),
+        ),
+        (right) {
+          AppLogger.info(right.toString());
+          emit(
+            InstituteAccountVerificationSuccessState(
+              instituteAccountEntity: right,
+            ),
+          );
         },
       );
     });
