@@ -31,6 +31,7 @@ class BatchBloc extends Bloc<BatchEvent, BatchState> {
     });
     on<GetCertificatesBatchListEvent>((event, emit) async {
       try {
+        emit(CertificateBatchSelectLoadingState());
         final certificatesBatchList = await certificateBatchUseCase.call(
           CertificateBatchUseCaseParams(
             institutionID: event.institutionID,
@@ -39,11 +40,11 @@ class BatchBloc extends Bloc<BatchEvent, BatchState> {
           ),
         );
         certificatesBatchList.fold(
-          (left) => emit(CategoryBatchLoadFailureState(left.message)),
-          (right) => emit(CategoryBatchSelectSuccessState(right)),
+          (left) => emit(CertificateBatchSelectFailureState(left.message)),
+          (right) => emit(CertificateBatchSelectSuccessState(right)),
         );
       } catch (e) {
-        emit(CategoryBatchLoadFailureState(e.toString()));
+        emit(CertificateBatchSelectFailureState(e.toString()));
       }
     });
   }

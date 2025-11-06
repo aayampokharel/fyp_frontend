@@ -16,7 +16,7 @@ class CertificateBatchRemoteDataSource {
   ) async {
     try {
       final response = await _dioClient.dio.get(
-        ApiEndpoints.getCertificates,
+        ApiEndpoints.getCertificatesBatch,
         queryParameters: {
           ApiEndpoints.institutionIDQuery: institutionID,
           ApiEndpoints.institutionFacultyIDQuery: institutionFacultyID,
@@ -24,11 +24,15 @@ class CertificateBatchRemoteDataSource {
         },
       );
       if (response.statusCode == 200) {
-        List<dynamic> categoriesList = response.data['data'];
-        List<CertificateDataEntity> categoriesEntityList = categoriesList
-            .map((elem) => CertificateDataEntity.fromJSON(elem))
-            .toList();
-        return categoriesEntityList;
+        final data = response.data['data'];
+
+        if (data != null && data is List) {
+          return data
+              .map((elem) => CertificateDataEntity.fromJSON(elem))
+              .toList();
+        } else {
+          return [];
+        }
       } else {
         throw Errorz(
           message: response.data['message'] ?? "Error:",

@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dashboard/core/errors/app_logger.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/presentation/view_model/batch_bloc.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/presentation/view_model/batch_event.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/presentation/view_model/batch_state.dart';
 import 'package:flutter_dashboard/features/csv_upload/domain/entity/certificate_data_entity.dart';
 
-class CertificateSelectionPage extends StatefulWidget {
+class CertificateBatchDisplayPage extends StatefulWidget {
   String institutionID;
   String institutionFacultyID;
   String categoryID;
 
-  CertificateSelectionPage({
+  CertificateBatchDisplayPage({
     super.key,
     required this.institutionID,
     required this.institutionFacultyID,
@@ -18,15 +19,15 @@ class CertificateSelectionPage extends StatefulWidget {
   });
 
   @override
-  State<CertificateSelectionPage> createState() =>
+  State<CertificateBatchDisplayPage> createState() =>
       _CertificateSelectionPageState();
 }
 
-class _CertificateSelectionPageState extends State<CertificateSelectionPage> {
+class _CertificateSelectionPageState
+    extends State<CertificateBatchDisplayPage> {
   @override
   void initState() {
     super.initState();
-    // Ensure context is ready
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<BatchBloc>().add(
         GetCertificatesBatchListEvent(
@@ -38,80 +39,84 @@ class _CertificateSelectionPageState extends State<CertificateSelectionPage> {
     });
   }
 
-  final List<CertificateDataEntity> categories = [
-    // CertificateDataEntity(
-    //   createdAt: DateTime.now(),
-    //   certificateId: "cert_001",
-    //   blockNumber: 1,
-    //   position: 1,
-    //   studentId: "STU001",
-    //   studentName: "John Smith",
-    //   institutionId: "INST001",
-    //   institutionFacultyId: "FAC001",
-    //   pdfCategoryId: "CAT001",
-    //   certificateType: "COURSE_COMPLETION",
-    //   degree: "Bachelor of Science",
-    //   college: "Science College",
-    //   major: "Computer Science",
-    //   gpa: "3.8",
-    //   percentage: 85.5,
-    //   division: "First",
-    //   universityName: "Tech University",
-    //   issueDate: DateTime(2024, 1, 15),
-    //   enrollmentDate: DateTime(2020, 8, 1),
-    //   completionDate: DateTime(2024, 1, 10),
-    //   certificateHash: "abc123",
-    //   facultyPublicKey: "pub_key_001",
-    // ),
-    // CertificateDataEntity(
-    //   createdAt: DateTime.now(),
+  List<CertificateDataEntity> categories = [
+    CertificateDataEntity(
+      leavingDate: DateTime(2024, 1, 15),
 
-    //   certificateId: "cert_002",
-    //   blockNumber: 1,
-    //   position: 2,
-    //   studentId: "STU002",
-    //   studentName: "Emma Wilson",
-    //   institutionId: "INST001",
-    //   institutionFacultyId: "FAC002",
-    //   pdfCategoryId: "CAT002",
-    //   certificateType: "CHARACTER",
-    //   college: "Arts College",
-    //   major: "Mathematics",
-    //   gpa: "3.9",
-    //   percentage: 88.2,
-    //   division: "First",
-    //   universityName: "Math University",
-    //   issueDate: DateTime(2024, 1, 16),
-    //   enrollmentDate: DateTime(2020, 8, 1),
-    //   completionDate: DateTime(2024, 1, 12),
-    //   characterRemarks: "Excellent character and leadership qualities",
-    //   certificateHash: "def456",
-    //   facultyPublicKey: "pub_key_002",
-    // ),
-    // CertificateDataEntity(
-    //   createdAt: DateTime.now(),
-    //   certificateId: "cert_003",
-    //   blockNumber: 1,
-    //   position: 3,
-    //   studentId: "STU003",
-    //   studentName: "Michael Brown",
-    //   institutionId: "INST001",
-    //   institutionFacultyId: "FAC003",
-    //   pdfCategoryId: "CAT003",
-    //   certificateType: "LEAVING",
-    //   degree: "Bachelor of Arts",
-    //   college: "Arts College",
-    //   major: "Physics",
-    //   percentage: 82.0,
-    //   division: "First",
-    //   universityName: "Science University",
-    //   issueDate: DateTime(2024, 1, 17),
-    //   enrollmentDate: DateTime(2020, 8, 1),
-    //   leavingDate: DateTime(2024, 1, 14),
-    //   reasonForLeaving: "Transfer to another institution",
-    //   certificateHash: "ghi789",
-    //   facultyPublicKey: "pub_key_003",
-    // ),
+      createdAt: DateTime.now(),
+      certificateId: "cert_001",
+      blockNumber: 1,
+      position: 1,
+      studentId: "STU001",
+      studentName: "John Smith",
+      institutionId: "INST001",
+      institutionFacultyId: "FAC001",
+      pdfCategoryId: "CAT001",
+      certificateType: "COURSE_COMPLETION",
+      degree: "Bachelor of Science",
+      college: "Science College",
+      major: "Computer Science",
+      gpa: "3.8",
+      percentage: 85.5,
+      division: "First",
+      universityName: "Tech University",
+      issueDate: DateTime(2024, 1, 15),
+      enrollmentDate: DateTime(2020, 8, 1),
+      completionDate: DateTime(2024, 1, 10),
+      certificateHash: "abc123",
+      facultyPublicKey: "pub_key_001",
+    ),
+    CertificateDataEntity(
+      createdAt: DateTime.now(),
+      leavingDate: DateTime(2024, 1, 15),
+
+      certificateId: "cert_002",
+      blockNumber: 1,
+      position: 2,
+      studentId: "STU002",
+      studentName: "Emma Wilson",
+      institutionId: "INST001",
+      institutionFacultyId: "FAC002",
+      pdfCategoryId: "CAT002",
+      certificateType: "CHARACTER",
+      college: "Arts College",
+      major: "Mathematics",
+      gpa: "3.9",
+      percentage: 88.2,
+      division: "First",
+      universityName: "Math University",
+      issueDate: DateTime(2024, 1, 16),
+      enrollmentDate: DateTime(2020, 8, 1),
+      completionDate: DateTime(2024, 1, 12),
+      characterRemarks: "Excellent character and leadership qualities",
+      certificateHash: "def456",
+      facultyPublicKey: "pub_key_002",
+    ),
+    CertificateDataEntity(
+      leavingDate: DateTime(2024, 1, 15),
+      completionDate: DateTime(2024, 1, 12),
+      createdAt: DateTime.now(),
+      certificateId: "cert_003",
+      blockNumber: 1,
+      position: 3,
+      studentId: "STU003",
+      studentName: "Michael Brown",
+      institutionId: "INST001",
+      institutionFacultyId: "FAC003",
+      pdfCategoryId: "CAT003",
+      certificateType: "LEAVING",
+      degree: "Bachelor of Arts",
+      college: "Arts College",
+      major: "Physics",
+      percentage: 82.0,
+      division: "First",
+      universityName: "Science University",
+      issueDate: DateTime(2024, 1, 17),
+      enrollmentDate: DateTime(2020, 8, 1),
+      reasonForLeaving: "Transfer to another institution",
+      certificateHash: "ghi789",
+      facultyPublicKey: "pub_key_003",
+    ),
   ];
 
   void _onViewPressed(CertificateDataEntity certificate) {
@@ -148,7 +153,9 @@ class _CertificateSelectionPageState extends State<CertificateSelectionPage> {
       ),
       body: BlocBuilder<BatchBloc, BatchState>(
         builder: (context, state) {
-          if (state is CategoryBatchSelectSuccessState) {
+          if (state is CertificateBatchSelectSuccessState) {
+            AppLogger.info(state.selectedCertificateBatch.length.toString());
+            categories = state.selectedCertificateBatch;
             return ListView.builder(
               itemCount: categories.length,
               itemBuilder: (context, index) {
@@ -234,7 +241,7 @@ class _CertificateSelectionPageState extends State<CertificateSelectionPage> {
                 );
               },
             );
-          } else if (state is CategoryBatchSelectFailureState) {
+          } else if (state is CertificateBatchSelectFailureState) {
             return Center(child: Text(state.errorMsg));
           } else {
             return const Center(child: CircularProgressIndicator());

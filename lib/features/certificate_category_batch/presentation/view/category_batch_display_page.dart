@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/domain/entity/certificate_category_entity.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/presentation/view/certificate_batch_display_page.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/presentation/view_model/batch_bloc.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/presentation/view_model/batch_event.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/presentation/view_model/batch_state.dart';
@@ -35,12 +36,6 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
     });
   }
 
-  // final List<Map<String, String>> categories = const [
-  //   {'name': 'Computer Science', 'createdAt': '2025-11-03'},
-  //   {'name': 'Mathematics', 'createdAt': '2025-10-30'},
-  //   {'name': 'Physics', 'createdAt': '2025-09-15'},
-  // ];
-
   List<CertificateCategoryEntity> categories = [];
   @override
   Widget build(BuildContext context) {
@@ -67,9 +62,18 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
                     subtitle: Text('Created: ${item.createdAt}'),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Selected: ${item.categoryName}'),
+                      // ScaffoldMessenger.of(context).showSnackBar(
+                      //   SnackBar(
+                      //     content: Text('Selected: ${item.categoryName}'),
+                      //   ),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => CertificateBatchDisplayPage(
+                            institutionID: widget.institutionID,
+                            institutionFacultyID: widget.institutionFacultyID,
+                            categoryID: item.categoryID,
+                          ),
                         ),
                       );
                     },

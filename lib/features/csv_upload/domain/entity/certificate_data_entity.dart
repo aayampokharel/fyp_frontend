@@ -249,10 +249,6 @@ class CertificateDataEntity {
   }
 
   String _formatDateForBackend(DateTime date) {
-    // Format: "2006-01-02T15:04:05Z" (UTC timezone)
     return date.toUtc().toIso8601String().replaceAll('000Z', 'Z');
-
-    // OR if backend needs timezone offset:
-    // return date.toIso8601String(); // This includes timezone offset
   }
 }

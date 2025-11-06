@@ -14,6 +14,7 @@ class ApiEndpoints {
   static const String sseInstitution = '/sse/institution';
   //========================fileuploadendpoints==============================
   static const String certificatesupload = '/blockchain/certificates';
+  static const String getCertificatesBatch = '/blockchain/certificate-batch';
   //========================categoryBatchendpoints==============================
   static const String getcategories = '/institution/categories';
   static const String getCertificates = '/institution/certificates';
