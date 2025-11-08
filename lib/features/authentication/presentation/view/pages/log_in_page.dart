@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:flutter_dashboard/core/constants/color_constants.dart";
+import "package:flutter_dashboard/core/constants/enum.dart";
 import "package:flutter_dashboard/core/constants/image_constants.dart";
 import "package:flutter_dashboard/core/constants/string_constants.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view/pages/institution_selection_page.dart";
@@ -14,13 +15,19 @@ import "package:flutter_dashboard/features/authentication/presentation/view_mode
 import "package:flutter_dashboard/features/csv_upload/presentation/view/page/institution_upload_page.dart";
 
 class LoginPage extends StatelessWidget {
-  final systemRole = "INSTITUTE";
+  SystemRole systemRole = SystemRole.institute;
+  bool isDataRightSided = true;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController institutionController = TextEditingController();
-  LoginPage({super.key});
+  LoginPage({super.key, required this.systemRole});
 
   @override
   Widget build(BuildContext context) {
+    if (systemRole == SystemRole.institute) {
+      isDataRightSided = true;
+    } else {
+      isDataRightSided = false;
+    }
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight),
@@ -69,6 +76,7 @@ class LoginPage extends StatelessWidget {
           // ✅ Default Login UI
           return Center(
             child: ContainerWithTwoParts(
+              isDataRightSided: isDataRightSided,
               height: 800,
               width: 800,
               imagePath: ImageConstants.natureImage,
@@ -76,7 +84,7 @@ class LoginPage extends StatelessWidget {
               companyName: StringConstants.companyName,
               taskName: "Sign In",
               taskDescription: "Please sign in to continue",
-              rightSideChild: Column(
+              inputChild: Column(
                 children: [
                   TextFieldWidget(
                     containerSize: 350,

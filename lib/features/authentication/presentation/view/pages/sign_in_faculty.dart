@@ -82,12 +82,13 @@ class SignInFacultyPage extends StatelessWidget {
         child: ContainerWithTwoParts(
           height: 800,
           width: 800,
+          isDataRightSided: true,
           imagePath: ImageConstants.natureImage,
           companyLogo: ImageConstants.logoImage,
           companyName: StringConstants.companyName,
           taskName: "Sign In",
           taskDescription: "Please sign in to continue",
-          rightSideChild: Column(
+          inputChild: Column(
             children: [
               // Email Field
               TextFieldWidget(

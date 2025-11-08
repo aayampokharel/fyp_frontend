@@ -7,13 +7,16 @@ import 'package:flutter_dashboard/features/authentication/domain/use_case/admin_
 import 'package:flutter_dashboard/features/authentication/domain/use_case/faculty_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/institute_login_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/institution_usecase.dart';
+import 'package:flutter_dashboard/features/authentication/domain/use_case/remove_background_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/user_account_usecase.dart';
+import 'package:flutter_dashboard/features/authentication/presentation/view/pages/initial_role_selection_page.dart';
 import 'package:flutter_dashboard/features/authentication/presentation/view/pages/sign_in_institution_page.dart';
+import 'package:flutter_dashboard/features/authentication/presentation/view/pages/sign_in_user_account_page.dart';
 import 'package:flutter_dashboard/features/authentication/presentation/view_model/authentication_bloc.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/category_batch_usecase.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/certificate_batch_usecase.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/certificate_html_preview_usecase.dart';
-import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/individual_certificate_download_usecase.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/certificate_download_usecase.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/presentation/view_model/batch_bloc.dart';
 import 'package:flutter_dashboard/features/csv_upload/domain/usecase/category_creation_usecase.dart';
 import 'package:flutter_dashboard/features/csv_upload/domain/usecase/certificate_upload_usecase.dart';
@@ -41,14 +44,15 @@ class MyApp extends StatelessWidget {
             userAccountUsecase: getIt<UserAccountUseCase>(),
             facultyUsecase: getIt<FacultyUseCase>(),
             adminAccountUsecase: getIt<AdminAccountUseCase>(),
+            removeBackgroundUsecase: getIt<RemoveBackgroundUseCase>(),
           ),
         ),
         BlocProvider(
           create: (context) => BatchBloc(
             certificateBatchUseCase: getIt<CertificateBatchUseCase>(),
             categoryBatchUseCase: getIt<CategoryBatchUseCase>(),
-            individualCertificateDownloadPDFUseCase:
-                getIt<IndividualCertificateDownloadPDFUseCase>(),
+            certificateDownloadPDFUseCase:
+                getIt<CertificateDownloadPDFUseCase>(),
             certificateHTMLPreviewUseCase:
                 getIt<CertificateHTMLPreviewUseCase>(),
           ),
@@ -75,7 +79,8 @@ class MyApp extends StatelessWidget {
             bodyMedium: TextStyle(color: Colors.black87),
           ),
         ),
-        home: SignInPage(),
+        // home: InitialRoleSelectionPage(),
+        home: SignInUserAccountPage(institutionID: ""),
       ),
     );
   }

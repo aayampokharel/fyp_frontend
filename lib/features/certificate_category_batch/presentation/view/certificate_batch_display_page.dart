@@ -53,16 +53,25 @@ class _CertificateSelectionPageState
 
   void _onDownloadPressed(CertificateDataEntity certificate) {
     context.read<BatchBloc>().add(
-      DownloadIndividualPDFButtonPressedEvent(
+      DownloadPDFButtonPressedEvent(
         categoryID: certificate.pdfCategoryId,
         categoryName: widget.categoryName,
         fileID: certificate.PDFFileID,
+        downloadAll: false,
       ),
     );
   }
 
   void _onDownloadAllPressed() {
     print('Download All pressed');
+    context.read<BatchBloc>().add(
+      DownloadPDFButtonPressedEvent(
+        categoryID: widget.categoryID,
+        categoryName: widget.categoryName,
+        fileID: "",
+        downloadAll: true,
+      ),
+    );
   }
 
   void _showErrorSnackbar(String message) {
@@ -100,7 +109,9 @@ class _CertificateSelectionPageState
             Padding(
               padding: const EdgeInsets.only(right: 16.0),
               child: ElevatedButton.icon(
-                onPressed: _onDownloadAllPressed,
+                onPressed: () {
+                  _onDownloadAllPressed();
+                },
                 icon: const Icon(Icons.download, size: 20),
                 label: const Text('Download All'),
                 style: ElevatedButton.styleFrom(

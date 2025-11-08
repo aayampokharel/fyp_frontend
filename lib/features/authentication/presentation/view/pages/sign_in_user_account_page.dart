@@ -11,6 +11,7 @@ import "package:flutter_dashboard/features/authentication/presentation/view/widg
 import "package:flutter_dashboard/features/authentication/presentation/view/widgets/container_with_two_parts_widget.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view/widgets/nav_bar_widget.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view/widgets/text_field_widget.dart";
+import "package:flutter_dashboard/features/authentication/presentation/view/widgets/upload_image_with_removed_bg.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view_model/authentication_bloc.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view_model/authentication_event.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view_model/authentication_state.dart";
@@ -75,7 +76,8 @@ class SignInUserAccountPage extends StatelessWidget {
           companyName: StringConstants.companyName,
           taskName: "Sign In",
           taskDescription: "Please sign in to continue",
-          rightSideChild: Column(
+          isDataRightSided: true,
+          inputChild: Column(
             children: [
               // Email Field
               TextFieldWidget(
@@ -108,17 +110,12 @@ class SignInUserAccountPage extends StatelessWidget {
                 containerSize: 350,
                 textController: roleController,
                 labelText: "Role",
-                hintText: "Enter your role",
+                hintText: "Enter your role at your institution",
               ),
 
               // Institution Logo File Selection
-              ColoredButtonWidget(
-                onPressed: _handleFileSelection,
-                width: 300,
-                textColor: Colors.white,
-                height: 50,
-                color: ColorConstants.accentPurple,
-                text: "Select Institution Logo",
+              UploadImageWithRemovedBg(
+                labelName: "Select Your Institution Logo",
               ),
 
               const SizedBox(height: 20),

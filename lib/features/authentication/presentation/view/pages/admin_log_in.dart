@@ -15,6 +15,7 @@ import "package:flutter_dashboard/features/sse/presentation/view/widgets/notific
 class AdminLoginPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
   AdminLoginPage({super.key});
 
   void _handAdminLogIn(BuildContext context) {
@@ -29,11 +30,12 @@ class AdminLoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ColorConstants.extraLightGray,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight),
+        preferredSize: const Size.fromHeight(70),
         child: NavBarWidget(
-          icon1: Icon(Icons.person, color: Colors.white),
-          icon2: Icon(Icons.logout, color: Colors.white),
+          icon1: Icon(Icons.person, color: ColorConstants.white, size: 28),
+          icon2: Icon(Icons.logout, color: ColorConstants.white, size: 28),
           onPressedIcon1: () {},
           onPressedIcon2: () {},
           companyName: StringConstants.companyName,
@@ -41,35 +43,42 @@ class AdminLoginPage extends StatelessWidget {
       ),
       body: Center(
         child: ContainerWithTwoParts(
-          height: 800,
           width: 800,
+          height: 700, // Increased height for proper spacing
           imagePath: ImageConstants.natureImage,
           companyLogo: ImageConstants.logoImage,
           companyName: StringConstants.companyName,
-          taskName: "Sign In",
-          taskDescription: "Please sign in to continue",
-          rightSideChild: Column(
+          taskName: "Admin Sign In",
+          isDataRightSided: false,
+          taskDescription: "Please enter your credentials to continue",
+          inputChild: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              SizedBox(height: 20),
               TextFieldWidget(
-                containerSize: 350,
+                containerSize: 400,
                 textController: emailController,
-                labelText: "email",
+                labelText: "Email",
                 hintText: "Enter your email",
               ),
+              const SizedBox(height: 20),
               TextFieldWidget(
-                containerSize: 350,
+                containerSize: 400,
                 textController: passwordController,
-                labelText: "Institution Name",
-                hintText: "Enter your Institution",
+                labelText: "Password",
+                hintText: "Enter your password",
+                // obscureText: true,
               ),
+              const SizedBox(height: 40),
               ColoredButtonWidget(
                 onPressed: () => _handAdminLogIn(context),
                 width: 300,
-                textColor: Colors.white,
-                height: 300,
+                height: 55, // realistic button height
                 color: ColorConstants.accentPurple,
+                textColor: ColorConstants.white,
                 text: "Sign In",
               ),
+              const SizedBox(height: 25),
               _buildBlocConsumer(),
             ],
           ),
@@ -103,14 +112,31 @@ class AdminLoginPage extends StatelessWidget {
     if (state is AuthenticationInitialState) {
       return const SizedBox.shrink();
     } else if (state is AuthenticationErrorState) {
-      return Text(
-        'ERROR: ${state.displayErrorString} code: ${state.code.toString()}',
+      return Padding(
+        padding: const EdgeInsets.only(top: 12.0),
+        child: Text(
+          'ERROR: ${state.displayErrorString} (code: ${state.code})',
+          style: const TextStyle(color: Colors.red, fontSize: 14),
+          textAlign: TextAlign.center,
+        ),
       );
     } else if (state is AuthenticationLoadingState) {
-      return const CircularProgressIndicator();
+      return const Padding(
+        padding: EdgeInsets.only(top: 12.0),
+        child: CircularProgressIndicator(),
+      );
     } else if (state is FacultySuccessState) {
-      return Text(
-        "Success: ${state.facultyEntity.facultyName} ${state.facultyEntity.facultyAuthorityWithSignatures} ${state.facultyEntity.universityAffiliation} ${state.facultyEntity.universityCollegeCode}",
+      return Padding(
+        padding: const EdgeInsets.only(top: 12.0),
+        child: Text(
+          "Welcome: ${state.facultyEntity.facultyName}",
+          style: TextStyle(
+            fontSize: 16,
+            color: ColorConstants.darkBrown,
+            fontWeight: FontWeight.w600,
+          ),
+          textAlign: TextAlign.center,
+        ),
       );
     } else {
       return const SizedBox.shrink();

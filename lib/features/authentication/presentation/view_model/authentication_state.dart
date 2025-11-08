@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dashboard/features/authentication/domain/entity/admin_account_entity.dart';
 import 'package:flutter_dashboard/features/authentication/domain/entity/faculty_entity.dart';
 import 'package:flutter_dashboard/features/authentication/domain/entity/institute_account_entity.dart';
@@ -53,4 +54,16 @@ class InstituteAccountVerificationSuccessState extends AuthenticationState {
 class InstituteAccountVerificationFailureState extends AuthenticationState {
   String errorMsg;
   InstituteAccountVerificationFailureState({required this.errorMsg});
+}
+
+class SendImageForBackgroundRemovalLoadingState extends AuthenticationState {}
+
+class SendImageForBackgroundRemovalFailureState extends AuthenticationState {
+  String errorMsg;
+  SendImageForBackgroundRemovalFailureState({required this.errorMsg});
+}
+
+class SendImageForBackgroundRemovalSuccessState extends AuthenticationState {
+  Uint8List imageIntList;
+  SendImageForBackgroundRemovalSuccessState({required this.imageIntList});
 }

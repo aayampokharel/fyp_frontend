@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:flutter_dashboard/core/constants/color_constants.dart";
 import "package:flutter_dashboard/core/constants/dependency_injection/di.dart";
+import "package:flutter_dashboard/core/constants/enum.dart";
 import "package:flutter_dashboard/core/constants/image_constants.dart";
 import "package:flutter_dashboard/core/constants/string_constants.dart";
 import "package:flutter_dashboard/features/authentication/domain/use_case/institution_usecase.dart";
@@ -51,7 +52,9 @@ class SignInPage extends StatelessWidget {
           companyName: StringConstants.companyName,
           taskName: "Sign In",
           taskDescription: "Please sign in to continue",
-          rightSideChild: Column(
+          isDataRightSided: true,
+
+          inputChild: Column(
             children: [
               TextFieldWidget(
                 containerSize: 350,
@@ -172,7 +175,9 @@ class SignInPage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => LoginPage(), // navigate to LoginPage
+                          builder: (_) => LoginPage(
+                            systemRole: SystemRole.institute,
+                          ), // navigate to LoginPage
                         ),
                       );
                     },
