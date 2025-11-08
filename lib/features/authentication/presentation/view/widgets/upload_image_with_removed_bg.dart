@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dashboard/features/authentication/presentation/view_model/authentication_bloc.dart';
@@ -22,11 +23,16 @@ class _UploadImageWithRemovedBgState extends State<UploadImageWithRemovedBg> {
   bool _loading = false;
   String? _error;
 
-  final ImagePicker _picker = ImagePicker();
+  final FilePicker _picker = FilePicker.platform;
   // final String apiUrl = "http://localhost:8080/remove-bg";
 
-  Future<XFile?> pickImage() async {
-    final picked = await _picker.pickImage(source: ImageSource.gallery);
+  Future<FilePickerResult?> pickImage() async {
+    final picked = await _picker.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'jpeg', 'png', 'webp'],
+      compressionQuality: 50,
+      withData: true,
+    );
     if (picked != null) {
       return picked;
     } else {
@@ -48,13 +54,7 @@ class _UploadImageWithRemovedBgState extends State<UploadImageWithRemovedBg> {
             child: Center(child: Text(state.errorMsg)),
           );
         } else if (state is SendImageForBackgroundRemovalSuccessState) {
-          return Container(
-            height: 200,
-            width: 200,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(8),
-            ),
+          return imageContainer(
             child: Image.memory(
               state.imageIntList,
               fit: BoxFit.contain,
@@ -64,25 +64,11 @@ class _UploadImageWithRemovedBgState extends State<UploadImageWithRemovedBg> {
             ),
           );
         } else if (state is SendImageForBackgroundRemovalLoadingState) {
-          return Container(
-            height: 200,
-            width: 200,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(8),
-            ),
+          return imageContainer(
             child: Center(child: CircularProgressIndicator()),
           );
         }
-        return Container(
-          height: 200,
-          width: 200,
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Center(child: Text("no image selected!")),
-        );
+        return imageContainer(child: Center(child: Text("no image selected!")));
       },
     );
   }
@@ -111,19 +97,46 @@ class _UploadImageWithRemovedBgState extends State<UploadImageWithRemovedBg> {
           ),
 
           SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {
-              pickImage().then((val) {
-                context.read<AuthenticationBloc>().add(
-                  SendImageForBackgroundRemovalEvent(pickerImageFile: val),
-                );
-              });
+
+          BlocBuilder<AuthenticationBloc, AuthenticationState>(
+            builder: (context, state) {
+              if (state is SendImageForBackgroundRemovalLoadingState) {
+                return elevatedContainerState(onTap: null);
+              }
+              return elevatedContainerState(
+                onTap: () {
+                  pickImage().then((val) {
+                    if (val != null && val.files.isNotEmpty) {
+                      context.read<AuthenticationBloc>().add(
+                        SendImageForBackgroundRemovalEvent(
+                          pickerImageFile: val.files.first,
+                        ),
+                      );
+                    }
+                  });
+                },
+              );
             },
-            child: Text("Pick Image"),
           ),
           SizedBox(width: 10),
         ],
       ),
     );
+  }
+
+  Widget imageContainer({required Widget child}) {
+    return Container(
+      height: 200,
+      width: 200,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: child,
+    );
+  }
+
+  Widget elevatedContainerState({required void Function()? onTap}) {
+    return ElevatedButton(onPressed: onTap, child: Text("Pick Image"));
   }
 }

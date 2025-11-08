@@ -157,15 +157,8 @@ class AuthenticationBloc
     });
     on<SendImageForBackgroundRemovalEvent>((event, emit) async {
       emit(SendImageForBackgroundRemovalLoadingState());
-      if (event.pickerImageFile == null) {
-        emit(
-          SendImageForBackgroundRemovalFailureState(
-            errorMsg: "No image selected",
-          ),
-        );
-        return;
-      }
-      Uint8List imageIntList = await event.pickerImageFile!.readAsBytes();
+
+      Uint8List imageIntList = event.pickerImageFile.bytes!;
       final response = await removeBackgroundUsecase.call(imageIntList);
       response.fold(
         (left) => emit(

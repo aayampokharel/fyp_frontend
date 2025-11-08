@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
+import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 
 abstract class AuthenticationEvent {}
@@ -70,6 +71,6 @@ class InstituteLoginEvent extends AuthenticationEvent {
 }
 
 class SendImageForBackgroundRemovalEvent extends AuthenticationEvent {
-  final XFile? pickerImageFile;
+  final PlatformFile pickerImageFile;
   SendImageForBackgroundRemovalEvent({required this.pickerImageFile});
 }

@@ -216,7 +216,7 @@ Future _authDependencies() async {
   );
   //===============================background_removal==x
   getIt.registerLazySingleton<RemoveBackgroundDataSource>(
-    () => RemoveBackgroundDataSource(),
+    () => RemoveBackgroundDataSource(getIt<DioClient>()),
   );
   getIt.registerLazySingleton<RemoveBackgroundRepositoryImpl>(
     () => RemoveBackgroundRepositoryImpl(getIt<RemoveBackgroundDataSource>()),
