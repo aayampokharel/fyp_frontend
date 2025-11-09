@@ -35,17 +35,23 @@ class CertificateBatchRepositoryImpl implements CertificateBatchIrepository {
   }
 
   @override
-  DefaultFutureEitherType<void> getIndividualCertificatePDF(
+  DefaultFutureEitherType<void> getCertificatePDFOrZip(
     String categoryName,
     String fileID,
     String categoryID,
+    bool downloadAll,
   ) async {
     try {
       AppLogger.debug(
-        "categoryName: $categoryName, fileID: $fileID, categoryID: $categoryID",
+        "categoryName: $categoryName, fileID: $fileID, categoryID: $categoryID, downloadAll: $downloadAll",
       );
       final response = await _certificateBatchRemoteDataSource
-          .downloadIndividualCertificatePDF(categoryName, categoryID, fileID);
+          .downloadCertificatePDFOrZip(
+            categoryName,
+            categoryID,
+            fileID,
+            downloadAll,
+          );
       return Right(response);
     } on ServerError catch (e) {
       return Left(Errorz(message: e.message, statusCode: e.statusCode));

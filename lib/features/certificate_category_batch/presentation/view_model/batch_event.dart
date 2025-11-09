@@ -22,15 +22,17 @@ class GetCertificatesBatchListEvent extends BatchEvent {
   });
 }
 
-class DownloadIndividualPDFButtonPressedEvent extends BatchEvent {
+class DownloadPDFButtonPressedEvent extends BatchEvent {
   String fileID;
   String categoryName;
   String categoryID;
+  bool downloadAll;
 
-  DownloadIndividualPDFButtonPressedEvent({
+  DownloadPDFButtonPressedEvent({
     required this.fileID,
     required this.categoryName,
     required this.categoryID,
+    required this.downloadAll,
   });
 }
 

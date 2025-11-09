@@ -32,4 +32,5 @@ class ApiEndpoints {
   static const String institutionStatus = '/institution/status';
   static const String certificateDownload = '/certificate/download';
   static const String certificatePreview = '/certificate/preview';
+  static const String removeBackground = '/image/remove-background';
 }

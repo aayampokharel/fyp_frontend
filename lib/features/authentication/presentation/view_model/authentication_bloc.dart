@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dashboard/core/constants/enum.dart';
 import 'package:flutter_dashboard/core/errors/app_logger.dart';
 import 'package:flutter_dashboard/core/use_case.dart';
@@ -11,6 +12,7 @@ import 'package:flutter_dashboard/features/authentication/domain/use_case/admin_
 import 'package:flutter_dashboard/features/authentication/domain/use_case/faculty_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/institute_login_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/institution_usecase.dart';
+import 'package:flutter_dashboard/features/authentication/domain/use_case/remove_background_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/user_account_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/presentation/view_model/authentication_event.dart';
 import 'package:flutter_dashboard/features/authentication/presentation/view_model/authentication_state.dart';
@@ -21,6 +23,7 @@ class AuthenticationBloc
   InstituteAccountUseCase instituteAccountUsecase;
   UserAccountUseCase userAccountUsecase;
   FacultyUseCase facultyUsecase;
+  RemoveBackgroundUseCase removeBackgroundUsecase;
 
   AdminAccountUseCase adminAccountUsecase;
 
@@ -30,19 +33,20 @@ class AuthenticationBloc
     required this.facultyUsecase,
     required this.adminAccountUsecase,
     required this.instituteAccountUsecase,
+    required this.removeBackgroundUsecase,
   }) : super(AuthenticationInitialState()) {
     on<CreateFacultyEvent>((event, emit) async {
+      AppLogger.info("faculty from vm::" + event.faculty);
       emit(AuthenticationLoadingState());
       FacultyUseCaseParams facultyParams = FacultyUseCaseParams(
         facultyEntity: FacultyEntity(
           facultyPublicKey: "",
           institutionFacultyID: "",
           institutionID: event.institutionID,
-          facultyName: "event.faculty",
-          //! to include the signature in a map and things
-          facultyAuthorityWithSignatures: [],
-          universityAffiliation: "event.universityAffiliation",
-          universityCollegeCode: "001",
+          facultyName: event.faculty,
+          facultyAuthorityWithSignatures: event.facultyAuthorityWithSignatures,
+          universityAffiliation: event.universityAffiliation,
+          universityCollegeCode: event.universityCollegeCode,
         ),
         institutionID: event.institutionID,
       );
@@ -149,6 +153,20 @@ class AuthenticationBloc
           ),
         ),
         (right) => emit(UserAccountSuccessState(userAccountEntity: right)),
+      );
+    });
+    on<SendImageForBackgroundRemovalEvent>((event, emit) async {
+      emit(SendImageForBackgroundRemovalLoadingState());
+
+      Uint8List imageIntList = event.pickerImageFile.bytes!;
+      final response = await removeBackgroundUsecase.call(imageIntList);
+      response.fold(
+        (left) => emit(
+          SendImageForBackgroundRemovalFailureState(errorMsg: left.message),
+        ),
+        (right) => emit(
+          SendImageForBackgroundRemovalSuccessState(imageIntList: right),
+        ),
       );
     });
   }

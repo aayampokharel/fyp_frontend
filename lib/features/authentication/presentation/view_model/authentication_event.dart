@@ -1,5 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
+import 'package:file_picker/file_picker.dart';
+import 'package:image_picker/image_picker.dart';
+
 abstract class AuthenticationEvent {}
 
 class CreateInstitutionUserEvent extends AuthenticationEvent {
@@ -36,22 +39,16 @@ class CreateUserAccountEvent extends AuthenticationEvent {
 class CreateFacultyEvent extends AuthenticationEvent {
   String faculty;
   String institutionID;
-  String principalName;
-  String principalSignatureBase64;
-  String facultyHodName;
+  List<Map<String, String>> facultyAuthorityWithSignatures;
   String universityAffiliation;
   String universityCollegeCode;
-  String facultyHodSignatureBase64;
 
   CreateFacultyEvent({
     required this.faculty,
     required this.institutionID,
-    required this.principalName,
-    required this.principalSignatureBase64,
-    required this.facultyHodName,
+    required this.facultyAuthorityWithSignatures,
     required this.universityAffiliation,
     required this.universityCollegeCode,
-    required this.facultyHodSignatureBase64,
   });
 }
 
@@ -65,4 +62,9 @@ class InstituteLoginEvent extends AuthenticationEvent {
   final String email;
   final String password;
   InstituteLoginEvent({required this.email, required this.password});
+}
+
+class SendImageForBackgroundRemovalEvent extends AuthenticationEvent {
+  final PlatformFile pickerImageFile;
+  SendImageForBackgroundRemovalEvent({required this.pickerImageFile});
 }
