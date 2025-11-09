@@ -195,6 +195,7 @@ import "package:flutter_dashboard/core/constants/image_constants.dart";
 import "package:flutter_dashboard/core/constants/string_constants.dart";
 import "package:flutter_dashboard/features/authentication/domain/use_case/user_account_usecase.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view/pages/sign_in_faculty.dart";
+import "package:flutter_dashboard/features/authentication/presentation/view/widgets/custom_text_field_widget.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view/widgets/upload_image_with_removed_bg.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view_model/authentication_bloc.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view_model/authentication_event.dart";
@@ -315,69 +316,6 @@ class _SignInUserAccountPageState extends State<SignInUserAccountPage> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildInputField({
-    required TextEditingController controller,
-    required String label,
-    required IconData icon,
-    String? errorText,
-    bool isPassword = false,
-    TextInputType keyboardType = TextInputType.text,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TextField(
-          controller: controller,
-          keyboardType: keyboardType,
-          obscureText: isPassword,
-          decoration: InputDecoration(
-            labelText: label,
-            prefixIcon: Icon(icon, color: ColorConstants.primaryBlue),
-            filled: true,
-            fillColor: ColorConstants.white,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: ColorConstants.lightGray),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(
-                color: ColorConstants.primaryBlue,
-                width: 2,
-              ),
-            ),
-          ),
-        ),
-        if (errorText != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 6, left: 8),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.error_outline,
-                  color: Colors.redAccent,
-                  size: 16,
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  errorText,
-                  style: const TextStyle(
-                    color: Colors.redAccent,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
-      ],
     );
   }
 
@@ -610,7 +548,7 @@ class _SignInUserAccountPageState extends State<SignInUserAccountPage> {
                             const SizedBox(height: 30),
 
                             // Email Field
-                            _buildInputField(
+                            CustomTextFieldWidget(
                               controller: emailController,
                               label: 'Email Address',
                               icon: Icons.email,
@@ -620,17 +558,17 @@ class _SignInUserAccountPageState extends State<SignInUserAccountPage> {
                             const SizedBox(height: 20),
 
                             // Password Field
-                            _buildInputField(
+                            CustomTextFieldWidget(
+                              isPassword: true,
                               controller: passwordController,
                               label: 'Password',
                               icon: Icons.lock,
                               errorText: passwordError,
-                              isPassword: true,
                             ),
                             const SizedBox(height: 20),
 
                             // Confirm Password Field
-                            _buildInputField(
+                            CustomTextFieldWidget(
                               controller: confirmPasswordController,
                               label: 'Confirm Password',
                               icon: Icons.lock_reset,
@@ -640,7 +578,7 @@ class _SignInUserAccountPageState extends State<SignInUserAccountPage> {
                             const SizedBox(height: 20),
 
                             // Role Field
-                            _buildInputField(
+                            CustomTextFieldWidget(
                               controller: roleController,
                               label: 'Institution Role',
                               icon: Icons.manage_accounts,

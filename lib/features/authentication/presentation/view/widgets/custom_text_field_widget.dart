@@ -169,7 +169,7 @@ class _CustomTextFieldWidgetState extends State<CustomTextFieldWidget> {
                 ? IconButton(
                     onPressed: _togglePasswordVisibility,
                     icon: Icon(
-                      _obscureText ? Icons.visibility : Icons.visibility_off,
+                      _obscureText ? Icons.visibility_off : Icons.visibility,
                       color: ColorConstants.mediumGray,
                     ),
                   )
