@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dashboard/features/authentication/presentation/view/widgets/primary_button_widget.dart';
 import 'package:flutter_dashboard/features/authentication/presentation/view_model/authentication_bloc.dart';
 import 'package:flutter_dashboard/features/authentication/presentation/view_model/authentication_event.dart';
 import 'package:flutter_dashboard/features/authentication/presentation/view_model/authentication_state.dart';
@@ -143,6 +144,6 @@ class _UploadImageWithRemovedBgState extends State<UploadImageWithRemovedBg> {
   }
 
   Widget elevatedContainerState({required void Function()? onTap}) {
-    return ElevatedButton(onPressed: onTap, child: Text("Pick Image"));
+    return PrimaryButtonWidget(onPressed: onTap, label: "pick image");
   }
 }

@@ -73,7 +73,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           brightness: Brightness.light,
-          primaryColor: ColorConstants.primaryPurple,
+          primaryColor: ColorConstants.primaryBlue,
           scaffoldBackgroundColor: ColorConstants.lightGray,
           fontFamily: 'Exo',
           textTheme: const TextTheme(
@@ -81,7 +81,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
         home: InitialRoleSelectionPage(),
-        // home: SignInFacultyPage(institutionID: '123', userAccountID: '123'),
+        // home: SignInFacultyPage(institutionID: "", userAccountID: ""),
       ),
     );
   }
