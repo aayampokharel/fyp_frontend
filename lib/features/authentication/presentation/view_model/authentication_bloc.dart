@@ -36,17 +36,17 @@ class AuthenticationBloc
     required this.removeBackgroundUsecase,
   }) : super(AuthenticationInitialState()) {
     on<CreateFacultyEvent>((event, emit) async {
+      AppLogger.info("faculty from vm::" + event.faculty);
       emit(AuthenticationLoadingState());
       FacultyUseCaseParams facultyParams = FacultyUseCaseParams(
         facultyEntity: FacultyEntity(
           facultyPublicKey: "",
           institutionFacultyID: "",
           institutionID: event.institutionID,
-          facultyName: "event.faculty",
-          //! to include the signature in a map and things
-          facultyAuthorityWithSignatures: [],
-          universityAffiliation: "event.universityAffiliation",
-          universityCollegeCode: "001",
+          facultyName: event.faculty,
+          facultyAuthorityWithSignatures: event.facultyAuthorityWithSignatures,
+          universityAffiliation: event.universityAffiliation,
+          universityCollegeCode: event.universityCollegeCode,
         ),
         institutionID: event.institutionID,
       );

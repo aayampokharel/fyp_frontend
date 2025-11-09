@@ -22,6 +22,8 @@ class SignInUserAccountPage extends StatelessWidget {
   final TextEditingController confirmPasswordController =
       TextEditingController();
   final TextEditingController roleController = TextEditingController();
+  final TextEditingController institutionLogoBase64Controller =
+      TextEditingController();
 
   final UserAccountUseCase userAccountUseCase = getIt<UserAccountUseCase>();
   final String institutionID;
@@ -33,7 +35,7 @@ class SignInUserAccountPage extends StatelessWidget {
     final String password = passwordController.text;
     final String confirmPassword = confirmPasswordController.text;
     final String institutionRole = roleController.text;
-    final String institutionLogoBase64 = "";
+    final String institutionLogoBase64 = institutionLogoBase64Controller.text;
 
     // TODO: Add validation for password match, email format, etc.
 
@@ -116,6 +118,7 @@ class SignInUserAccountPage extends StatelessWidget {
               // Institution Logo File Selection
               UploadImageWithRemovedBg(
                 labelName: "Select Your Institution Logo",
+                controller: institutionLogoBase64Controller,
               ),
 
               const SizedBox(height: 20),

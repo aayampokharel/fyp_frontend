@@ -10,6 +10,7 @@ import 'package:flutter_dashboard/features/authentication/domain/use_case/instit
 import 'package:flutter_dashboard/features/authentication/domain/use_case/remove_background_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/user_account_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/presentation/view/pages/initial_role_selection_page.dart';
+import 'package:flutter_dashboard/features/authentication/presentation/view/pages/sign_in_faculty.dart';
 import 'package:flutter_dashboard/features/authentication/presentation/view/pages/sign_in_institution_page.dart';
 import 'package:flutter_dashboard/features/authentication/presentation/view/pages/sign_in_user_account_page.dart';
 import 'package:flutter_dashboard/features/authentication/presentation/view_model/authentication_bloc.dart';
@@ -79,8 +80,8 @@ class MyApp extends StatelessWidget {
             bodyMedium: TextStyle(color: Colors.black87),
           ),
         ),
-        // home: InitialRoleSelectionPage(),
-        home: SignInUserAccountPage(institutionID: ""),
+        home: InitialRoleSelectionPage(),
+        // home: SignInFacultyPage(institutionID: '123', userAccountID: '123'),
       ),
     );
   }

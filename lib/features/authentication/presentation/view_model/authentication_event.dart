@@ -39,22 +39,16 @@ class CreateUserAccountEvent extends AuthenticationEvent {
 class CreateFacultyEvent extends AuthenticationEvent {
   String faculty;
   String institutionID;
-  String principalName;
-  String principalSignatureBase64;
-  String facultyHodName;
+  List<Map<String, String>> facultyAuthorityWithSignatures;
   String universityAffiliation;
   String universityCollegeCode;
-  String facultyHodSignatureBase64;
 
   CreateFacultyEvent({
     required this.faculty,
     required this.institutionID,
-    required this.principalName,
-    required this.principalSignatureBase64,
-    required this.facultyHodName,
+    required this.facultyAuthorityWithSignatures,
     required this.universityAffiliation,
     required this.universityCollegeCode,
-    required this.facultyHodSignatureBase64,
   });
 }
 

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
@@ -10,7 +11,12 @@ import 'package:image_picker/image_picker.dart';
 
 class UploadImageWithRemovedBg extends StatefulWidget {
   final String labelName;
-  const UploadImageWithRemovedBg({super.key, required this.labelName});
+  final TextEditingController controller;
+  const UploadImageWithRemovedBg({
+    super.key,
+    required this.labelName,
+    required this.controller,
+  });
 
   @override
   State<UploadImageWithRemovedBg> createState() =>
@@ -24,7 +30,6 @@ class _UploadImageWithRemovedBgState extends State<UploadImageWithRemovedBg> {
   String? _error;
 
   final FilePicker _picker = FilePicker.platform;
-  // final String apiUrl = "http://localhost:8080/remove-bg";
 
   Future<FilePickerResult?> pickImage() async {
     final picked = await _picker.pickFiles(
@@ -54,6 +59,7 @@ class _UploadImageWithRemovedBgState extends State<UploadImageWithRemovedBg> {
             child: Center(child: Text(state.errorMsg)),
           );
         } else if (state is SendImageForBackgroundRemovalSuccessState) {
+          widget.controller.text = base64Encode(state.imageIntList);
           return imageContainer(
             child: Image.memory(
               state.imageIntList,

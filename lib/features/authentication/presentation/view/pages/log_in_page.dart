@@ -4,6 +4,7 @@ import "package:flutter_dashboard/core/constants/color_constants.dart";
 import "package:flutter_dashboard/core/constants/enum.dart";
 import "package:flutter_dashboard/core/constants/image_constants.dart";
 import "package:flutter_dashboard/core/constants/string_constants.dart";
+import "package:flutter_dashboard/core/errors/app_logger.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view/pages/institution_selection_page.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view/widgets/colored_button_widget.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view/widgets/container_with_two_parts_widget.dart";
@@ -47,9 +48,7 @@ class LoginPage extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (_) => InstitutionSelectionPage(
-                  institutions: state
-                      .instituteAccountEntity
-                      .institutionList, // <-- full list
+                  institutions: state.instituteAccountEntity.institutionList,
                 ),
               ),
             );
@@ -100,14 +99,14 @@ class LoginPage extends StatelessWidget {
                   ),
                   ColoredButtonWidget(
                     onPressed: () {
-                      if (systemRole == "INSTITUTE") {
+                      if (systemRole == SystemRole.institute) {
                         context.read<AuthenticationBloc>().add(
                           InstituteLoginEvent(
                             email: emailController.text,
                             password: institutionController.text,
                           ),
                         );
-                      } else if (systemRole == "ADMIN") {
+                      } else if (systemRole == SystemRole.admin) {
                         context.read<AuthenticationBloc>().add(
                           AdminLoginEvent(
                             email: emailController.text,
