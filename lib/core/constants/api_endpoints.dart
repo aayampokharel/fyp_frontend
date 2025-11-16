@@ -25,8 +25,8 @@ class ApiEndpoints {
   static const String institutionFacultyIDQuery = "institution_faculty_id";
   static const String categoryIDQuery = "category_id";
   static const String fileIDQuery = "file_id";
-  static const String idQuery =
-      "id"; //not made for now , but needs to be implemented later .
+  static const String idQuery = "certificate_id";
+  static const String certificateHashQuery = "certificate_hash";
   static const String categoryNameQuery = "category_name";
 
   //========================fileuploadendpoints==============================

@@ -46,7 +46,8 @@ class _CertificateSelectionPageState
   void _onViewPressed(CertificateDataEntity certificate) {
     context.read<BatchBloc>().add(
       PreviewCertificateHTMLButtonPressedEvent(
-        id: "123",
+        id: certificate.certificateId,
+        certificateHash: certificate.certificateHash!,
       ), //! to be changed later .
     );
   }

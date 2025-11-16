@@ -79,11 +79,17 @@ class CertificateBatchRemoteDataSource {
     }
   }
 
-  Future<void> getCertificateHTMLPreview(String id) async {
+  Future<void> getCertificateHTMLPreview(String id, String hash) async {
     try {
-      final url = Uri.parse(
-        ApiEndpoints.baseUrl + ApiEndpoints.certificatePreview,
-      ).replace(queryParameters: {ApiEndpoints.idQuery: id}).toString();
+      final url =
+          Uri.parse(ApiEndpoints.baseUrl + ApiEndpoints.certificatePreview)
+              .replace(
+                queryParameters: {
+                  ApiEndpoints.idQuery: id,
+                  ApiEndpoints.certificateHashQuery: hash,
+                },
+              )
+              .toString();
 
       print('Generated URL: $url');
 

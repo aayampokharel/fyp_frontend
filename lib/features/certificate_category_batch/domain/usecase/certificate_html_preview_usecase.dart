@@ -4,11 +4,26 @@ import 'package:flutter_dashboard/features/certificate_category_batch/domain/rep
 import 'package:flutter_dashboard/features/certificate_category_batch/domain/repository/certificate_batch_iresponsibility.dart';
 import 'package:flutter_dashboard/features/csv_upload/domain/entity/certificate_data_entity.dart';
 
-class CertificateHTMLPreviewUseCase implements UseCase<void, String> {
+class CertificateHTMLPreviewUseCaseParams {
+  final String id;
+  final String certificateHash;
+  CertificateHTMLPreviewUseCaseParams({
+    required this.id,
+    required this.certificateHash,
+  });
+}
+
+class CertificateHTMLPreviewUseCase
+    implements UseCase<void, CertificateHTMLPreviewUseCaseParams> {
   final CertificateBatchIrepository _certificateBatchIrepository;
   CertificateHTMLPreviewUseCase(this._certificateBatchIrepository);
   @override
-  DefaultFutureEitherType<void> call(String id) {
-    return _certificateBatchIrepository.getCertificateHTMLPreview(id);
+  DefaultFutureEitherType<void> call(
+    CertificateHTMLPreviewUseCaseParams params,
+  ) {
+    return _certificateBatchIrepository.getCertificateHTMLPreview(
+      params.id,
+      params.certificateHash,
+    );
   }
 }

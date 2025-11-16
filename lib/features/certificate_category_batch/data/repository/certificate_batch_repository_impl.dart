@@ -61,11 +61,14 @@ class CertificateBatchRepositoryImpl implements CertificateBatchIrepository {
   }
 
   @override
-  DefaultFutureEitherType<void> getCertificateHTMLPreview(String id) async {
+  DefaultFutureEitherType<void> getCertificateHTMLPreview(
+    String id,
+    String hash,
+  ) async {
     try {
       AppLogger.debug("id: $id");
       final response = await _certificateBatchRemoteDataSource
-          .getCertificateHTMLPreview(id);
+          .getCertificateHTMLPreview(id, hash);
       return Right(response);
     } on ServerError catch (e) {
       return Left(Errorz(message: e.message, statusCode: e.statusCode));

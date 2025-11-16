@@ -78,7 +78,12 @@ class BatchBloc extends Bloc<BatchEvent, BatchState> {
     });
     on<PreviewCertificateHTMLButtonPressedEvent>((event, emit) async {
       try {
-        await certificateHTMLPreviewUseCase.call(event.id);
+        await certificateHTMLPreviewUseCase.call(
+          CertificateHTMLPreviewUseCaseParams(
+            id: event.id,
+            certificateHash: event.certificateHash,
+          ),
+        );
         //   //! throw error notification only no success thing .
       } catch (e) {
         emit(CertificateBatchSelectFailureState(e.toString()));

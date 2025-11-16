@@ -38,6 +38,9 @@ class DownloadPDFButtonPressedEvent extends BatchEvent {
 
 class PreviewCertificateHTMLButtonPressedEvent extends BatchEvent {
   String id;
-
-  PreviewCertificateHTMLButtonPressedEvent({required this.id});
+  String certificateHash;
+  PreviewCertificateHTMLButtonPressedEvent({
+    required this.id,
+    required this.certificateHash,
+  });
 }

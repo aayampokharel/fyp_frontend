@@ -14,5 +14,8 @@ abstract interface class CertificateBatchIrepository {
     String categoryID,
     bool downloadAll,
   );
-  DefaultFutureEitherType<void> getCertificateHTMLPreview(String id);
+  DefaultFutureEitherType<void> getCertificateHTMLPreview(
+    String id,
+    String certificateHash,
+  );
 }
