@@ -3,6 +3,7 @@ import 'package:flutter_dashboard/core/constants/api_endpoints.dart';
 import 'package:flutter_dashboard/core/errors/errorz.dart';
 import 'package:flutter_dashboard/core/wrappers/dio_client.dart';
 import 'package:flutter_dashboard/features/authentication/data/model/Admin_account_model.dart';
+import 'package:flutter_dashboard/features/authentication/domain/entity/institution_entity.dart';
 
 import '../../../../core/errors/app_logger.dart' show AppLogger;
 
@@ -11,7 +12,7 @@ class AdminAccountRemoteDataSource {
 
   AdminAccountRemoteDataSource(this._dioClient);
 
-  Future<AdminAccountResponseModel> verifyAdminLogin(
+  Future<AdminDashboardCountsResponseModel> verifyAdminLogin(
     AdminAccountRequestModel adminAccountRequest,
   ) async {
     try {
@@ -27,8 +28,35 @@ class AdminAccountRemoteDataSource {
       );
 
       if (response.statusCode == 200) {
+        final pendingInstitutionsJson =
+            response.data['data']['pending_institutions'] as List<dynamic>;
+
+        final pendingInstitutions = pendingInstitutionsJson
+            .map(
+              (json) => InstitutionEntity.fromMap(json as Map<String, dynamic>),
+            )
+            .toList();
+
         AppLogger.info(response.data);
-        return AdminAccountResponseModel.fromJSON(response.data['data']);
+        var res = AdminDashboardCountsResponseModel.fromJson(
+          response.data['data']['admin_dashboard_count_details'],
+        );
+        AppLogger.info(response.data['data']);
+        return AdminDashboardCountsResponseModel(
+          activeInstitutions: res.activeInstitutions,
+          deletedInstitutions: res.deletedInstitutions,
+          signedUpInstitutions: res.signedUpInstitutions,
+          totalFaculties: res.totalFaculties,
+          activeUsers: res.activeUsers,
+          deletedUsers: res.deletedUsers,
+          activeAdmins: res.activeAdmins,
+          activeInstitutes: res.activeInstitutes,
+          totalPDFCategories: res.totalPDFCategories,
+          totalPDFFiles: res.totalPDFFiles,
+          totalCertificates: res.totalCertificates,
+          totalBlocks: res.totalBlocks,
+          pendingInstitutionEntities: pendingInstitutions,
+        );
       } else {
         AppLogger.apiError(
           ApiEndpoints.authUser,

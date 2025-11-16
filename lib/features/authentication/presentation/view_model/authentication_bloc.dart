@@ -92,8 +92,8 @@ class AuthenticationBloc
         email: event.email,
         password: event.password,
       );
-      DefaultEitherType<AdminAccountEntity> response = await adminAccountUsecase
-          .call(params);
+      DefaultEitherType<AdminDashboardCountsEntity> response =
+          await adminAccountUsecase.call(params);
 
       response.fold<void>(
         (left) => emit(
@@ -104,7 +104,11 @@ class AuthenticationBloc
         ),
         (right) {
           AppLogger.info(right.toString());
-          emit(AdminAccountVerificationSuccessState(adminAccountEntity: right));
+          emit(
+            AdminAccountVerificationSuccessState(
+              adminDashboardCountsEntity: right,
+            ),
+          );
         },
       );
     });

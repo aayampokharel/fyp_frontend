@@ -1,20 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dashboard/core/constants/color_constants.dart';
 import 'package:flutter_dashboard/core/constants/dependency_injection/di.dart';
 import 'package:flutter_dashboard/core/constants/enum.dart';
 import 'package:flutter_dashboard/core/errors/app_logger.dart';
+import 'package:flutter_dashboard/features/admin/presentation/view_model/bloc.dart';
+import 'package:flutter_dashboard/features/admin/presentation/view_model/event.dart';
+import 'package:flutter_dashboard/features/admin/presentation/view_model/state.dart';
+import 'package:flutter_dashboard/features/authentication/domain/entity/admin_account_entity.dart';
+import 'package:flutter_dashboard/features/authentication/domain/entity/institution_entity.dart';
 import 'package:flutter_dashboard/features/sse/domain/usecase/sse_use_case.dart';
+import 'package:intl/intl.dart';
 
 class AdminPage extends StatefulWidget {
-  const AdminPage({super.key});
+  final AdminDashboardCountsEntity dashboardCounts;
+  const AdminPage({super.key, required this.dashboardCounts});
 
   @override
   State<AdminPage> createState() => _AdminPageState();
 }
 
 class _AdminPageState extends State<AdminPage> {
-  final ValueNotifier<List<Map<String, dynamic>>> institutionsNotifier =
+  final ValueNotifier<List<InstitutionEntity>> institutionsNotifier =
       ValueNotifier([]);
 
   @override
@@ -24,17 +32,21 @@ class _AdminPageState extends State<AdminPage> {
 
     sseUseCase.call().listen((event) {
       AppLogger.debug(event.toString());
-      if (event['event'] == SSEType.sseSingleForm.value) {
-        final newData = Map<String, dynamic>.from(event['data']);
-        newData['status'] = 'Pending';
 
-        institutionsNotifier.value = [...institutionsNotifier.value, newData];
+      if (event['event'] == SSEType.sseSingleForm.value) {
+        final newInstitution = InstitutionEntity.fromMap(event['data']);
+        institutionsNotifier.value = [
+          ...institutionsNotifier.value,
+          newInstitution,
+        ];
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final counts = widget.dashboardCounts;
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Admin Dashboard',
@@ -47,10 +59,13 @@ class _AdminPageState extends State<AdminPage> {
         ),
         useMaterial3: true,
       ),
-      home: ValueListenableBuilder(
+      home: ValueListenableBuilder<List<InstitutionEntity>>(
         valueListenable: institutionsNotifier,
-        builder: (context, value, child) {
-          return ProfessionalAdminDashboard(institutions: value);
+        builder: (context, institutions, child) {
+          return ProfessionalAdminDashboard(
+            institutions: institutions,
+            counts: counts,
+          );
         },
       ),
     );
@@ -58,8 +73,14 @@ class _AdminPageState extends State<AdminPage> {
 }
 
 class ProfessionalAdminDashboard extends StatefulWidget {
-  final List<Map<String, dynamic>> institutions;
-  const ProfessionalAdminDashboard({super.key, required this.institutions});
+  final List<InstitutionEntity> institutions;
+  final AdminDashboardCountsEntity counts;
+
+  const ProfessionalAdminDashboard({
+    super.key,
+    required this.institutions,
+    required this.counts,
+  });
 
   @override
   State<ProfessionalAdminDashboard> createState() =>
@@ -68,25 +89,18 @@ class ProfessionalAdminDashboard extends StatefulWidget {
 
 class _ProfessionalAdminDashboardState
     extends State<ProfessionalAdminDashboard> {
-  // Local list for notifications (using static data as requested)
-  late List<Map<String, dynamic>> _pendingInstitutions;
+  late List<InstitutionEntity> _pendingInstitutions;
 
   @override
   void initState() {
     super.initState();
 
-    _pendingInstitutions = [
-      {
-        "institution_id": "47621e31-42c8-48",
-        "institution_name": "ABCD College",
-        "tole_address": "Sinamangal",
-        "ward_number": "1",
-        "district_address": "Kathmandu",
-        "is_active": null,
-      },
-    ];
+    _pendingInstitutions = [];
+    if (widget.counts.pendingInstitutions.isNotEmpty) {
+      _pendingInstitutions.addAll(widget.counts.pendingInstitutions);
+    }
 
-    // Add initial passed institutions
+    // Add institutions from backend
     _pendingInstitutions.addAll(widget.institutions);
   }
 
@@ -104,7 +118,7 @@ class _ProfessionalAdminDashboardState
     }
   }
 
-  void _removeInstitution(Map<String, dynamic> institution) {
+  void _removeInstitution(InstitutionEntity institution) {
     setState(() {
       _pendingInstitutions.remove(institution);
     });
@@ -123,11 +137,11 @@ class _ProfessionalAdminDashboardState
         foregroundColor: Colors.white,
         elevation: 0,
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.logout_rounded),
-            tooltip: 'Logout',
-          ),
+          // IconButton(
+          //   onPressed: () {},
+          //   icon: const Icon(Icons.logout_rounded),
+          //   tooltip: 'Logout',
+          // ),
         ],
       ),
       body: SingleChildScrollView(
@@ -137,7 +151,7 @@ class _ProfessionalAdminDashboardState
           children: [
             _buildWelcomeCard(),
             const SizedBox(height: 24),
-            _buildStatisticsGrid(),
+            _buildStatisticsGrid(widget.counts),
             const SizedBox(height: 24),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -237,7 +251,7 @@ class _ProfessionalAdminDashboardState
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    "12-11-2025",
+                    DateFormat('dd-MM-yyyy').format(DateTime.now()),
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.9),
                       fontSize: 12,
@@ -253,49 +267,63 @@ class _ProfessionalAdminDashboardState
   }
 
   // ================= Statistics Grid =================
-  Widget _buildStatisticsGrid() {
+  Widget _buildStatisticsGrid(AdminDashboardCountsEntity dashboardCount) {
     final stats = [
       {
         "title": "Total Institutions",
-        "count": 45,
-        "icon": Icons.school_rounded,
+        "count":
+            dashboardCount.activeInstitutions +
+            dashboardCount.deletedInstitutions,
+        "icon": Icons.school_outlined,
         "color": ColorConstants.primaryBlue,
-        "trend": "+12%",
       },
       {
         "title": "Total Faculties",
-        "count": 120,
+        "count": dashboardCount.totalFaculties,
         "icon": Icons.groups_rounded,
         "color": const Color(0xFFFF8C4C),
-        "trend": "+8%",
       },
       {
         "title": "Active Accounts",
-        "count": 156,
+        "count": dashboardCount.activeUsers,
         "icon": Icons.person_rounded,
         "color": ColorConstants.successGreen,
-        "trend": "+5%",
+        // "trend": "+5%",
       },
       {
         "title": "Deleted Accounts",
-        "count": 12,
+        "count": dashboardCount.deletedUsers,
         "icon": Icons.person_off_rounded,
         "color": ColorConstants.errorRed,
-        "trend": "-2%",
+        // "trend": "-2%",
       },
       {
-        "title": "Total Categories",
-        "count": 89,
-        "icon": Icons.category_rounded,
+        "title": "Total Signed Up Institutions",
+        "count": dashboardCount.signedUpInstitutions,
+        "icon": Icons.bookmark_added,
         "color": ColorConstants.accentPurple,
-        "trend": "+15%",
+        // "trend": "+15%",
       },
       {
-        "title": "Certificates This Year",
-        "count": 1245,
+        "title": "Certificates ",
+        "count": dashboardCount.totalCertificates,
         "icon": Icons.verified_rounded,
         "color": const Color(0xFF00B4D8),
-        "trend": "+27%",
+        // "trend": "+27%",
+      },
+      {
+        "title": "Deleted Institutions",
+        "count": dashboardCount.deletedInstitutions,
+        "icon": Icons.group_off,
+        "color": Colors.red,
+        // "trend": "+27%",
+      },
+      {
+        "title": "Signed Up Institutions",
+        "count": dashboardCount.signedUpInstitutions,
+        "icon": Icons.group_sharp,
+        "color": const Color(0xFF00B4D8),
+        // "trend": "+27%",
       },
     ];
 
@@ -345,24 +373,6 @@ class _ProfessionalAdminDashboardState
                     stat["icon"] as IconData,
                     color: stat["color"] as Color,
                     size: 22,
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: ColorConstants.successGreen.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    stat["trend"] as String,
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: ColorConstants.successGreen,
-                    ),
                   ),
                 ),
               ],
@@ -520,25 +530,20 @@ class _ProfessionalAdminDashboardState
     final quickStats = [
       {
         "title": "Pending Requests",
-        "value": 3,
+        "value": _pendingInstitutions.length,
         "icon": Icons.pending_actions_rounded,
         "color": Colors.orange,
       },
+
       {
-        "title": "New Users Today",
-        "value": 5,
-        "icon": Icons.person_add_alt_rounded,
-        "color": ColorConstants.successGreen,
-      },
-      {
-        "title": "Certificates Today",
-        "value": 7,
+        "title": "Total Certificates",
+        "value": widget.counts.totalCertificates,
         "icon": Icons.verified_user_rounded,
         "color": ColorConstants.primaryBlue,
       },
       {
-        "title": "Active Categories",
-        "value": 4,
+        "title": "Active Faculties",
+        "value": widget.counts.totalFaculties,
         "icon": Icons.category_rounded,
         "color": ColorConstants.accentPurple,
       },
@@ -613,7 +618,7 @@ class _ProfessionalAdminDashboardState
     );
   }
 
-  // ================= Notifications Section (Using Static Data) =================
+  // ================= Notifications Section =================
   Widget _buildNotificationsSection() {
     final pendingCount = _pendingInstitutions.length;
 
@@ -683,6 +688,7 @@ class _ProfessionalAdminDashboardState
               (inst) => BuildNotificationItem(
                 institution: inst,
                 onRemove: _removeInstitution,
+                context: context,
               ),
             ),
         ],
@@ -693,92 +699,134 @@ class _ProfessionalAdminDashboardState
 
 // ================= Notification Item =================
 class BuildNotificationItem extends StatelessWidget {
-  final Map<String, dynamic> institution;
-  final ValueChanged<Map<String, dynamic>> onRemove;
+  final InstitutionEntity institution;
+  final ValueChanged<InstitutionEntity> onRemove;
+  final BuildContext context;
 
-  const BuildNotificationItem({
+  BuildNotificationItem({
     super.key,
     required this.institution,
     required this.onRemove,
+    required this.context,
   });
 
   void _handleAccept() {
-    AppLogger.info("Accepted: ${institution['institution_name']}");
+    AppLogger.info("Accepted: ${institution.institutionName}");
+
+    // Dispatch BLoC event for activating institution
+    context.read<AdminBloc>().add(
+      AdminIsActiveButtonPressedEvent(
+        institutionID: institution.institutionID,
+        isActive: true,
+      ),
+    );
+
     onRemove(institution);
   }
 
   void _handleReject() {
+    // Dispatch BLoC event for deactivating/rejecting institution
+    context.read<AdminBloc>().add(
+      AdminIsActiveButtonPressedEvent(
+        institutionID: institution.institutionID,
+        isActive: false,
+      ),
+    );
+
     onRemove(institution);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: Colors.blue.withOpacity(0.1),
-              shape: BoxShape.circle,
+    return BlocListener<AdminBloc, AdminState>(
+      listener: (context, state) {
+        // Handle different states if needed
+        if (state is AdminIsInstitutionButtonPressedFailureState) {
+          // Show error message
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+          );
+        }
+        if (state is AdminIsInstitutionButtonPressedSuccessState) {
+          // Show success message
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.green,
             ),
-            child: const Icon(
-              Icons.school_rounded,
-              color: Colors.blue,
-              size: 18,
+          );
+        }
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.grey[50],
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey[200]!),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: Colors.blue.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.school_rounded,
+                color: Colors.blue,
+                size: 18,
+              ),
             ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              institution["institution_name"] ?? "Unknown",
-              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-            ),
-          ),
-          Row(
-            children: [
-              GestureDetector(
-                onTap: _handleAccept,
-                child: Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: Colors.green.withOpacity(0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.check_rounded,
-                    color: Colors.green,
-                    size: 20,
-                  ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                institution.institutionName ?? "Unknown",
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
                 ),
               ),
-              const SizedBox(width: 8),
-              GestureDetector(
-                onTap: _handleReject,
-                child: Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: Colors.red.withOpacity(0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.close_rounded,
-                    color: Colors.red,
-                    size: 20,
+            ),
+            Row(
+              children: [
+                GestureDetector(
+                  onTap: _handleAccept,
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: Colors.green.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.check_rounded,
+                      color: Colors.green,
+                      size: 20,
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ],
+                const SizedBox(width: 8),
+                GestureDetector(
+                  onTap: _handleReject,
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.close_rounded,
+                      color: Colors.red,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

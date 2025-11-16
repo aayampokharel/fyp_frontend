@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dashboard/core/constants/color_constants.dart';
 import 'package:flutter_dashboard/core/constants/dependency_injection/di.dart';
+import 'package:flutter_dashboard/features/admin/domain/usecase/update_institution_is_active_status.dart';
+import 'package:flutter_dashboard/features/admin/presentation/view_model/bloc.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/admin_account_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/faculty_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/institute_login_usecase.dart';
@@ -56,6 +58,11 @@ class MyApp extends StatelessWidget {
                 getIt<CertificateDownloadPDFUseCase>(),
             certificateHTMLPreviewUseCase:
                 getIt<CertificateHTMLPreviewUseCase>(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => AdminBloc(
+            adminInstitutionUsecase: getIt<AdminInstitutionUseCase>(),
           ),
         ),
         BlocProvider(

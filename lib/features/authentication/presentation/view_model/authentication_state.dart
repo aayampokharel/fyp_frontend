@@ -40,8 +40,10 @@ class FacultySuccessState extends AuthenticationState {
 }
 
 class AdminAccountVerificationSuccessState extends AuthenticationState {
-  AdminAccountEntity adminAccountEntity;
-  AdminAccountVerificationSuccessState({required this.adminAccountEntity});
+  AdminDashboardCountsEntity adminDashboardCountsEntity;
+  AdminAccountVerificationSuccessState({
+    required this.adminDashboardCountsEntity,
+  });
 }
 
 class InstituteAccountVerificationSuccessState extends AuthenticationState {

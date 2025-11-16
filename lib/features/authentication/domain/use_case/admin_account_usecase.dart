@@ -9,11 +9,11 @@ class AdminAccountUseCaseParams {
 }
 
 class AdminAccountUseCase
-    implements UseCase<AdminAccountEntity, AdminAccountUseCaseParams> {
+    implements UseCase<AdminDashboardCountsEntity, AdminAccountUseCaseParams> {
   final AdminAccountRepository _adminAccountRepository;
   AdminAccountUseCase(this._adminAccountRepository);
   @override
-  DefaultFutureEitherType<AdminAccountEntity> call(params) {
+  DefaultFutureEitherType<AdminDashboardCountsEntity> call(params) {
     return _adminAccountRepository.adminLogin(
       email: params.email,
       password: params.password,

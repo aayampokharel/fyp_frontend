@@ -13,7 +13,7 @@ class AdminAccountRepositoryImpl implements AdminAccountRepository {
   AdminAccountRepositoryImpl(this._adminAccountRemoteDataSource);
 
   @override
-  DefaultFutureEitherType<AdminAccountEntity> adminLogin({
+  DefaultFutureEitherType<AdminDashboardCountsEntity> adminLogin({
     required String email,
     required String password,
   }) async {
@@ -23,16 +23,15 @@ class AdminAccountRepositoryImpl implements AdminAccountRepository {
         email: email,
       );
 
-      final AdminAccountResponseModel responseModel =
+      final AdminDashboardCountsResponseModel responseModel =
           await _adminAccountRemoteDataSource.verifyAdminLogin(
             userAccountRequest,
           );
 
       AppLogger.info(responseModel.toString());
 
-      AdminAccountEntity adminAccountEntityFromModel = responseModel.toEntity(
-        email,
-      );
+      AdminDashboardCountsEntity adminAccountEntityFromModel = responseModel
+          .toEntity();
 
       AppLogger.info(adminAccountEntityFromModel.toString());
       return Right(adminAccountEntityFromModel);

@@ -15,6 +15,17 @@ class InstitutionEntity {
     required this.institutionID,
   });
 
+  factory InstitutionEntity.fromMap(Map<String, dynamic> map) {
+    return InstitutionEntity(
+      institutionID: map['institution_id'] ?? '',
+      map['institution_name'] ?? '',
+      int.tryParse(map['ward_number'].toString()) ?? 0,
+      map['tole_address'] ?? '',
+      map['district_address'] ?? '',
+      map['is_active'], // may be null
+    );
+  }
+
   Map<String, dynamic> toJSON() => {
     'institution_id': institutionID,
     'institution_name': institutionName,

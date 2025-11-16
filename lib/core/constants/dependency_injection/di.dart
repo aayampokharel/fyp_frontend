@@ -1,5 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dashboard/core/wrappers/dio_client.dart';
+import 'package:flutter_dashboard/features/admin/data/data_source/admin_is_active_data_source.dart';
+import 'package:flutter_dashboard/features/admin/data/repository/institution_is_active_repository_impl.dart';
+import 'package:flutter_dashboard/features/admin/domain/repository/institution_is_active_repository.dart';
+import 'package:flutter_dashboard/features/admin/domain/usecase/update_institution_is_active_status.dart';
 import 'package:flutter_dashboard/features/authentication/data/data_source/admin_remote_data_source.dart';
 import 'package:flutter_dashboard/features/authentication/data/data_source/faculty_remote_data_source.dart';
 import 'package:flutter_dashboard/features/authentication/data/data_source/institution_remote_data_source.dart';
@@ -226,5 +230,19 @@ Future _authDependencies() async {
   );
   getIt.registerLazySingleton<RemoveBackgroundUseCase>(
     () => RemoveBackgroundUseCase(getIt<RemoveBackgroundIRepository>()),
+  );
+  //===============================admin_institutiions==x
+  getIt.registerLazySingleton<AdminRemoteDataSource>(
+    () => AdminRemoteDataSource(getIt<DioClient>()),
+  );
+  getIt.registerLazySingleton<InstitutionIsActiveAdminRepositoryImpl>(
+    () =>
+        InstitutionIsActiveAdminRepositoryImpl(getIt<AdminRemoteDataSource>()),
+  );
+  getIt.registerLazySingleton<InstitutionIsActiveRepository>(
+    () => getIt<InstitutionIsActiveAdminRepositoryImpl>(),
+  );
+  getIt.registerLazySingleton<AdminInstitutionUseCase>(
+    () => AdminInstitutionUseCase(getIt<InstitutionIsActiveRepository>()),
   );
 }

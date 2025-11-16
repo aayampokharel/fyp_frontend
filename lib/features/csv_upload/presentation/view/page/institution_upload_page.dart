@@ -6,6 +6,8 @@ import 'package:flutter_dashboard/core/constants/color_constants.dart';
 import 'package:flutter_dashboard/core/errors/app_logger.dart';
 import 'package:flutter_dashboard/features/authentication/domain/entity/faculty_entity.dart';
 import 'package:flutter_dashboard/features/authentication/domain/entity/institution_entity.dart';
+import 'package:flutter_dashboard/features/authentication/presentation/view/pages/initial_role_selection_page.dart';
+import 'package:flutter_dashboard/features/csv_upload/presentation/view/page/add_faculty_page.dart';
 import 'package:flutter_dashboard/features/csv_upload/presentation/view_model/upload_bloc.dart';
 import 'package:flutter_dashboard/features/csv_upload/presentation/view_model/upload_event.dart';
 import 'package:flutter_dashboard/features/csv_upload/presentation/view_model/upload_state.dart';
@@ -481,12 +483,18 @@ class _InstitutionCsvUploadPageState extends State<InstitutionCsvUploadPage> {
                   width: double.infinity,
                   child: OutlinedButton.icon(
                     onPressed: () {
-                      // Settings functionality
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              AddFacultyPage(institutionID: institutionID),
+                        ),
+                      );
                     },
-                    icon: const Icon(Icons.settings_outlined, size: 16),
-                    label: const Text('Settings'),
+                    icon: const Icon(Icons.add_rounded, size: 16),
+                    label: const Text('Add Faculty'),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: ColorConstants.darkGray,
+                      foregroundColor: ColorConstants.infoBlue,
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -502,7 +510,13 @@ class _InstitutionCsvUploadPageState extends State<InstitutionCsvUploadPage> {
                   width: double.infinity,
                   child: OutlinedButton.icon(
                     onPressed: () {
-                      // Logout functionality
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => InitialRoleSelectionPage(),
+                        ),
+                        (route) => false,
+                      );
                     },
                     icon: const Icon(Icons.logout_rounded, size: 16),
                     label: const Text('Logout'),
