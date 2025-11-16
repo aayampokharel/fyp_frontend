@@ -31,7 +31,7 @@ class SseRemoteDataSource {
               );
               final data = json.decode(rawJson) as Map<String, dynamic>;
               yield {
-                'connection_token': connectionToken,
+                //'connection_token': connectionToken,
                 'event': currentEvent,
                 'data': data,
               };

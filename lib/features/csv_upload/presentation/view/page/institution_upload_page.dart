@@ -95,319 +95,424 @@ class _InstitutionCsvUploadPageState extends State<InstitutionCsvUploadPage> {
   // Sidebar with faculties list
   Widget _buildFacultiesSidebar(String institutionID) {
     return Container(
-      width: 280,
+      width: 320,
       decoration: BoxDecoration(
-        color: Colors.grey[50],
-        border: Border(right: BorderSide(color: Colors.grey[300]!)),
+        color: Colors.white,
+        border: Border(right: BorderSide(color: Colors.grey[200]!)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(2, 0),
+          ),
+        ],
       ),
       child: Column(
         children: [
-          // User info section
+          // User info section - Improved
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: Colors.blue,
-              border: Border(bottom: BorderSide(color: Colors.blue.shade700)),
-            ),
-            child: Column(
-              children: [
-                CircleAvatar(
-                  backgroundColor: Colors.white,
-                  radius: 30,
-                  child: Icon(Icons.person, size: 40, color: Colors.blue),
+              gradient: LinearGradient(
+                colors: [
+                  ColorConstants.primaryBlue,
+                  ColorConstants.primaryBlue.withOpacity(0.9),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: ColorConstants.primaryBlue.withOpacity(0.2),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
                 ),
-                const SizedBox(height: 10),
+              ],
+            ),
+            child: Row(
+              children: [
+                // User Avatar
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFFFF8C4C), Color(0xFFFF4C4C)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.3),
+                      width: 2,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.person_rounded,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 12),
+
+                // User Info
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Institution Admin",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        "Management Portal",
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white.withOpacity(0.9),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
 
           // Faculties Section
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header
-                Row(
-                  children: [
-                    Icon(
-                      Icons.school_outlined,
-                      color: ColorConstants.primaryBlue,
-                      size: 20,
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
                     ),
-                    const SizedBox(width: 8),
-                    Text(
-                      "SELECT FACULTY",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: ColorConstants.darkGray,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-
-                // Faculty Cards
-                ...facultyList.map((faculty) {
-                  final isSelected =
-                      selectedFaculty?.institutionFacultyID ==
-                      faculty.institutionFacultyID;
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 12),
                     decoration: BoxDecoration(
-                      color: isSelected
-                          ? ColorConstants.primaryBlue.withOpacity(0.08)
-                          : Colors.white,
-                      borderRadius: BorderRadius.circular(12),
+                      color: ColorConstants.primaryBlue.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: isSelected
-                            ? ColorConstants.primaryBlue
-                            : ColorConstants.lightGray,
-                        width: isSelected ? 1.5 : 1,
+                        color: ColorConstants.primaryBlue.withOpacity(0.1),
                       ),
-                      boxShadow: isSelected
-                          ? [
-                              BoxShadow(
-                                color: ColorConstants.primaryBlue.withOpacity(
-                                  0.1,
-                                ),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ]
-                          : [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
-                                blurRadius: 4,
-                                offset: const Offset(0, 1),
-                              ),
-                            ],
                     ),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            selectedFaculty = faculty;
-                          });
-                        },
-                        borderRadius: BorderRadius.circular(12),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Row(
-                            children: [
-                              // Faculty Icon
-                              Container(
-                                width: 44,
-                                height: 44,
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? ColorConstants.primaryBlue
-                                      : ColorConstants.mediumGray.withOpacity(
-                                          0.1,
-                                        ),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Icon(
-                                  Icons.school_rounded,
-                                  color: isSelected
-                                      ? Colors.white
-                                      : ColorConstants.primaryBlue,
-                                  size: 20,
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-
-                              // Faculty Details
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      faculty.facultyName.isNotEmpty
-                                          ? faculty.facultyName
-                                          : "Unnamed Faculty",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: isSelected
-                                            ? FontWeight.w700
-                                            : FontWeight.w600,
-                                        color: isSelected
-                                            ? ColorConstants.primaryBlue
-                                            : ColorConstants.textDark,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    if (faculty
-                                        .universityAffiliation
-                                        .isNotEmpty) ...[
-                                      const SizedBox(height: 4),
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.account_balance_outlined,
-                                            size: 12,
-                                            color: ColorConstants.mediumGray,
-                                          ),
-                                          const SizedBox(width: 4),
-                                          Expanded(
-                                            child: Text(
-                                              faculty.universityAffiliation,
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                color:
-                                                    ColorConstants.mediumGray,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                    if (faculty
-                                        .universityCollegeCode
-                                        .isNotEmpty) ...[
-                                      const SizedBox(height: 2),
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.code_outlined,
-                                            size: 12,
-                                            color: ColorConstants.mediumGray,
-                                          ),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            "Code: ${faculty.universityCollegeCode}",
-                                            style: TextStyle(
-                                              fontSize: 11,
-                                              color: ColorConstants.mediumGray,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ],
-                                ),
-                              ),
-
-                              // Selection Indicator
-                              if (isSelected) ...[
-                                Container(
-                                  width: 24,
-                                  height: 24,
-                                  decoration: BoxDecoration(
-                                    color: ColorConstants.primaryBlue,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    Icons.check_rounded,
-                                    color: Colors.white,
-                                    size: 16,
-                                  ),
-                                ),
-                              ] else ...[
-                                Container(
-                                  width: 24,
-                                  height: 24,
-                                  decoration: BoxDecoration(
-                                    color: ColorConstants.lightGray,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    Icons.circle_outlined,
-                                    color: Colors.white,
-                                    size: 16,
-                                  ),
-                                ),
-                              ],
-                            ],
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.school_outlined,
+                          color: ColorConstants.primaryBlue,
+                          size: 18,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          "SELECT FACULTY",
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            color: ColorConstants.primaryBlue,
+                            letterSpacing: 0.5,
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                  );
-                }),
-              ],
-            ),
-          ),
+                  ),
+                  const SizedBox(height: 20),
 
-          const Spacer(),
+                  // Faculty Cards
+                  if (facultyList.isEmpty)
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[50],
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.school_outlined,
+                            size: 40,
+                            color: ColorConstants.mediumGray,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            "No Faculties",
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: ColorConstants.darkGray,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            "No faculties available",
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: ColorConstants.mediumGray,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    )
+                  else
+                    ...facultyList.map((faculty) {
+                      final isSelected =
+                          selectedFaculty?.institutionFacultyID ==
+                          faculty.institutionFacultyID;
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? ColorConstants.primaryBlue.withOpacity(0.08)
+                              : Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: isSelected
+                                ? ColorConstants.primaryBlue
+                                : ColorConstants.lightGray,
+                            width: isSelected ? 1.5 : 1,
+                          ),
+                          boxShadow: isSelected
+                              ? [
+                                  BoxShadow(
+                                    color: ColorConstants.primaryBlue
+                                        .withOpacity(0.1),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ]
+                              : [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.03),
+                                    blurRadius: 2,
+                                    offset: const Offset(0, 1),
+                                  ),
+                                ],
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                selectedFaculty = faculty;
+                              });
+                            },
+                            borderRadius: BorderRadius.circular(12),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Row(
+                                children: [
+                                  // Faculty Icon
+                                  Container(
+                                    width: 40,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? ColorConstants.primaryBlue
+                                          : ColorConstants.mediumGray
+                                                .withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Icon(
+                                      Icons.school_rounded,
+                                      color: isSelected
+                                          ? Colors.white
+                                          : ColorConstants.primaryBlue,
+                                      size: 18,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
 
-          // Navigation Section
-          Container(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                // SizedBox(
-                //   width: double.infinity,
-                //   child: ElevatedButton.icon(
-                //     onPressed: () {
-                //       Navigator.push(
-                //         context,
-                //         MaterialPageRoute(
-                //           builder: (_) => CategorySelectionPage(
-                //             institutionFacultyID:
-                //                 selectedFaculty?.institutionFacultyID ?? '',
-                //             institutionID: institutionID,
-                //           ),
-                //         ),
-                //       );
-                //     },
-                //     icon: const Icon(Icons.list),
-                //     label: const Text('View Categories'),
-                //     style: ElevatedButton.styleFrom(
-                //       backgroundColor: Colors.green,
-                //       foregroundColor: Colors.white,
-                //     ),
-                //   ),
-                // ),
-                const SizedBox(height: 8),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CategorySelectionPage(
-                            institutionFacultyID:
-                                selectedFaculty?.institutionFacultyID ?? '',
-                            institutionID: institutionID,
+                                  // Faculty Details
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          faculty.facultyName.isNotEmpty
+                                              ? faculty.facultyName
+                                              : "Unnamed Faculty",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: isSelected
+                                                ? FontWeight.w700
+                                                : FontWeight.w600,
+                                            color: isSelected
+                                                ? ColorConstants.primaryBlue
+                                                : ColorConstants.textDark,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        if (faculty
+                                            .universityAffiliation
+                                            .isNotEmpty) ...[
+                                          const SizedBox(height: 2),
+                                          Row(
+                                            children: [
+                                              Icon(
+                                                Icons.account_balance_outlined,
+                                                size: 10,
+                                                color:
+                                                    ColorConstants.mediumGray,
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Expanded(
+                                                child: Text(
+                                                  faculty.universityAffiliation,
+                                                  style: TextStyle(
+                                                    fontSize: 10,
+                                                    color: ColorConstants
+                                                        .mediumGray,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ],
+                                    ),
+                                  ),
+
+                                  // Selection Indicator
+                                  Container(
+                                    width: 20,
+                                    height: 20,
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? ColorConstants.primaryBlue
+                                          : Colors.transparent,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: isSelected
+                                            ? ColorConstants.primaryBlue
+                                            : ColorConstants.lightGray,
+                                        width: 2,
+                                      ),
+                                    ),
+                                    child: isSelected
+                                        ? Icon(
+                                            Icons.check_rounded,
+                                            color: Colors.white,
+                                            size: 12,
+                                          )
+                                        : null,
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                       );
-                    },
-                    icon: const Icon(Icons.settings),
-                    label: const Text('Category'),
+                    }),
+                ],
+              ),
+            ),
+          ),
+
+          // Navigation Section - Improved
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.grey[50],
+              border: Border(top: BorderSide(color: Colors.grey[200]!)),
+            ),
+            child: Column(
+              children: [
+                // Categories Button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: selectedFaculty != null
+                        ? () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CategorySelectionPage(
+                                  institutionFacultyID:
+                                      selectedFaculty!.institutionFacultyID,
+                                  institutionID: institutionID,
+                                ),
+                              ),
+                            );
+                          }
+                        : null,
+                    icon: const Icon(Icons.category_rounded, size: 18),
+                    label: const Text('Manage Categories'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorConstants.primaryBlue,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      elevation: 2,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 8),
+
+                // Divider
+                Divider(color: Colors.grey[300], height: 20),
+
+                // Settings Button
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(
                     onPressed: () {
                       // Settings functionality
                     },
-                    icon: const Icon(Icons.settings),
+                    icon: const Icon(Icons.settings_outlined, size: 16),
                     label: const Text('Settings'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: ColorConstants.darkGray,
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      side: BorderSide(color: Colors.grey[300]!),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 8),
+
+                // Logout Button
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(
                     onPressed: () {
                       // Logout functionality
                     },
-                    icon: const Icon(Icons.logout),
+                    icon: const Icon(Icons.logout_rounded, size: 16),
                     label: const Text('Logout'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.red,
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      side: BorderSide(color: Colors.red.withOpacity(0.3)),
                     ),
                   ),
                 ),

@@ -147,6 +147,7 @@ import "package:flutter_bloc/flutter_bloc.dart";
 import "package:flutter_dashboard/core/constants/color_constants.dart";
 import "package:flutter_dashboard/core/constants/image_constants.dart";
 import "package:flutter_dashboard/core/constants/string_constants.dart";
+import "package:flutter_dashboard/features/admin/admin.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view/widgets/nav_bar_widget.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view_model/authentication_bloc.dart";
 import "package:flutter_dashboard/features/authentication/presentation/view_model/authentication_event.dart";
@@ -613,7 +614,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
   void _handleAdminSignInSuccess(BuildContext context) {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => SseListPage()),
+      MaterialPageRoute(builder: (context) => AdminPage()),
     );
   }
 }
