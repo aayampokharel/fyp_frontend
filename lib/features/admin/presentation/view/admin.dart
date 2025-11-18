@@ -159,11 +159,7 @@ class _ProfessionalAdminDashboardState
                 Expanded(
                   flex: 2,
                   child: Column(
-                    children: [
-                      _buildCertificateChart(),
-                      const SizedBox(height: 24),
-                      _buildQuickStats(),
-                    ],
+                    children: [const SizedBox(height: 24), _buildQuickStats()],
                   ),
                 ),
                 const SizedBox(width: 24),
@@ -397,130 +393,6 @@ class _ProfessionalAdminDashboardState
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  // ================= Certificate Chart =================
-  Widget _buildCertificateChart() {
-    final monthlyData = [
-      {"month": "Aug", "certificates": 18},
-      {"month": "Sept", "certificates": 8},
-      {"month": "Oct", "certificates": 28},
-      {"month": "Nov", "certificates": 50},
-    ];
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "Certificate Issuance Trend",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF2D3748),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            "Monthly certificate issuance overview",
-            style: TextStyle(fontSize: 14, color: ColorConstants.mediumGray),
-          ),
-          const SizedBox(height: 24),
-          SizedBox(
-            height: 200,
-            child: BarChart(
-              BarChartData(
-                alignment: BarChartAlignment.spaceAround,
-                barTouchData: BarTouchData(enabled: true),
-                titlesData: FlTitlesData(
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      getTitlesWidget: (value, meta) {
-                        final index = value.toInt();
-                        if (index >= 0 && index < monthlyData.length) {
-                          return Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Text(
-                              monthlyData[index]["month"] as String,
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: ColorConstants.mediumGray,
-                              ),
-                            ),
-                          );
-                        }
-                        return const Text('');
-                      },
-                    ),
-                  ),
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 40,
-                      getTitlesWidget: (value, meta) {
-                        return Text(
-                          value.toInt().toString(),
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: ColorConstants.mediumGray,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  rightTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                  topTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                ),
-                gridData: FlGridData(
-                  show: true,
-                  drawVerticalLine: false,
-                  getDrawingHorizontalLine: (value) =>
-                      FlLine(color: ColorConstants.lightGray, strokeWidth: 0.5),
-                ),
-                borderData: FlBorderData(show: false),
-                barGroups: monthlyData.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final data = entry.value;
-                  return BarChartGroupData(
-                    x: index,
-                    barRods: [
-                      BarChartRodData(
-                        toY: (data["certificates"] as int).toDouble(),
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF4C7FFF), Color(0xFF8B4DFF)],
-                          begin: Alignment.bottomCenter,
-                          end: Alignment.topCenter,
-                        ),
-                        width: 16,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ],
-                  );
-                }).toList(),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

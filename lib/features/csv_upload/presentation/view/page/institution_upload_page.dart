@@ -51,12 +51,10 @@ class _InstitutionCsvUploadPageState extends State<InstitutionCsvUploadPage> {
       ),
       body: Row(
         children: [
-          // Sidebar - Always visible
           BlocBuilder<UploadBloc, UploadState>(
             builder: (context, state) {
               if (state is InstitutionCheckSuccessState) {
                 facultyList = state.institutionWithFacultiesEntity.faculties;
-                // Set first faculty as default selection
                 if (facultyList.isNotEmpty && selectedFaculty == null) {
                   selectedFaculty = facultyList.first;
                 }
@@ -67,7 +65,6 @@ class _InstitutionCsvUploadPageState extends State<InstitutionCsvUploadPage> {
             },
           ),
 
-          // Main content area
           Expanded(
             child: BlocBuilder<UploadBloc, UploadState>(
               builder: (context, state) {
@@ -75,7 +72,6 @@ class _InstitutionCsvUploadPageState extends State<InstitutionCsvUploadPage> {
                   return Center(child: Text(state.message));
                 } else if (state is InstitutionCheckSuccessState) {
                   facultyList = state.institutionWithFacultiesEntity.faculties;
-                  // Set first faculty as default selection if not already set
                   if (facultyList.isNotEmpty && selectedFaculty == null) {
                     selectedFaculty = facultyList.first;
                   }
@@ -83,6 +79,16 @@ class _InstitutionCsvUploadPageState extends State<InstitutionCsvUploadPage> {
                     context,
                     state.institutionWithFacultiesEntity.institution,
                   );
+                } else if (state is UploadCsvFileSuccessState) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    final snackBar = SnackBar(
+                      content: Text(state.message),
+                      behavior: SnackBarBehavior.floating,
+                      duration: const Duration(seconds: 2),
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  });
+                  return const SizedBox.shrink();
                 } else {
                   return const Center(child: CircularProgressIndicator());
                 }
@@ -547,186 +553,195 @@ class _InstitutionCsvUploadPageState extends State<InstitutionCsvUploadPage> {
     } else if (institutionEntity.isActive!) {
       return Padding(
         padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Selected Faculty Info
-            if (selectedFaculty != null) ...[
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: [
-                      Icon(Icons.school, color: Colors.blue),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Selected Faculty: ${selectedFaculty!.facultyName.isNotEmpty ? selectedFaculty!.facultyName : 'Unnamed Faculty'}",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                            if (selectedFaculty!
-                                .universityAffiliation
-                                .isNotEmpty)
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Selected Faculty Info
+              if (selectedFaculty != null) ...[
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        Icon(Icons.school, color: Colors.blue),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
                               Text(
-                                selectedFaculty!.universityAffiliation,
-                                style: TextStyle(color: Colors.grey[600]),
+                                "Selected Faculty: ${selectedFaculty!.facultyName.isNotEmpty ? selectedFaculty!.facultyName : 'Unnamed Faculty'}",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
                               ),
-                          ],
+                              if (selectedFaculty!
+                                  .universityAffiliation
+                                  .isNotEmpty)
+                                Text(
+                                  selectedFaculty!.universityAffiliation,
+                                  style: TextStyle(color: Colors.grey[600]),
+                                ),
+                            ],
+                          ),
+                        ),
+                        Chip(
+                          label: Text(
+                            selectedFaculty!.universityCollegeCode,
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          backgroundColor: Colors.blue,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+              ],
+
+              // File Picker (CSV only)
+              GestureDetector(
+                onTap: () async {
+                  final result = await FilePicker.platform.pickFiles(
+                    type: FileType.custom,
+                    allowedExtensions: ['csv'],
+                    allowMultiple: false,
+                  );
+
+                  if (result != null && result.files.isNotEmpty) {
+                    setState(() {
+                      pickedFile = result.files.first;
+                      fileName = pickedFile!.name;
+                      _showCsvPreview(result.files.first);
+                    });
+                  }
+                },
+                child: Container(
+                  height: 150,
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.upload_file,
+                        size: 50,
+                        color: fileName == null ? Colors.grey : Colors.green,
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        fileName ?? "Click to select CSV file",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: fileName == null ? Colors.grey : Colors.black,
+                          fontWeight: fileName == null
+                              ? FontWeight.normal
+                              : FontWeight.bold,
                         ),
                       ),
-                      Chip(
-                        label: Text(
-                          selectedFaculty!.universityCollegeCode,
-                          style: TextStyle(color: Colors.white),
+                      if (fileName != null) ...[
+                        const SizedBox(height: 5),
+                        Text(
+                          "File size: ${_formatFileSize(pickedFile!.size)}",
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
                         ),
-                        backgroundColor: Colors.blue,
-                      ),
+                      ],
                     ],
                   ),
                 ),
               ),
+
               const SizedBox(height: 20),
-            ],
 
-            // File Picker (CSV only)
-            GestureDetector(
-              onTap: () async {
-                final result = await FilePicker.platform.pickFiles(
-                  type: FileType.custom,
-                  allowedExtensions: ['csv'],
-                  allowMultiple: false,
-                );
+              // CSV Format Help
+              _buildCsvFormatHelp(),
 
-                if (result != null && result.files.isNotEmpty) {
-                  setState(() {
-                    pickedFile = result.files.first;
-                    fileName = pickedFile!.name;
-                    _showCsvPreview(result.files.first);
-                  });
-                }
-              },
-              child: Container(
-                height: 150,
+              const SizedBox(height: 20),
+
+              // Category TextField
+              TextField(
+                controller: _categoryController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: "Enter Category Name",
+                  hintText: "e.g., CS_2021_Computer_Science",
+                  prefixIcon: Icon(Icons.category),
+                ),
+                onChanged: (value) {
+                  if (value.length <= 1) {
+                    setState(() {});
+                  }
+                },
+              ),
+
+              const SizedBox(height: 10),
+              Text(
+                "This will be used to organize your certificates",
+                style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+              ),
+
+              const SizedBox(height: 20),
+
+              // Upload Button
+              SizedBox(
                 width: double.infinity,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.upload_file,
-                      size: 50,
-                      color: fileName == null ? Colors.grey : Colors.green,
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      fileName ?? "Click to select CSV file",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: fileName == null ? Colors.grey : Colors.black,
-                        fontWeight: fileName == null
-                            ? FontWeight.normal
-                            : FontWeight.bold,
-                      ),
-                    ),
-                    if (fileName != null) ...[
-                      const SizedBox(height: 5),
-                      Text(
-                        "File size: ${_formatFileSize(pickedFile!.size)}",
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // CSV Format Help
-            _buildCsvFormatHelp(),
-
-            const SizedBox(height: 20),
-
-            // Category TextField
-            TextField(
-              controller: _categoryController,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: "Enter Category Name",
-                hintText: "e.g., CS_2021_Computer_Science",
-                prefixIcon: Icon(Icons.category),
-              ),
-            ),
-
-            const SizedBox(height: 10),
-            Text(
-              "This will be used to organize your certificates",
-              style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-            ),
-
-            const SizedBox(height: 20),
-
-            // Upload Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed:
-                    pickedFile != null &&
-                        _categoryController.text.isNotEmpty &&
-                        selectedFaculty != null
-                    ? () {
-                        context.read<UploadBloc>().add(
-                          UploadCsvFileEvent(
-                            institutionID: widget.institutionID,
-                            categoryName: _categoryController.text,
-                            platformFile: pickedFile,
-                            facultyPublicKey: selectedFaculty!.facultyPublicKey,
-                            institutionFacultyName:
-                                selectedFaculty!.facultyName == ""
-                                ? institutionEntity.institutionName + " faculty"
-                                : selectedFaculty!.facultyName,
-                            institutionFacultyID:
-                                selectedFaculty!.institutionFacultyID,
-                          ),
-                        );
-                      }
-                    : null,
-                icon: const Icon(Icons.cloud_upload),
-                label: const Text("Upload CSV"),
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  backgroundColor:
+                child: ElevatedButton.icon(
+                  onPressed:
                       pickedFile != null &&
                           _categoryController.text.isNotEmpty &&
                           selectedFaculty != null
-                      ? Colors.blue
-                      : Colors.grey,
+                      ? () {
+                          context.read<UploadBloc>().add(
+                            UploadCsvFileEvent(
+                              institutionID: widget.institutionID,
+                              categoryName: _categoryController.text,
+                              platformFile: pickedFile,
+                              facultyPublicKey:
+                                  selectedFaculty!.facultyPublicKey,
+                              institutionFacultyName:
+                                  selectedFaculty!.facultyName == ""
+                                  ? institutionEntity.institutionName +
+                                        " faculty"
+                                  : selectedFaculty!.facultyName,
+                              institutionFacultyID:
+                                  selectedFaculty!.institutionFacultyID,
+                            ),
+                          );
+                        }
+                      : null,
+                  icon: const Icon(Icons.cloud_upload),
+                  label: const Text("Upload CSV"),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    backgroundColor:
+                        pickedFile != null &&
+                            _categoryController.text.isNotEmpty &&
+                            selectedFaculty != null
+                        ? Colors.blue
+                        : Colors.grey,
+                  ),
                 ),
               ),
-            ),
 
-            const SizedBox(height: 10),
+              const SizedBox(height: 10),
 
-            // Sample CSV Download
-            TextButton.icon(
-              onPressed: _downloadSampleCsv,
-              icon: const Icon(Icons.download),
-              label: const Text("Download Sample CSV Template"),
-            ),
-          ],
+              // Sample CSV Download
+              TextButton.icon(
+                onPressed: _downloadSampleCsv,
+                icon: const Icon(Icons.download),
+                label: const Text("Download Sample CSV Template"),
+              ),
+            ],
+          ),
         ),
       );
     } else {
@@ -809,7 +824,7 @@ class _InstitutionCsvUploadPageState extends State<InstitutionCsvUploadPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                "Required Columns:",
+                "Columns:",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
@@ -820,25 +835,24 @@ class _InstitutionCsvUploadPageState extends State<InstitutionCsvUploadPage> {
                   Chip(label: Text("student_id")),
                   Chip(label: Text("student_name")),
                   Chip(label: Text("certificate_type")),
+                  Chip(label: Text("degree")),
+                  Chip(label: Text("college")),
+                  Chip(label: Text("major")),
+                  Chip(label: Text("gpa")),
+                  Chip(label: Text("percentage")),
+                  Chip(label: Text("division")),
+                  Chip(label: Text("university_name")),
                   Chip(label: Text("issue_date")),
+                  Chip(label: Text("enrollment_date")),
+                  Chip(label: Text("completion_date")),
+                  Chip(label: Text("leaving_date")),
+                  Chip(label: Text("reason_for_leaving")),
+                  Chip(label: Text("character_remarks")),
+                  Chip(label: Text("general_remarks")),
                 ],
               ),
+
               const SizedBox(height: 12),
-              const Text(
-                "Certificate Types:",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                children: const [
-                  Chip(label: Text("COURSE_COMPLETION")),
-                  Chip(label: Text("CHARACTER")),
-                  Chip(label: Text("LEAVING")),
-                  Chip(label: Text("TRANSFER")),
-                  Chip(label: Text("PROVISIONAL")),
-                ],
-              ),
             ],
           ),
         ),
