@@ -22,7 +22,7 @@ class ContentHeaderWidget extends StatelessWidget {
         Text(
           title,
           style: TextStyle(
-            color: ColorConstants.primaryPurple,
+            color: ColorConstants.primaryBlue,
             fontSize: 28,
             fontWeight: FontWeight.bold,
           ),
@@ -51,8 +51,8 @@ Widget _glassButtonRow(String icon1Name, String icon2Name) {
         // label: const Text('Filter'),
         label: Text(icon1Name),
         style: ElevatedButton.styleFrom(
-          backgroundColor: ColorConstants.primaryPurple.withOpacity(0.1),
-          foregroundColor: ColorConstants.primaryPurple,
+          backgroundColor: ColorConstants.primaryBlue.withOpacity(0.1),
+          foregroundColor: ColorConstants.primaryBlue,
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
@@ -67,7 +67,7 @@ Widget _glassButtonRow(String icon1Name, String icon2Name) {
         // label: const Text('View All'),
         label: Text(icon2Name),
         style: ElevatedButton.styleFrom(
-          backgroundColor: ColorConstants.primaryPurple,
+          backgroundColor: ColorConstants.primaryBlue,
           foregroundColor: Colors.white,
           elevation: 0,
           shape: RoundedRectangleBorder(

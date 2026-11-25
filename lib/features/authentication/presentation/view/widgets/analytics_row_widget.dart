@@ -51,8 +51,8 @@ class AnalyticsRowWidget extends StatelessWidget {
                             height: heights[i].toDouble(),
                             decoration: BoxDecoration(
                               color: i == 6
-                                  ? ColorConstants.primaryPurple
-                                  : ColorConstants.primaryPurple.withOpacity(
+                                  ? ColorConstants.primaryBlue
+                                  : ColorConstants.primaryBlue.withOpacity(
                                       0.18,
                                     ),
                               borderRadius: BorderRadius.circular(6),
@@ -129,7 +129,7 @@ class AnalyticsRowWidget extends StatelessWidget {
                               height: 70,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: ColorConstants.primaryPurple.withOpacity(
+                                color: ColorConstants.primaryBlue.withOpacity(
                                   0.18,
                                 ),
                               ),
@@ -147,7 +147,7 @@ class AnalyticsRowWidget extends StatelessWidget {
                               height: 12,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: ColorConstants.primaryPurple,
+                                color: ColorConstants.primaryBlue,
                               ),
                             ),
                           ],

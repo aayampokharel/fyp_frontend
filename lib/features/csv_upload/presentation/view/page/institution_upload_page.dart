@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dashboard/core/constants/color_constants.dart';
 import 'package:flutter_dashboard/core/errors/app_logger.dart';
 import 'package:flutter_dashboard/features/authentication/domain/entity/faculty_entity.dart';
 import 'package:flutter_dashboard/features/authentication/domain/entity/institution_entity.dart';
@@ -38,7 +39,6 @@ class _InstitutionCsvUploadPageState extends State<InstitutionCsvUploadPage> {
     );
   }
 
-  @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -123,64 +123,212 @@ class _InstitutionCsvUploadPageState extends State<InstitutionCsvUploadPage> {
 
           // Faculties Section
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "SELECT FACULTY",
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[600],
-                  ),
+                // Header
+                Row(
+                  children: [
+                    Icon(
+                      Icons.school_outlined,
+                      color: ColorConstants.primaryBlue,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      "SELECT FACULTY",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: ColorConstants.darkGray,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 16),
+
+                // Faculty Cards
                 ...facultyList.map((faculty) {
                   final isSelected =
                       selectedFaculty?.institutionFacultyID ==
                       faculty.institutionFacultyID;
-                  return Card(
-                    margin: const EdgeInsets.only(bottom: 8),
-                    color: isSelected
-                        ? Colors.blue.withOpacity(0.1)
-                        : Colors.white,
-                    elevation: isSelected ? 2 : 0,
-                    child: ListTile(
-                      dense: true,
-                      leading: Icon(
-                        Icons.school,
-                        color: isSelected ? Colors.blue : Colors.grey,
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? ColorConstants.primaryBlue.withOpacity(0.08)
+                          : Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: isSelected
+                            ? ColorConstants.primaryBlue
+                            : ColorConstants.lightGray,
+                        width: isSelected ? 1.5 : 1,
                       ),
-                      title: Text(
-                        faculty.facultyName.isNotEmpty
-                            ? faculty.facultyName
-                            : "Unnamed Faculty",
-                        style: TextStyle(
-                          fontWeight: isSelected
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                          color: isSelected ? Colors.blue : Colors.black87,
+                      boxShadow: isSelected
+                          ? [
+                              BoxShadow(
+                                color: ColorConstants.primaryBlue.withOpacity(
+                                  0.1,
+                                ),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ]
+                          : [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 4,
+                                offset: const Offset(0, 1),
+                              ),
+                            ],
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            selectedFaculty = faculty;
+                          });
+                        },
+                        borderRadius: BorderRadius.circular(12),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Row(
+                            children: [
+                              // Faculty Icon
+                              Container(
+                                width: 44,
+                                height: 44,
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? ColorConstants.primaryBlue
+                                      : ColorConstants.mediumGray.withOpacity(
+                                          0.1,
+                                        ),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Icon(
+                                  Icons.school_rounded,
+                                  color: isSelected
+                                      ? Colors.white
+                                      : ColorConstants.primaryBlue,
+                                  size: 20,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+
+                              // Faculty Details
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      faculty.facultyName.isNotEmpty
+                                          ? faculty.facultyName
+                                          : "Unnamed Faculty",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: isSelected
+                                            ? FontWeight.w700
+                                            : FontWeight.w600,
+                                        color: isSelected
+                                            ? ColorConstants.primaryBlue
+                                            : ColorConstants.textDark,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    if (faculty
+                                        .universityAffiliation
+                                        .isNotEmpty) ...[
+                                      const SizedBox(height: 4),
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.account_balance_outlined,
+                                            size: 12,
+                                            color: ColorConstants.mediumGray,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Expanded(
+                                            child: Text(
+                                              faculty.universityAffiliation,
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color:
+                                                    ColorConstants.mediumGray,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                    if (faculty
+                                        .universityCollegeCode
+                                        .isNotEmpty) ...[
+                                      const SizedBox(height: 2),
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.code_outlined,
+                                            size: 12,
+                                            color: ColorConstants.mediumGray,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            "Code: ${faculty.universityCollegeCode}",
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              color: ColorConstants.mediumGray,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
+
+                              // Selection Indicator
+                              if (isSelected) ...[
+                                Container(
+                                  width: 24,
+                                  height: 24,
+                                  decoration: BoxDecoration(
+                                    color: ColorConstants.primaryBlue,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.check_rounded,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
+                                ),
+                              ] else ...[
+                                Container(
+                                  width: 24,
+                                  height: 24,
+                                  decoration: BoxDecoration(
+                                    color: ColorConstants.lightGray,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.circle_outlined,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
                         ),
                       ),
-                      subtitle: faculty.universityAffiliation.isNotEmpty
-                          ? Text(
-                              faculty.universityAffiliation,
-                              style: TextStyle(fontSize: 11),
-                            )
-                          : null,
-                      trailing: isSelected
-                          ? Icon(
-                              Icons.check_circle,
-                              color: Colors.blue,
-                              size: 16,
-                            )
-                          : null,
-                      onTap: () {
-                        setState(() {
-                          selectedFaculty = faculty;
-                        });
-                      },
                     ),
                   );
                 }),

@@ -48,12 +48,14 @@ class CertificateBatchRemoteDataSource {
     }
   }
 
-  Future<void> downloadIndividualCertificatePDF(
+  Future<void> downloadCertificatePDFOrZip(
     String categoryName,
     String categoryID,
     String fileID,
+    bool downloadAll,
   ) async {
     try {
+      AppLogger.info(ApiEndpoints.baseUrl + ApiEndpoints.certificateDownload);
       final url =
           Uri.parse(ApiEndpoints.baseUrl + ApiEndpoints.certificateDownload)
               .replace(
@@ -61,7 +63,7 @@ class CertificateBatchRemoteDataSource {
                   ApiEndpoints.categoryIDQuery: categoryID,
                   ApiEndpoints.categoryNameQuery: categoryName,
                   ApiEndpoints.fileIDQuery: fileID,
-                  ApiEndpoints.isDownloadAllQuery: false.toString(),
+                  ApiEndpoints.isDownloadAllQuery: downloadAll.toString(),
                 },
               )
               .toString();

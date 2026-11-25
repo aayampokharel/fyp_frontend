@@ -8,10 +8,11 @@ abstract interface class CertificateBatchIrepository {
     String institutionFacultyID,
     String categoryID,
   );
-  DefaultFutureEitherType<void> getIndividualCertificatePDF(
+  DefaultFutureEitherType<void> getCertificatePDFOrZip(
     String categoryName,
     String fileID,
     String categoryID,
+    bool downloadAll,
   );
   DefaultFutureEitherType<void> getCertificateHTMLPreview(String id);
 }

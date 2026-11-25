@@ -19,7 +19,7 @@ class LeftSideBarWidget extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 20,
-                  backgroundColor: ColorConstants.primaryPurple,
+                  backgroundColor: ColorConstants.primaryBlue,
                   child: const Icon(Icons.security, color: Colors.white),
                 ),
                 const SizedBox(width: 12),
@@ -86,13 +86,13 @@ Widget _navItem(IconData icon, String title, bool selected) {
       children: [
         Icon(
           icon,
-          color: selected ? ColorConstants.primaryPurple : Colors.black54,
+          color: selected ? ColorConstants.primaryBlue : Colors.black54,
         ),
         const SizedBox(width: 12),
         Text(
           title,
           style: TextStyle(
-            color: selected ? ColorConstants.primaryPurple : Colors.black54,
+            color: selected ? ColorConstants.primaryBlue : Colors.black54,
             fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
           ),
         ),

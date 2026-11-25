@@ -3,19 +3,23 @@ import 'package:flutter_dashboard/core/wrappers/dio_client.dart';
 import 'package:flutter_dashboard/features/authentication/data/data_source/admin_remote_data_source.dart';
 import 'package:flutter_dashboard/features/authentication/data/data_source/faculty_remote_data_source.dart';
 import 'package:flutter_dashboard/features/authentication/data/data_source/institution_remote_data_source.dart';
+import 'package:flutter_dashboard/features/authentication/data/data_source/remove_background_data_source.dart';
 import 'package:flutter_dashboard/features/authentication/data/data_source/user_account_remote_data_source.dart';
 import 'package:flutter_dashboard/features/authentication/data/repository/admin_account_repository_impl.dart';
 import 'package:flutter_dashboard/features/authentication/data/repository/faculty_repository_impl.dart';
 import 'package:flutter_dashboard/features/authentication/data/repository/institution_repository_impl.dart';
+import 'package:flutter_dashboard/features/authentication/data/repository/remove_background_repository_impl.dart';
 import 'package:flutter_dashboard/features/authentication/data/repository/user_account_repository_impl.dart';
 import 'package:flutter_dashboard/features/authentication/domain/repository/admin_repository.dart';
 import 'package:flutter_dashboard/features/authentication/domain/repository/faculty_repository.dart';
 import 'package:flutter_dashboard/features/authentication/domain/repository/institution_repository.dart';
+import 'package:flutter_dashboard/features/authentication/domain/repository/remove_background_repository.dart';
 import 'package:flutter_dashboard/features/authentication/domain/repository/user_account_repository.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/admin_account_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/faculty_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/institute_login_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/institution_usecase.dart';
+import 'package:flutter_dashboard/features/authentication/domain/use_case/remove_background_usecase.dart';
 import 'package:flutter_dashboard/features/authentication/domain/use_case/user_account_usecase.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/data/data_source/category_batch_remote_data_source.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/data/data_source/certificate_batch_remote_data_source.dart';
@@ -26,7 +30,7 @@ import 'package:flutter_dashboard/features/certificate_category_batch/domain/rep
 import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/category_batch_usecase.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/certificate_batch_usecase.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/certificate_html_preview_usecase.dart';
-import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/individual_certificate_download_usecase.dart';
+import 'package:flutter_dashboard/features/certificate_category_batch/domain/usecase/certificate_download_usecase.dart';
 import 'package:flutter_dashboard/features/csv_upload/data/data_source/category_creation_remote_data_source.dart';
 import 'package:flutter_dashboard/features/csv_upload/data/data_source/certificate_list_remote_data_source.dart';
 import 'package:flutter_dashboard/features/csv_upload/data/data_source/institution_is_active_data_source.dart';
@@ -156,10 +160,8 @@ Future _authDependencies() async {
   getIt.registerLazySingleton<CertificateBatchIrepository>(
     () => getIt<CertificateBatchRepositoryImpl>(),
   );
-  getIt.registerLazySingleton<IndividualCertificateDownloadPDFUseCase>(
-    () => IndividualCertificateDownloadPDFUseCase(
-      getIt<CertificateBatchIrepository>(),
-    ),
+  getIt.registerLazySingleton<CertificateDownloadPDFUseCase>(
+    () => CertificateDownloadPDFUseCase(getIt<CertificateBatchIrepository>()),
   );
   getIt.registerLazySingleton<CertificateHTMLPreviewUseCase>(
     () => CertificateHTMLPreviewUseCase(getIt<CertificateBatchIrepository>()),
@@ -211,5 +213,18 @@ Future _authDependencies() async {
   );
   getIt.registerLazySingleton<CategoryCreationUseCase>(
     () => CategoryCreationUseCase(getIt<CategoryCreationIRepository>()),
+  );
+  //===============================background_removal==x
+  getIt.registerLazySingleton<RemoveBackgroundDataSource>(
+    () => RemoveBackgroundDataSource(getIt<DioClient>()),
+  );
+  getIt.registerLazySingleton<RemoveBackgroundRepositoryImpl>(
+    () => RemoveBackgroundRepositoryImpl(getIt<RemoveBackgroundDataSource>()),
+  );
+  getIt.registerLazySingleton<RemoveBackgroundIRepository>(
+    () => getIt<RemoveBackgroundRepositoryImpl>(),
+  );
+  getIt.registerLazySingleton<RemoveBackgroundUseCase>(
+    () => RemoveBackgroundUseCase(getIt<RemoveBackgroundIRepository>()),
   );
 }

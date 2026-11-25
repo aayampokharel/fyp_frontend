@@ -2,31 +2,34 @@ import 'package:flutter_dashboard/core/errors/app_logger.dart';
 import 'package:flutter_dashboard/core/use_case.dart';
 import 'package:flutter_dashboard/features/certificate_category_batch/domain/repository/certificate_batch_iresponsibility.dart';
 
-class IndividualCertificateDownloadPDFUseCaseParams {
+class CertificateDownloadPDFUseCaseParams {
   String categoryName;
   String categoryID;
   String fileID;
+  bool isDownloadAll;
 
-  IndividualCertificateDownloadPDFUseCaseParams({
+  CertificateDownloadPDFUseCaseParams({
     required this.categoryName,
     required this.categoryID,
     required this.fileID,
+    required this.isDownloadAll,
   });
 }
 
-class IndividualCertificateDownloadPDFUseCase
-    implements UseCase<void, IndividualCertificateDownloadPDFUseCaseParams> {
+class CertificateDownloadPDFUseCase
+    implements UseCase<void, CertificateDownloadPDFUseCaseParams> {
   final CertificateBatchIrepository _certificateBatchIrepository;
-  IndividualCertificateDownloadPDFUseCase(this._certificateBatchIrepository);
+  CertificateDownloadPDFUseCase(this._certificateBatchIrepository);
   @override
   DefaultFutureEitherType<void> call(
-    IndividualCertificateDownloadPDFUseCaseParams params,
+    CertificateDownloadPDFUseCaseParams params,
   ) {
-    AppLogger.info("IndividualCertificateDownloadPDFUseCase");
-    return _certificateBatchIrepository.getIndividualCertificatePDF(
+    AppLogger.info("CertificateDownloadPDFUseCase");
+    return _certificateBatchIrepository.getCertificatePDFOrZip(
       params.categoryName,
       params.fileID,
       params.categoryID,
+      params.isDownloadAll,
     );
   }
 }

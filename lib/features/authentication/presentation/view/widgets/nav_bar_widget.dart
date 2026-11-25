@@ -20,7 +20,7 @@ class NavBarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: ColorConstants.primaryPurple,
+      backgroundColor: ColorConstants.primaryBlue,
       title: Text(companyName),
       actions: [
         IconButton(onPressed: onPressedIcon1, icon: icon1),
